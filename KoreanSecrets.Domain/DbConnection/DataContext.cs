@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using KoreanSecrets.Domain.Entities;
+using KoreanSecrets.Domain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +10,14 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.Domain.DbConnection;
 
-public class DataContext : DbContext
+public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
 {
     public DataContext(DbContextOptions<DataContext> opts) : base(opts) { }
+
+
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+    public string PhoneNumber { get; set; }
 }

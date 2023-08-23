@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.Domain.Entities;
+namespace KoreanSecrets.Domain.Models;
 
-public class User : IdentityUser<Guid>
+public class ApplicationRole : IdentityRole<Guid>
 {
 }
