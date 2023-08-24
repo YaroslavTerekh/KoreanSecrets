@@ -15,9 +15,5 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DataContext(DbContextOptions<DataContext> opts) : base(opts) { }
 
 
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
-
-    public string PhoneNumber { get; set; }
+    public DbSet<AddressInfo> Addresses { get; set; }
 }

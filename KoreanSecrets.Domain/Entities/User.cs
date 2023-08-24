@@ -9,4 +9,11 @@ namespace KoreanSecrets.Domain.Entities;
 
 public class User : IdentityUser<Guid>
 {
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+    public long PhoneNumber { get; set; }
+
+    public AddressInfo? AddressInfo { get; set; }
 }
