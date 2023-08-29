@@ -1,20 +1,21 @@
-﻿using KoreanSecrets.Domain.Common.Enums;
-using Microsoft.AspNetCore.Identity;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.Domain.Entities;
+namespace KoreanSecrets.BL.Behaviors.Auth.Register;
 
-public class User : IdentityUser<Guid>
+public class RegisterCommand : IRequest
 {
     public string FirstName { get; set; }
 
     public string LastName { get; set; }
 
+    public string Email { get; set; }
+
     public long PhoneNumber { get; set; }
 
-    public AddressInfo? AddressInfo { get; set; }
+    public string Password { get; set; }
 }
