@@ -36,6 +36,7 @@ public class LoginHandler : IRequestHandler<LoginCommand, AuthToken>
     {
         var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber, cancellationToken);
 
+        //ToDo: Exception hangling
         //if (user is null)
         //    throw new Exception(ErrorMessage.UserNotFound);
 

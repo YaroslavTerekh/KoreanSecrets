@@ -13,6 +13,7 @@ using System.Text;
 using FluentValidation;
 using KoreanSecrets.Domain.Common.DbSeed;
 using KoreanSecrets.BL.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,6 +102,8 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 var scope = app.Services.CreateScope();
 
+var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+dataContext.Database.Migrate();
 builder.Services.SeedDatabase(scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>());
 
 // Configure the HTTP request pipeline.
