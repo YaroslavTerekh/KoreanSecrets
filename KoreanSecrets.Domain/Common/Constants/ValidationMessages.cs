@@ -36,4 +36,6 @@ public static class ValidationMessages
 
     public const string WrongDateTime = "Вказано некоректну дату";
     public const string WrongPrice = "Вказано некоректну ціну";
+
+    public const string UserWithNumberExists = "Користувач з таким номером телефону вже присутній";
 }
