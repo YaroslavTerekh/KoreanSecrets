@@ -14,5 +14,13 @@ public class User : IdentityUser<Guid>
 
     public string LastName { get; set; }
 
+    public Guid? AddressInfoId { get; set; }
+
     public AddressInfo? AddressInfo { get; set; }
+
+    public Guid BucketId { get; set; }
+
+    public Bucket Bucket { get; set; }
+
+    public List<Feedback> Feedbacks { get; set; } = new();
 }
