@@ -8,6 +8,10 @@ namespace KoreanSecrets.Domain.Entities;
 
 public class AddressInfo : BaseEntity
 {
+    public Guid UserId { get; set; }
+
+    public User User { get; set; }
+
     public string City { get; set; }
 
     public string Street { get; set; }
