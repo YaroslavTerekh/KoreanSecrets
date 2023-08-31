@@ -13,8 +13,10 @@ public class LoginCommandValidator : AbstractValidator<LoginCommand>
     public LoginCommandValidator()
     {
         RuleFor(t => t.PhoneNumber)
-            .NotEqual(0)
-            .WithMessage(ValidationMessages.PhoneNumberRequired)
+            .MaximumLength(13)
+            .WithMessage(ValidationMessages.PhoneNumberTooLong)
+            .MinimumLength(9)
+            .WithMessage(ValidationMessages.PhoneNumberTooShort)
             .NotEmpty()
             .WithMessage(ValidationMessages.PhoneNumberRequired);
     }

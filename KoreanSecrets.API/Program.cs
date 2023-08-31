@@ -14,16 +14,21 @@ using FluentValidation;
 using KoreanSecrets.Domain.Common.DbSeed;
 using KoreanSecrets.BL.Services;
 using Microsoft.EntityFrameworkCore;
+using KoreanSecrets.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContextsCustom(builder.Configuration);
 
-builder.Services.AddIdentity<User, ApplicationRole>()
+builder.Services.AddIdentity<User, ApplicationRole>(opts =>
+    {
+        opts.User.RequireUniqueEmail = true;
+    })
     .AddRoles<ApplicationRole>()
     .AddEntityFrameworkStores<DataContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<CustomIdentityErrorDescriber>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -122,6 +127,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

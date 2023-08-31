@@ -1,9 +1,12 @@
-﻿using KoreanSecrets.Domain.Entities;
+﻿using KoreanSecrets.Domain.Common.Constants;
+using KoreanSecrets.Domain.Common.CustomExceptions;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,16 +25,13 @@ public class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
     {
         var user = await _userManager.FindByIdAsync(request.UserId.ToString());
 
-        if(user is null) { }
-        //ToDo: Exception handling
+        if (user is null)
+            throw new NotFoundException(ErrorMessages.UserNotFound);
 
         var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
 
         if (!result.Succeeded)
-        {
-            //ToDo: Exception handling
-            throw new Exception(result.Errors.ToString());
-        }
+            throw new AuthException(HttpStatusCode.BadRequest, result.Errors);
 
         return Unit.Value;
     }

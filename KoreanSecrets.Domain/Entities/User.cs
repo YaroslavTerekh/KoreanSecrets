@@ -14,7 +14,5 @@ public class User : IdentityUser<Guid>
 
     public string LastName { get; set; }
 
-    public long PhoneNumber { get; set; }
-
     public AddressInfo? AddressInfo { get; set; }
 }
