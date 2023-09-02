@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230901112332_AddPhotosToProduct")]
+    partial class AddPhotosToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,18 +99,16 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ProductId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ProductPhotoId")
-                        .IsRequired()
+                    b.Property<Guid>("ProductPhotoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId")
-                        .IsUnique()
-                        .HasFilter("[ProductId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("ProductPhotoId");
 
@@ -308,10 +308,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("DemandId");
 
                     b.HasIndex("SubCategoryId");
 
@@ -583,7 +579,8 @@ namespace KoreanSecrets.Domain.Migrations
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", "Product")
                         .WithOne("Guide")
                         .HasForeignKey("KoreanSecrets.Domain.Entities.AppFile", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", "ProductPhoto")
                         .WithMany("Photos")
@@ -667,21 +664,21 @@ namespace KoreanSecrets.Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("KoreanSecrets.Domain.Entities.Country", "Country")
                         .WithMany("Products")
-                        .HasForeignKey("CountryId")
+                        .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Demand", "Demand")
                         .WithMany("Products")
-                        .HasForeignKey("DemandId")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

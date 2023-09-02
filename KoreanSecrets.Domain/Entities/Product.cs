@@ -44,6 +44,8 @@ public class Product : BaseEntity
 
     public AppFile Guide { get; set; }
 
+    public List<AppFile> Photos { get; set; }
+
     public List<Feedback> Feedbacks { get; set; } = new();
 
     public List<Bucket> Buckets { get; set; } = new();

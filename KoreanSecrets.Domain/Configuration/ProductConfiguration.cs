@@ -30,12 +30,12 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.HasOne(t => t.Country)
             .WithMany(t => t.Products)
-            .HasForeignKey(t => t.BrandId)
+            .HasForeignKey(t => t.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(t => t.Demand)
             .WithMany(t => t.Products)
-            .HasForeignKey(t => t.BrandId)
+            .HasForeignKey(t => t.DemandId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(t => t.Guide)
@@ -47,5 +47,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .WithOne(t => t.Product)
             .HasForeignKey(t => t.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(t => t.Photos)
+            .WithOne(t => t.ProductPhoto)
+            .HasForeignKey(t => t.ProductPhotoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -8,6 +8,12 @@ namespace KoreanSecrets.Domain.Common.Constants;
 
 public static class ErrorMessages
 {
+    public const string BrandNotFound = "Бренд не знайдено";
+    public const string CountryNotFound = "Країну не знайдено";
+    public const string SubCatNotFound = "Підкатегорію не знайдено";
+    public const string DemandNotFound = "Необхідність не знайдено";
+    public const string CategoryNotFound = "Необхідність не знайдено";
+
     public const string WrongPassword = "Пароль неправильний";
     public const string WrongPhoneNumber = "Номер телефону неправильний";
 

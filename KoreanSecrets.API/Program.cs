@@ -104,12 +104,12 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthPolicies.Admins, policy =>
     {
-        policy.RequireRole(Roles.Admin.ToString());
+        policy.RequireRole(Roles.Admin);
     });
 
     options.AddPolicy(AuthPolicies.Users, policy =>
     {
-        policy.RequireRole(Roles.User.ToString());
+        policy.RequireRole(Roles.User);
     });
 });
 
@@ -118,7 +118,8 @@ var scope = app.Services.CreateScope();
 
 var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 dataContext.Database.Migrate();
-builder.Services.SeedDatabase(scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>());
+await builder.Services.SeedDatabase(scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>(),
+    scope.ServiceProvider.GetRequiredService<UserManager<User>>());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
