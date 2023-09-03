@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddProduct;
+namespace KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
 
 public class AddProductHandler : IRequestHandler<AddProductCommand>
 {

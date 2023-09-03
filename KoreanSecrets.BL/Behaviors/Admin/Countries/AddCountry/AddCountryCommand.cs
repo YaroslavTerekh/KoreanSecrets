@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddSubCategory;
+namespace KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 
-public class AddSubCategoryCommand : IRequest
+public class AddCountryCommand : IRequest
 {
     public Guid CategoryId { get; set; }
 

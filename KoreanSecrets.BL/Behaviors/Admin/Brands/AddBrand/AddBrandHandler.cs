@@ -7,26 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddSubCategory;
+namespace KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
 
-public class AddSubCategoryHandler : IRequestHandler<AddSubCategoryCommand>
+public class AddBrandHandler : IRequestHandler<AddBrandCommand>
 {
     private readonly DataContext _context;
 
-    public AddSubCategoryHandler(DataContext context)
-    { 
+    public AddBrandHandler(DataContext context)
+    {
         _context = context;
     }
 
-    public async Task<Unit> Handle(AddSubCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AddBrandCommand request, CancellationToken cancellationToken)
     {
-        var subCategory = new SubCategory
+        var brand = new Brand
         {
             Title = request.Title,
             CategoryId = request.CategoryId
         };
 
-        await _context.SubCategories.AddAsync(subCategory, cancellationToken);
+        await _context.Brands.AddAsync(brand, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddBrand;
+namespace KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 
-public class AddBrandCommandValidator : AbstractValidator<AddBrandCommand>
+public class AddCountryCommandValidator : AbstractValidator<AddCountryCommand>
 {
-    public AddBrandCommandValidator(DataContext context)
+    public AddCountryCommandValidator(DataContext context)
     {
         RuleFor(t => t.Title)
             .MinimumLength(4)

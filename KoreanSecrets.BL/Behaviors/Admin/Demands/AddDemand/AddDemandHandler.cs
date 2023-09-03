@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddDemand;
+namespace KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 
 public class AddDemandHandler : IRequestHandler<AddDemandCommand>
 {

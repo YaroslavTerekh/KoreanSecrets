@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddProduct;
+namespace KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
 
 public class AddProductCommand : IRequest
 {

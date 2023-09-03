@@ -7,26 +7,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddCountry;
+namespace KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 
-public class AddCountryHandler : IRequestHandler<AddCountryCommand>
+public class AddSubCategoryHandler : IRequestHandler<AddSubCategoryCommand>
 {
     private readonly DataContext _context;
 
-    public AddCountryHandler(DataContext context)
-    {
+    public AddSubCategoryHandler(DataContext context)
+    { 
         _context = context;
     }
 
-    public async Task<Unit> Handle(AddCountryCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AddSubCategoryCommand request, CancellationToken cancellationToken)
     {
-        var country = new Country
+        var subCategory = new SubCategory
         {
             Title = request.Title,
             CategoryId = request.CategoryId
         };
 
-        await _context.Countries.AddAsync(country, cancellationToken);
+        await _context.SubCategories.AddAsync(subCategory, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

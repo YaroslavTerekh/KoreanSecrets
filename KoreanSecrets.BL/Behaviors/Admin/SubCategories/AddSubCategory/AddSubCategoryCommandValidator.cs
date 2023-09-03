@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.AddDemand;
+namespace KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 
-public class AddDemandCommandValidator : AbstractValidator<AddDemandCommand>
+public class AddSubCategoryCommandValidator : AbstractValidator<AddSubCategoryCommand>
 {
-    public AddDemandCommandValidator(DataContext context)
+    public AddSubCategoryCommandValidator(DataContext context)
     {
         RuleFor(t => t.Title)
             .MinimumLength(4)
