@@ -29,13 +29,14 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             Characteristics = request.Characteristics,
             Syllabes = request.Syllabes,
             Usage = request.Usage,
-            Volume = request.Volume,
+            Volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = t.ProductId}).ToList(),
             Price = request.Price,            
             BrandId = request.BrandId,
             CategoryId = request.CategoryId,
             CountryId = request.CountryId,
             DemandId = request.DemandId,
-            SubCategoryId = request.SubCategoryId
+            SubCategoryId = request.SubCategoryId,
+            AdditionalIcon = request.Icon
         };
 
         List<AppFile> photos = new List<AppFile>();

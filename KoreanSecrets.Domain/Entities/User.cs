@@ -23,4 +23,6 @@ public class User : IdentityUser<Guid>
     public Bucket Bucket { get; set; }
 
     public List<Feedback> Feedbacks { get; set; } = new();
+
+    public List<Product> Likes { get; set; } = new();
 }

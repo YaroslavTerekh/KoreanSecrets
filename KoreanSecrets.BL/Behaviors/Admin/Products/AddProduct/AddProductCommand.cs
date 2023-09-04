@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using KoreanSecrets.Domain.DataTransferObjects;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -19,8 +21,6 @@ public class AddProductCommand : IRequest
 
     public string Syllabes { get; set; }
 
-    public string Volume { get; set; }
-
     public long Price { get; set; }
 
     public Guid CategoryId { get; set; }
@@ -36,4 +36,8 @@ public class AddProductCommand : IRequest
     public List<IFormFile> Photos { get; set; }
 
     public IFormFile? VideoGuide { get; set; }
+
+    public List<VolumeDTO> Volumes { get; set; } = new();
+
+    public ProductIcon Icon { get; set; } = ProductIcon.None;
 }

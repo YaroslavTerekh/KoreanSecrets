@@ -13,6 +13,7 @@ public static class ErrorMessages
     public const string SubCatNotFound = "Підкатегорію не знайдено";
     public const string DemandNotFound = "Необхідність не знайдено";
     public const string CategoryNotFound = "Необхідність не знайдено";
+    public const string SomeProductNotFound = "Товару не знайдено";
 
     public const string WrongPassword = "Пароль неправильний";
     public const string WrongPhoneNumber = "Номер телефону неправильний";

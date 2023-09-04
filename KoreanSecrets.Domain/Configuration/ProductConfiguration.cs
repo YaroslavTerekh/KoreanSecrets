@@ -52,5 +52,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .WithOne(t => t.ProductPhoto)
             .HasForeignKey(t => t.ProductPhotoId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasOne(t => t.MainPhoto)
+            .WithOne(t => t.ProductMainPhoto)
+            .HasForeignKey<AppFile>(t => t.ProductMainPhotoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,9 @@ public class Product : BaseEntity
 
     public Demand Demand { get; set; }
 
-    public string Volume { get; set; }
+    public ProductIcon AdditionalIcon { get; set; }
+
+    public List<Volume> Volumes { get; set; }
 
     public long Price { get; set; }
 
@@ -43,6 +46,10 @@ public class Product : BaseEntity
     public Guid? GuideId { get; set; }
 
     public AppFile Guide { get; set; }
+
+    public Guid MainPhotoId { get; set; }
+
+    public AppFile MainPhoto { get; set; }
 
     public List<AppFile> Photos { get; set; }
 
