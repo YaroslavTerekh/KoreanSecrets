@@ -51,6 +51,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasMany(t => t.Photos)
             .WithOne(t => t.ProductPhoto)
             .HasForeignKey(t => t.ProductPhotoId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(t => t.MainPhoto)

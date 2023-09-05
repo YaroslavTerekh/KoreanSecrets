@@ -11,6 +11,4 @@ public class VolumeDTO
     public long Value { get; set; }
 
     public string Unit { get; set; }
-
-    public Guid ProductId { get; set; }
 }

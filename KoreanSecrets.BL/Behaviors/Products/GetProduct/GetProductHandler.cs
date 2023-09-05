@@ -35,6 +35,8 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Include(t => t.Photos)
             .Include(t => t.Guide)
             .Include(t => t.MainPhoto)
+            .Include(t => t.Feedbacks)
+                .ThenInclude(t => t.User)
             .Where(t => t.Id == request.ProductId)
             .Select(t => _mapper.Map<PageProductDTO>(t))
             .FirstOrDefaultAsync(cancellationToken);

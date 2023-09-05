@@ -1,4 +1,6 @@
-﻿using KoreanSecrets.Domain.DbConnection;
+﻿using AutoMapper;
+using KoreanSecrets.Domain.DataTransferObjects;
+using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,19 +12,23 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetProducts;
 
-public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<Product>>
+public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<ListProductDTO>>
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public GetProductsHandler(DataContext context)
+    public GetProductsHandler(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<List<Product>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<List<ListProductDTO>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
         var products = _context.Products
             .AsNoTracking()
+            .Include(t => t.Brand)
+            .Include(t => t.MainPhoto)
             .Where(t => t.CategoryId == request.CategoryId);
 
         if (request.CountriesIds.Count > 0) products = products.Where(t => request.CountriesIds.Contains(t.CountryId));
@@ -33,6 +39,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, List<Product
         return await products
             .Skip(request.CurrentPage * request.PageSize)
             .Take(request.PageSize)
+            .Select(t => _mapper.Map<ListProductDTO>(t))
             .ToListAsync(cancellationToken);
     }
 }

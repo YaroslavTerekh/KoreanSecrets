@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.Entities;
+﻿using KoreanSecrets.Domain.DataTransferObjects;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetProducts;
 
-public class GetProductsQuery : IRequest<List<Product>>
+public class GetProductsQuery : IRequest<List<ListProductDTO>>
 {
     public Guid CategoryId { get; set; }
 

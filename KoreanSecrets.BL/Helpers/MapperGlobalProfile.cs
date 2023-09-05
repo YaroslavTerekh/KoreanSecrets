@@ -21,5 +21,7 @@ public class MapperGlobalProfile : Profile
         CreateMap<Country, CountryDTO>();
         CreateMap<SubCategory, SubCategoryDTO>();
         CreateMap<AppFile, AppFileDTO>();
+        CreateMap<Feedback, FeedbackDTO>();
+        CreateMap<User, UserDTO>();
     }
 }

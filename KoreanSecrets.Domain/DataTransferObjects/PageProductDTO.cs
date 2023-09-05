@@ -45,7 +45,7 @@ public class PageProductDTO : BaseEntity
 
     public List<AppFileDTO> Photos { get; set; }
     
-    public List<Feedback> Feedbacks { get; set; } = new();
+    public List<FeedbackDTO> Feedbacks { get; set; } = new();
 
     public List<ListProductDTO> SameProducts { get; set; } = new();
 }
