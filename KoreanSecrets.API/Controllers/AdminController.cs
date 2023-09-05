@@ -3,6 +3,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Categories.AddCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
+using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
@@ -64,4 +65,11 @@ public class AdminController : ControllerBase
         [FromBody] AddSubCategoryCommand command, 
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPut("products/{id:guid}/stock/toggle")]
+    public async Task<IActionResult> ToggleIsInStockAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new ChangeIsInStockStatusCommand(id), cancellationToken));
 }

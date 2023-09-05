@@ -49,6 +49,8 @@ public class Product : BaseEntity
 
     public Guid MainPhotoId { get; set; }
 
+    public bool IsInStock { get; set; }
+
     public AppFile MainPhoto { get; set; }
 
     public List<AppFile> Photos { get; set; }

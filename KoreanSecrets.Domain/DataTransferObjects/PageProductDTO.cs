@@ -29,13 +29,15 @@ public class PageProductDTO : BaseEntity
 
     public DemandDTO Demand { get; set; }
 
-    public string Volume { get; set; }
+    public List<VolumeDTO> Volumes { get; set; }
 
     public long Price { get; set; }
 
     public string Characteristics { get; set; }
 
     public string Usage { get; set; }
+
+    public bool IsInStock { get; set; }
 
     public string Syllabes { get; set; }
 

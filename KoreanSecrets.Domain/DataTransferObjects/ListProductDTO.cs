@@ -23,4 +23,6 @@ public class ListProductDTO : BaseEntity
     public BrandDTO Brand { get; set; }
 
     public ProductIcon Icon { get; set; }
+
+    public bool IsInStock { get; set; }
 }
