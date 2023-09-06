@@ -14,8 +14,10 @@ public class MapperGlobalProfile : Profile
     public MapperGlobalProfile()
     {
         CreateMap<Product, PageProductDTO>()
-            .ForMember(dest => dest.SameProducts, src => src.Ignore());
-        CreateMap<Product, ListProductDTO>();
+            .ForMember(dest => dest.SameProducts, src => src.Ignore())
+            .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
+        CreateMap<Product, ListProductDTO>()
+            .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Brand, BrandDTO>();
         CreateMap<Demand, DemandDTO>();
         CreateMap<Country, CountryDTO>();

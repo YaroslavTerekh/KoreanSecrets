@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.Entities;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using KoreanSecrets.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,8 @@ public class PageProductDTO : BaseEntity
     public string Characteristics { get; set; }
 
     public string Usage { get; set; }
+
+    public ProductIcon Icon { get; set; }
 
     public bool IsInStock { get; set; }
 

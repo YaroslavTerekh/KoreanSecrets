@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.BL.Behaviors.Products.GetProduct;
+﻿using KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
+using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -30,4 +31,11 @@ public class ProductsController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetProductQuery(id), cancellationToken));
+
+    [HttpPost("get/discounted")]
+    public async Task<IActionResult> GetDiscountedAsync
+    (
+        [FromBody] GetDiscountedProductsQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
 }

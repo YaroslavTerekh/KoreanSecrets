@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetProducts;
 
-public class GetProductsQuery : IRequest<List<ListProductDTO>>
+public class GetProductsQuery : IRequest<PaginnationModelDTO<ListProductDTO>>
 {
     public Guid CategoryId { get; set; }
 

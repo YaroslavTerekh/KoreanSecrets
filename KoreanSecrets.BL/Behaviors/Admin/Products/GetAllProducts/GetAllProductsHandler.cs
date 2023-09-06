@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
 
-public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, List<ListProductDTO>>
+public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, PaginnationModelDTO<ListProductDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -22,17 +22,23 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, List<L
         _mapper = mapper;
     }
 
-    public async Task<List<ListProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginnationModelDTO<ListProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
-        var products = await _context.Products
+        var query = _context.Products
             .AsNoTracking()
             .Include(t => t.Brand)
-            .Include(t => t.MainPhoto)
-            .Select(t => _mapper.Map<ListProductDTO>(t))
-            .Skip(request.CurrentPage * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+            .Include(t => t.MainPhoto);
 
-        return products;
+        return new PaginnationModelDTO<ListProductDTO>
+        {
+            CurrentPage = request.CurrentPage,
+            PageSize = request.PageSize,
+            Total = await query.CountAsync(cancellationToken),
+            Products = await query
+                .Select(t => _mapper.Map<ListProductDTO>(t))
+                .Skip(request.CurrentPage * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken)
+        };
     }
 }
