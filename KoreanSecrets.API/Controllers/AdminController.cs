@@ -3,9 +3,15 @@ using KoreanSecrets.BL.Behaviors.Admin.Categories.AddCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddDiscount;
+using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
+using KoreanSecrets.BL.Behaviors.Admin.Products.AddPhotoToList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
+using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
+using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
+using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.Domain.Common.Constants;
@@ -72,7 +78,7 @@ public class AdminController : ControllerBase
     [HttpPost("subcategories/add")]
     public async Task<IActionResult> AddSubCategoryAsync
     (
-        [FromBody] AddSubCategoryCommand command, 
+        [FromBody] AddSubCategoryCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 
@@ -97,4 +103,53 @@ public class AdminController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new RemoveDiscountCommand(id), cancellationToken));
+
+    [HttpPatch("products/photos/main/change")]
+    public async Task<IActionResult> ChangeMainPhotoAsync
+    (
+        [FromForm] ChangeMainPhotoCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("products/photos/add")]
+    public async Task<IActionResult> AddPhotoAsync
+    (
+        [FromForm] AddPhotoToListCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("products/photos/{id:guid}/remove")]
+    public async Task<IActionResult> RemovePhotoAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeletePhotoFromListCommand(id), cancellationToken));
+
+    [HttpPatch("products/guide/add")]
+    public async Task<IActionResult> AddGuideAsync
+    (
+        [FromForm] AddGuideCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("products/{productId:guid}/guide/{guideId:guid}/remove")]
+    public async Task<IActionResult> RemoveGuideAsync
+    (
+        [FromRoute] Guid productId,
+        [FromRoute] Guid guideId,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeleteGuideCommand(productId, guideId), cancellationToken));
+
+    [HttpPut("product/{id:guid}/modify")]
+    public async Task<IActionResult> ModifyProductAsync
+    (
+        [FromRoute] Guid id,
+        [FromBody] ModifyProductCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.ProductId = id;
+
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 }

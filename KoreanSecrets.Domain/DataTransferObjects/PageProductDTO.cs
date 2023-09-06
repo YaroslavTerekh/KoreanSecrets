@@ -12,6 +12,10 @@ public class PageProductDTO : BaseEntity
 {
     public string Title { get; set; }
 
+    public Guid MainPhotoId { get; set; }
+
+    public AppFile MainPhoto { get; set; }
+
     public Guid BrandId { get; set; }
 
     public BrandDTO Brand { get; set; }

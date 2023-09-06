@@ -40,6 +40,7 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
         };
 
         product.MainPhoto.ProductMainPhotoId = product.Id;
+        product.MainPhotoId = product.MainPhoto.Id;
         product.Volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = product.Id }).ToList();
 
         List<AppFile> photos = new List<AppFile>();
@@ -57,6 +58,7 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             var videoResult = await _fileService.UploadFileAsync(request.VideoGuide, cancellationToken);
             videoResult.ProductId = product.Id;
             product.Guide = videoResult;
+            product.GuideId = videoResult.Id;
         }
 
         await _context.Products.AddAsync(product, cancellationToken);

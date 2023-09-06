@@ -57,9 +57,7 @@ public class FileService : IFileService
         var file = await _context.Files.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
         if (file is null)
-        {
             throw new NotFoundException(ErrorMessages.FileNotFound);
-        }
 
         var path = Path.Combine(_env.ContentRootPath, file.FilePath);
 
