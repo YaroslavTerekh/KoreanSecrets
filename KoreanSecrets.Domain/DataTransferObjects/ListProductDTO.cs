@@ -14,6 +14,8 @@ public class ListProductDTO : BaseEntity
 
     public long Price { get; set; }
 
+    public long? DiscountPrice { get; set; }
+
     public Guid MainPhotoId { get; set; }
 
     public AppFileDTO MainPhoto { get; set; }

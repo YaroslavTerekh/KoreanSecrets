@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230905134215_AddedOldPricePropertyToProducts")]
+    partial class AddedOldPricePropertyToProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,9 +289,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<Guid>("DemandId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("DiscountPrice")
-                        .HasColumnType("bigint");
-
                     b.Property<Guid?>("GuideId")
                         .HasColumnType("uniqueidentifier");
 
@@ -298,6 +297,9 @@ namespace KoreanSecrets.Domain.Migrations
 
                     b.Property<Guid>("MainPhotoId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("OldPrice")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");

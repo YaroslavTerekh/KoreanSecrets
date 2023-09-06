@@ -17,6 +17,7 @@ public static class ErrorMessages
 
     public const string WrongPassword = "Пароль неправильний";
     public const string WrongPhoneNumber = "Номер телефону неправильний";
+    public const string WrongNewPrice = "Нова ціна вказано неправильно";
 
     public const string FileNotFound = "Файлу не знайдено";
     public const string UserNotFound = "Користувача не знайдено";
