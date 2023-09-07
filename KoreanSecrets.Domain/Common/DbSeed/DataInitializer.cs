@@ -1,4 +1,5 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
+using KoreanSecrets.Domain.Entities;
 using KoreanSecrets.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,10 @@ namespace KoreanSecrets.Domain.Common.DbSeed;
 
 public static class DataInitializer
 {
-    public static IServiceCollection SeedDatabase(
+    public async static Task<IServiceCollection> SeedDatabase(
         this IServiceCollection services, 
-        RoleManager<ApplicationRole> roleManager
+        RoleManager<ApplicationRole> roleManager,
+        UserManager<User> userManager
     )
     {
         if(!roleManager.Roles.AnyAsync(t => t.Name == Roles.Admin).GetAwaiter().GetResult())
@@ -23,6 +25,25 @@ public static class DataInitializer
 
         if(!roleManager.Roles.AnyAsync(t => t.Name == Roles.User).GetAwaiter().GetResult())
             roleManager.CreateAsync(new ApplicationRole(Roles.User)).GetAwaiter().GetResult();
+
+        var admins = await userManager.GetUsersInRoleAsync(Roles.Admin);
+
+        if (admins.Count < 1)
+        {
+            var admin = new User
+            {
+                UserName = "Admin",
+                FirstName = "Admin",
+                LastName = "Admin",
+                PhoneNumber = "+380999999999",
+                Email = "Admin@gmail.com",
+                PhoneNumberConfirmed = true
+            };
+
+            await userManager.CreateAsync(admin, "Pa$$word123!");
+            await userManager.AddToRoleAsync(admin, Roles.Admin);
+        }
+
         return services;
     }
 }

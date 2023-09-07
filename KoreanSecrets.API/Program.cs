@@ -15,6 +15,7 @@ using KoreanSecrets.Domain.Common.DbSeed;
 using KoreanSecrets.BL.Services;
 using Microsoft.EntityFrameworkCore;
 using KoreanSecrets.API.Middleware;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,11 +40,17 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = false;
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddValidatorsFromAssembly(AppDomain.CurrentDomain.GetAssemblies().Where(t => t.FullName.Contains("BL")).First());
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.InjectServices();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -104,12 +111,12 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthPolicies.Admins, policy =>
     {
-        policy.RequireRole(Roles.Admin.ToString());
+        policy.RequireRole(Roles.Admin);
     });
 
     options.AddPolicy(AuthPolicies.Users, policy =>
     {
-        policy.RequireRole(Roles.User.ToString());
+        policy.RequireRole(Roles.User);
     });
 });
 
@@ -118,7 +125,8 @@ var scope = app.Services.CreateScope();
 
 var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 dataContext.Database.Migrate();
-builder.Services.SeedDatabase(scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>());
+await builder.Services.SeedDatabase(scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>(),
+    scope.ServiceProvider.GetRequiredService<UserManager<User>>());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

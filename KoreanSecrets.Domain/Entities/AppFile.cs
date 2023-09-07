@@ -14,7 +14,15 @@ public class AppFile : BaseEntity
 
     public string FilePath { get; set; }
 
-    public Guid ProductId { get; set; }
+    public Guid? ProductId { get; set; }
 
     public Product Product { get; set; }
+
+    public Guid? ProductPhotoId { get; set; }
+
+    public Product ProductPhoto { get; set; }
+
+    public Guid? ProductMainPhotoId { get; set; }
+
+    public Product ProductMainPhoto { get; set; }
 }

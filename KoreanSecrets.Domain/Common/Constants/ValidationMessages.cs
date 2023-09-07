@@ -34,6 +34,10 @@ public static class ValidationMessages
     public const string DescriptionTooLong = "Опис занадто довгий";
     public const string DescriptionTooShort = "Опис занадто короткий";
 
+    public const string FeedbackRequired = "Необхідно ввести відгук";
+    public const string FeedbackTooLong = "Відгук занадто довгий";
+    public const string FeedbackTooShort = "Відгук занадто короткий";
+
     public const string WrongDateTime = "Вказано некоректну дату";
     public const string WrongPrice = "Вказано некоректну ціну";
 

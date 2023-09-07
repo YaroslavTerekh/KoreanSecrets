@@ -18,6 +18,7 @@ public static class ServicesInjector
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddTransient<IJWTService, JWTService>();
         services.AddTransient<IPhoneNumberService, PhoneNumberService>();
+        services.AddTransient<IFileService, FileService>();
 
         return services;
     }

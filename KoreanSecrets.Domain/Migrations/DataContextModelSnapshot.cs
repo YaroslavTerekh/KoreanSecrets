@@ -97,13 +97,26 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductMainPhotoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductPhotoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ProductId] IS NOT NULL");
+
+                    b.HasIndex("ProductMainPhotoId")
+                        .IsUnique()
+                        .HasFilter("[ProductMainPhotoId] IS NOT NULL");
+
+                    b.HasIndex("ProductPhotoId");
 
                     b.ToTable("Files");
                 });
@@ -252,6 +265,9 @@ namespace KoreanSecrets.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AdditionalIcon")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
@@ -271,7 +287,16 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<Guid>("DemandId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long?>("DiscountPrice")
+                        .HasColumnType("bigint");
+
                     b.Property<Guid?>("GuideId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsInStock")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MainPhotoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Price")
@@ -292,9 +317,8 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Volume")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -302,7 +326,13 @@ namespace KoreanSecrets.Domain.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("DemandId");
+
                     b.HasIndex("SubCategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Products");
                 });
@@ -408,6 +438,32 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Volume", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("Value")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Volume");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Models.ApplicationRole", b =>
@@ -572,10 +628,23 @@ namespace KoreanSecrets.Domain.Migrations
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", "Product")
                         .WithOne("Guide")
                         .HasForeignKey("KoreanSecrets.Domain.Entities.AppFile", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("KoreanSecrets.Domain.Entities.Product", "ProductMainPhoto")
+                        .WithOne("MainPhoto")
+                        .HasForeignKey("KoreanSecrets.Domain.Entities.AppFile", "ProductMainPhotoId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("KoreanSecrets.Domain.Entities.Product", "ProductPhoto")
+                        .WithMany("Photos")
+                        .HasForeignKey("ProductPhotoId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductMainPhoto");
+
+                    b.Navigation("ProductPhoto");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Brand", b =>
@@ -649,21 +718,21 @@ namespace KoreanSecrets.Domain.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("KoreanSecrets.Domain.Entities.Country", "Country")
                         .WithMany("Products")
-                        .HasForeignKey("BrandId")
+                        .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Demand", "Demand")
                         .WithMany("Products")
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("DemandId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -672,6 +741,10 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasForeignKey("SubCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("KoreanSecrets.Domain.Entities.User", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Brand");
 
@@ -693,6 +766,17 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Volume", b =>
+                {
+                    b.HasOne("KoreanSecrets.Domain.Entities.Product", "Product")
+                        .WithMany("Volumes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -780,6 +864,13 @@ namespace KoreanSecrets.Domain.Migrations
 
                     b.Navigation("Guide")
                         .IsRequired();
+
+                    b.Navigation("MainPhoto")
+                        .IsRequired();
+
+                    b.Navigation("Photos");
+
+                    b.Navigation("Volumes");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.SubCategory", b =>
@@ -795,6 +886,8 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Feedbacks");
+
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }
