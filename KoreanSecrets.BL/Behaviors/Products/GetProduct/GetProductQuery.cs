@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetProduct;
 
-public class GetProductQuery : IRequest<PageProductDTO>
+public class GetProductQuery : IAuthorizedRequest<PageProductDTO>
 {
     public Guid ProductId { get; set; }
 

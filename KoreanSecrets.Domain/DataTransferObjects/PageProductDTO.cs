@@ -12,9 +12,11 @@ public class PageProductDTO : BaseEntity
 {
     public string Title { get; set; }
 
+    public bool? IsLikedByUser { get; set; }
+
     public Guid MainPhotoId { get; set; }
 
-    public AppFile MainPhoto { get; set; }
+    public AppFileDTO MainPhoto { get; set; }
 
     public Guid BrandId { get; set; }
 

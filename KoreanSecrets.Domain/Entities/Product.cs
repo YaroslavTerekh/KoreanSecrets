@@ -60,4 +60,6 @@ public class Product : BaseEntity
     public List<Feedback> Feedbacks { get; set; } = new();
 
     public List<Bucket> Buckets { get; set; } = new();
+
+    public List<User> Likes { get; set; } = new();
 }

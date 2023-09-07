@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KoreanSecrets.BL.Helpers;
 using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
@@ -36,16 +37,34 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginnationM
         if (request.DemandsIds.Count > 0) query = query.Where(t => request.DemandsIds.Contains(t.DemandId));
         if (request.BrandsIds.Count > 0) query = query.Where(t => request.BrandsIds.Contains(t.BrandId));
 
+        var products = await query
+                .Skip(request.CurrentPage * request.PageSize)
+                .Take(request.PageSize)
+                .Select(t => _mapper.Map<ListProductDTO>(t))
+                .ToListAsync(cancellationToken);
+
+        if (request.CurrentUserId != Guid.Empty)
+        {
+            foreach (var product in products)
+            {
+                var likes = await _context.Products
+                    .AsNoTracking()
+                    .Where(t => product.Id == t.Id)
+                    .SelectMany(t => t.Likes.Select(t => t.Id)).ToListAsync(cancellationToken);
+
+                if (likes.Contains(request.CurrentUserId))
+                    product.IsLikedByUser = true;
+                else
+                    product.IsLikedByUser = false;
+            }
+        }
+
         return new PaginnationModelDTO<ListProductDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken),
-            Products = await query
-                .Skip(request.CurrentPage * request.PageSize)
-                .Take(request.PageSize)
-                .Select(t => _mapper.Map<ListProductDTO>(t))
-                .ToListAsync(cancellationToken)
-    };
+            Products = products
+        };
     }
 }

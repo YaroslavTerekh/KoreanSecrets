@@ -16,6 +16,8 @@ using KoreanSecrets.BL.Services;
 using Microsoft.EntityFrameworkCore;
 using KoreanSecrets.API.Middleware;
 using System.Text.Json.Serialization;
+using AutoMapper;
+using KoreanSecrets.BL.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +43,6 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 builder.Services.AddValidatorsFromAssembly(AppDomain.CurrentDomain.GetAssemblies().Where(t => t.FullName.Contains("BL")).First());
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.InjectServices();
