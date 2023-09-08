@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.Domain.DataTransferObjects;
 
-public class PaginnationModelDTO<T>
+public class PaginationModelDTO<T>
 {
     public int CurrentPage { get; set; }
 

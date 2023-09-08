@@ -11,5 +11,7 @@ public class BrandDTO : BaseEntity
 {
     public string Title { get; set; }
 
+    public AppFileDTO Photo { get; set; }
+
     public Guid CategoryId { get; set; }
 }

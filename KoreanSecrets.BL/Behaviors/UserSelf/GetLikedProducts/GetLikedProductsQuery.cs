@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
 
-public class GetLikedProductsQuery : IAuthorizedRequest<PaginnationModelDTO<ListProductDTO>>
+public class GetLikedProductsQuery : IAuthorizedRequest<PaginationModelDTO<ListProductDTO>>
 {
     public int CurrentPage { get; set; }
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
 
-public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, PaginnationModelDTO<ListProductDTO>>
+public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, PaginationModelDTO<ListProductDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -22,14 +22,14 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Paginn
         _mapper = mapper;
     }
 
-    public async Task<PaginnationModelDTO<ListProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<ListProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Products
             .AsNoTracking()
             .Include(t => t.Brand)
             .Include(t => t.MainPhoto);
 
-        return new PaginnationModelDTO<ListProductDTO>
+        return new PaginationModelDTO<ListProductDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,

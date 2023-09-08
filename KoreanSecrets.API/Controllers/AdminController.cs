@@ -43,7 +43,7 @@ public class AdminController : ControllerBase
     [HttpPost("brands/add")]
     public async Task<IActionResult> AddBrandAsync
     (
-        [FromBody] AddBrandCommand command,
+        [FromForm] AddBrandCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 

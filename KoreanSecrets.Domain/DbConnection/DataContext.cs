@@ -33,5 +33,6 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
 
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new UserConfiguration());
+        builder.ApplyConfiguration(new BrandConfiguration());
     }
 }

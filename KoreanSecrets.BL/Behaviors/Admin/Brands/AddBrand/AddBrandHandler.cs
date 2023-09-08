@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.DbConnection;
+﻿using KoreanSecrets.BL.Services.Abstractions;
+using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
 using System;
@@ -12,10 +13,12 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
 public class AddBrandHandler : IRequestHandler<AddBrandCommand>
 {
     private readonly DataContext _context;
+    private readonly IFileService _fileService;
 
-    public AddBrandHandler(DataContext context)
+    public AddBrandHandler(DataContext context, IFileService fileService)
     {
         _context = context;
+        _fileService = fileService;
     }
 
     public async Task<Unit> Handle(AddBrandCommand request, CancellationToken cancellationToken)
@@ -26,6 +29,11 @@ public class AddBrandHandler : IRequestHandler<AddBrandCommand>
             CategoryId = request.CategoryId
         };
 
+        var photoResult = await _fileService.UploadFileAsync(request.Photo, cancellationToken);
+        photoResult.BrandPhotoId = brand.Id;
+        brand.PhotoId = brand.Id;
+
+        await _context.Files.AddAsync(photoResult, cancellationToken);
         await _context.Brands.AddAsync(brand, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

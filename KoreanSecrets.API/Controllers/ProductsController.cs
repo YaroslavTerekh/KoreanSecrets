@@ -1,4 +1,5 @@
 ﻿using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
+using KoreanSecrets.BL.Behaviors.Products.GetBrands;
 using KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
@@ -92,5 +93,15 @@ public class ProductsController : BaseController
     )
     {
         return Ok(await _mediatr.Send(new DislikeProductCommand(id, CurrentUserId), cancellationToken));
+    }
+
+    [HttpPost("brands/get")]
+    public async Task<IActionResult> GetBrandsAsync
+    (
+        [FromBody] GetBrandsQuery query,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return Ok(await _mediatr.Send(query, cancellationToken));
     }
 }

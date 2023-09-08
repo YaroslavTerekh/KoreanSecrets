@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
 
-public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, PaginnationModelDTO<ListProductDTO>>
+public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, PaginationModelDTO<ListProductDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
         _mapper = mapper;
     }
 
-    public async Task<PaginnationModelDTO<ListProductDTO>> Handle(GetLikedProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<ListProductDTO>> Handle(GetLikedProductsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Users
             .Include(t => t.Likes)
@@ -35,7 +35,7 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
         foreach (var likedProduct in likes)
             likedProduct.IsLikedByUser = true;
 
-        return new PaginnationModelDTO<ListProductDTO>
+        return new PaginationModelDTO<ListProductDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
