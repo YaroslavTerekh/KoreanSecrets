@@ -27,4 +27,6 @@ public class ListProductDTO : BaseEntity
     public ProductIcon Icon { get; set; }
 
     public bool IsInStock { get; set; }
+
+    public bool? IsLikedByUser { get; set; }
 }

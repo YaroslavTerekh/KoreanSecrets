@@ -45,6 +45,19 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
+        if (request.CurrentUserId != Guid.Empty)
+        {
+            var likes = await _context.Products
+                    .AsNoTracking()
+                    .Where(t => product.Id == t.Id)
+                    .SelectMany(t => t.Likes.Select(t => t.Id)).ToListAsync(cancellationToken);
+
+            if (likes.Contains(request.CurrentUserId))
+                product.IsLikedByUser = true;
+            else
+                product.IsLikedByUser = false;
+        }
+
         product.SameProducts = await _context.Products
             .AsNoTracking()
             .Include(t => t.MainPhoto)
