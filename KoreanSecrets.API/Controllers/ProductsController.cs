@@ -100,8 +100,5 @@ public class ProductsController : BaseController
     (
         [FromBody] GetBrandsQuery query,
         CancellationToken cancellationToken = default
-    )
-    {
-        return Ok(await _mediatr.Send(query, cancellationToken));
-    }
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
 }

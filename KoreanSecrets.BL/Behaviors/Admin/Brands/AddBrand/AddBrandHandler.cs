@@ -31,7 +31,7 @@ public class AddBrandHandler : IRequestHandler<AddBrandCommand>
 
         var photoResult = await _fileService.UploadFileAsync(request.Photo, cancellationToken);
         photoResult.BrandPhotoId = brand.Id;
-        brand.PhotoId = brand.Id;
+        brand.PhotoId = photoResult.Id;
 
         await _context.Files.AddAsync(photoResult, cancellationToken);
         await _context.Brands.AddAsync(brand, cancellationToken);
