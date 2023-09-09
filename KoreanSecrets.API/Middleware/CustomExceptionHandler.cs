@@ -49,6 +49,11 @@ public class CustomExceptionHandler
                 result = notFoundException.Description;
                 break;
 
+            case DeleteException deleteException:
+                code = HttpStatusCode.Conflict;
+                result = deleteException.Description;
+                break;
+
             case DbUpdateException dbUpdateException:
                 code = HttpStatusCode.InternalServerError;
                 result = ErrorMessages.UnknownError;

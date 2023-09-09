@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,20 @@ public static class ErrorMessages
     public const string FileNotFound = "Файлу не знайдено";
     public const string UserNotFound = "Користувача не знайдено";
     public static string ProductNotFound(string product) => $"{product} не знайдено";
+    public static string DeleteProductsFirst(EntityErrorType type, string title) 
+    {
+        var message = type switch
+        {
+            EntityErrorType.Brand => "брендом",
+            EntityErrorType.Country => "країною",
+            EntityErrorType.SubCategory => "підкатегорією",
+            EntityErrorType.Demand => "потребою",
+            EntityErrorType.Category => "категорією",
+            _ => ""
+        };
+
+        return $"Спочатку необхідно видалити всі продукти, які пов'язані з {message} {title}";
+    }
 
     public const string UnknownError = "На сервері сталась невідома помилка, або ви вказали невірні дані, спробуйте ще раз";
     public const string UnknownVideoType = "Невідомий тип даних (дозволені типи: .mp4)";
