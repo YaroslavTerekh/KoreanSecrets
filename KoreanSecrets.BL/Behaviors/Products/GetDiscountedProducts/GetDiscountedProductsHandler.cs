@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
 
-public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProductsQuery, PaginnationModelDTO<ListProductDTO>>
+public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProductsQuery, PaginationModelDTO<ListProductDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProduct
         _mapper = mapper;
     }
 
-    public async Task<PaginnationModelDTO<ListProductDTO>> Handle(GetDiscountedProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<ListProductDTO>> Handle(GetDiscountedProductsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Products
             .Include(t => t.Brand)
@@ -52,7 +52,7 @@ public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProduct
             }
         }
 
-        return new PaginnationModelDTO<ListProductDTO>
+        return new PaginationModelDTO<ListProductDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,

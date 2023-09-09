@@ -1,4 +1,6 @@
 ﻿using KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
+using KoreanSecrets.BL.Behaviors.Admin.Brands.ChangeBrandPhoto;
+using KoreanSecrets.BL.Behaviors.Admin.Brands.DeleteBrand;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.AddCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
@@ -43,7 +45,7 @@ public class AdminController : ControllerBase
     [HttpPost("brands/add")]
     public async Task<IActionResult> AddBrandAsync
     (
-        [FromBody] AddBrandCommand command,
+        [FromForm] AddBrandCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 
@@ -152,4 +154,18 @@ public class AdminController : ControllerBase
 
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
+
+    [HttpPatch("brand/photo/change")]
+    public async Task<IActionResult> ChangeBrandPhotoAsync
+    (
+        [FromForm] ChangeBrandPhotoCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpDelete("brand/{id:guid}")]
+    public async Task<IActionResult> DeleteBrandAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeleteBrandCommand(id), cancellationToken));
 }

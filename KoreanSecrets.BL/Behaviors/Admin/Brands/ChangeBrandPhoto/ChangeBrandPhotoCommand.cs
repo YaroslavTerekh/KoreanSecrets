@@ -6,13 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
+namespace KoreanSecrets.BL.Behaviors.Admin.Brands.ChangeBrandPhoto;
 
-public class AddBrandCommand : IRequest
+public class ChangeBrandPhotoCommand : IRequest
 {
-    public Guid CategoryId { get; set; }
-
-    public string Title { get; set; }
+    public Guid BrandId { get; set; }
 
     public IFormFile Photo { get; set; }
 }

@@ -25,4 +25,8 @@ public class AppFile : BaseEntity
     public Guid? ProductMainPhotoId { get; set; }
 
     public Product ProductMainPhoto { get; set; }
+
+    public Guid? BrandPhotoId { get; set; }
+
+    public Brand BrandPhoto { get; set; }
 }
