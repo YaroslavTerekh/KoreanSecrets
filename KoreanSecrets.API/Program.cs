@@ -18,6 +18,7 @@ using KoreanSecrets.API.Middleware;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using KoreanSecrets.BL.Helpers;
+using KoreanSecrets.Domain.Common.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,11 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddValidatorsFromAssembly(AppDomain.CurrentDomain.GetAssemblies().Where(t => t.FullName.Contains("BL")).First());
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+
+var emailConfig = builder.Configuration
+        .GetSection("EmailConfiguration")
+        .Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
 builder.Services.InjectServices();
 
 builder.Services.AddControllers()

@@ -1,4 +1,5 @@
 ﻿using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
+using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,4 +29,12 @@ public class UserController : BaseController
         command.CurrentUserId = CurrentUserId;
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
+
+    [Authorize]
+    [HttpPatch("subscribe/{id:guid}")]
+    public async Task<IActionResult> SubscribeOnProductAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new SubscribeOnProductCommand(id, CurrentUserId), cancellationToken));
 }

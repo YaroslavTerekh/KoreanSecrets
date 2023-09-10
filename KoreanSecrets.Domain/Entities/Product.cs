@@ -62,4 +62,6 @@ public class Product : BaseEntity
     public List<Bucket> Buckets { get; set; } = new();
 
     public List<User> Likes { get; set; } = new();
+
+    public List<User> UsersWaitingForStock { get; set; } = new();
 }

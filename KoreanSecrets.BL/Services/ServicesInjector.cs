@@ -19,6 +19,7 @@ public static class ServicesInjector
         services.AddTransient<IJWTService, JWTService>();
         services.AddTransient<IPhoneNumberService, PhoneNumberService>();
         services.AddTransient<IFileService, FileService>();
+        services.AddTransient<IEmailService, EmailService>();
 
         return services;
     }
