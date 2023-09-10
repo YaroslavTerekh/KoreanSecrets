@@ -9,6 +9,8 @@ namespace KoreanSecrets.Domain.Common.Constants;
 
 public static class ErrorMessages
 {
+    public const string ProductNotInStock = "Товару немає в наявності";
+
     public const string BrandNotFound = "Бренд не знайдено";
     public const string CountryNotFound = "Країну не знайдено";
     public const string SubCatNotFound = "Підкатегорію не знайдено";

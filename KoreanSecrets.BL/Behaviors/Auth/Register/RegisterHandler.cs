@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.BL.Services.Abstractions;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
+using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using KoreanSecrets.Domain.Models;
 using MediatR;
@@ -19,16 +20,19 @@ public class RegisterHandler : IRequestHandler<RegisterCommand>
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IPhoneNumberService _phoneNumberService;
+    private readonly DataContext _context;
 
     public RegisterHandler(
         UserManager<User> userManager, 
         RoleManager<ApplicationRole> roleManager, 
-        IPhoneNumberService phoneNumberService
+        IPhoneNumberService phoneNumberService,
+        DataContext context
     )
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _phoneNumberService = phoneNumberService;
+        _context = context;
     }
 
     public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -51,6 +55,15 @@ public class RegisterHandler : IRequestHandler<RegisterCommand>
 
         if (!roleResult.Succeeded)
             throw new AuthException(HttpStatusCode.BadRequest, roleResult.Errors);
+
+        var bucket = new Bucket
+        {
+            UserId = user.Id,
+        };
+        user.BucketId = bucket.Id;
+
+        await _context.Buckets.AddAsync(bucket, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }
