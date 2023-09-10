@@ -18,6 +18,7 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Product, ListProductDTO>()
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
+        CreateMap<Bucket, BucketDTO>();
         CreateMap<Brand, BrandDTO>();
         CreateMap<Demand, DemandDTO>();
         CreateMap<Country, CountryDTO>();

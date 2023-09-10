@@ -1,4 +1,7 @@
 ﻿using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
+using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -37,4 +40,27 @@ public class UserController : BaseController
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new SubscribeOnProductCommand(id, CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPatch("bucket/add/{id:guid}")]
+    public async Task<IActionResult> AddProductToBucketAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new AddProductToBucketCommand(id, CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPatch("bucket/remove/{id:guid}")]
+    public async Task<IActionResult> RemoveProductFromBucketAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new RemoveProductFromBucketCommand(id, CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPatch("bucket/get")]
+    public async Task<IActionResult> GetBucketAsync
+    (
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetBucketQuery(CurrentUserId), cancellationToken));
 }
