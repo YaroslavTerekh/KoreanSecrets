@@ -27,11 +27,13 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<Product> Products { get; set; }
     public DbSet<SubCategory> SubCategories { get; set; }
     public DbSet<Promocode> Promocodes { get; set; }
+    public DbSet<Banner> Banners { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
+        builder.ApplyConfiguration(new BannerConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new UserConfiguration());
         builder.ApplyConfiguration(new BrandConfiguration());

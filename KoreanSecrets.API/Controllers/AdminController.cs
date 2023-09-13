@@ -1,4 +1,8 @@
-﻿using KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
+﻿using KoreanSecrets.BL.Behaviors.Admin.Banners.AddBanner;
+using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerPhoto;
+using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerText;
+using KoreanSecrets.BL.Behaviors.Admin.Banners.DeleteBanner;
+using KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.ChangeBrandPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.DeleteBrand;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.ModifyBrand;
@@ -286,4 +290,32 @@ public class AdminController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeletePromocodeCommand(id), cancellationToken));
+
+    [HttpPost("banners/add")]
+    public async Task<IActionResult> AddBannerAsync
+    (
+        [FromForm] AddBannerCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("banners/photo/change")]
+    public async Task<IActionResult> ChangeBannerPhotoAsync
+    (
+        [FromForm] ChangeBannerPhotoCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("banners/modify")]
+    public async Task<IActionResult> ModifyBannerAsync
+    (
+        [FromBody] ChangeBannerTextCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpDelete("banners/{id:guid}/delete")]
+    public async Task<IActionResult> DeleteBannerAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeleteBannerCommand(id), cancellationToken));
 }
