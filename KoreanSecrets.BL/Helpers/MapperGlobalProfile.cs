@@ -27,5 +27,6 @@ public class MapperGlobalProfile : Profile
         CreateMap<Feedback, FeedbackDTO>();
         CreateMap<User, UserDTO>();
         CreateMap<Volume, VolumeDTO>();
+        CreateMap<Banner, BannerDTO>();
     }
 }
