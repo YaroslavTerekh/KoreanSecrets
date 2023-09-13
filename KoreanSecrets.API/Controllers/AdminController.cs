@@ -22,6 +22,8 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
+using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
+using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
@@ -270,4 +272,18 @@ public class AdminController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeleteSubCategoryCommand(id), cancellationToken));
+
+    [HttpPost("promocodes/add")]
+    public async Task<IActionResult> AddPromocodeAsync
+    (
+        [FromBody] AddPromocodeCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpDelete("promocodes/{id:guid}/delete")]
+    public async Task<IActionResult> DeletePromocodeAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeletePromocodeCommand(id), cancellationToken));
 }

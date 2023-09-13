@@ -26,6 +26,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<Feedback> Feedbacks { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<SubCategory> SubCategories { get; set; }
+    public DbSet<Promocode> Promocodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
