@@ -1,6 +1,8 @@
 ﻿using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
 using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetBrands;
+using KoreanSecrets.BL.Behaviors.Products.GetCategories;
+using KoreanSecrets.BL.Behaviors.Products.GetCategory;
 using KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
@@ -107,4 +109,16 @@ public class ProductsController : BaseController
     public async Task<IActionResult> GetBannersAsync
     (CancellationToken cancellationToken = default)
         => Ok(await _mediatr.Send(new GetAllBannersQuery(), cancellationToken));
+
+    [HttpGet("categories")]
+    public async Task<IActionResult> GetCategoriesAsync
+    (CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(new GetCategoriesQuery(), cancellationToken));
+
+    [HttpPost("category/get")]
+    public async Task<IActionResult> GetCategoryAsync
+    (
+        [FromBody] GetCategoryQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
 }
