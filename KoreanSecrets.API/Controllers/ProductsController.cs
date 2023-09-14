@@ -4,6 +4,7 @@ using KoreanSecrets.BL.Behaviors.Products.GetBrands;
 using KoreanSecrets.BL.Behaviors.Products.GetCategories;
 using KoreanSecrets.BL.Behaviors.Products.GetCategory;
 using KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
+using KoreanSecrets.BL.Behaviors.Products.GetPopularProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Products.LikeProduct;
@@ -119,6 +120,13 @@ public class ProductsController : BaseController
     public async Task<IActionResult> GetCategoryAsync
     (
         [FromBody] GetCategoryQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("get/popular")]
+    public async Task<IActionResult> GetPopularProductsAsync
+    (
+        [FromBody] GetPopularProductsQuery query,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
 }
