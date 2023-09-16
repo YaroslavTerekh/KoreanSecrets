@@ -28,6 +28,8 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<SubCategory> SubCategories { get; set; }
     public DbSet<Promocode> Promocodes { get; set; }
     public DbSet<Banner> Banners { get; set; }
+    public DbSet<Purchase> Purchases { get; set; }
+    public DbSet<PurchasedProduct> PurchasedProducts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -37,5 +39,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new UserConfiguration());
         builder.ApplyConfiguration(new BrandConfiguration());
+        builder.ApplyConfiguration(new PurchaseConfiguration());
+        builder.ApplyConfiguration(new PurchaseProductConfiguration());
     }
 }
