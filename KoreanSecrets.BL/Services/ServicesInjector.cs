@@ -20,6 +20,7 @@ public static class ServicesInjector
         services.AddTransient<IPhoneNumberService, PhoneNumberService>();
         services.AddTransient<IFileService, FileService>();
         services.AddTransient<IEmailService, EmailService>();
+        services.AddTransient<INovaPostService, NovaPostService>();
 
         return services;
     }

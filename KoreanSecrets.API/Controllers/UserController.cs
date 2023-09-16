@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
 using MediatR;
@@ -63,4 +64,17 @@ public class UserController : BaseController
     (
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetBucketQuery(CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPut("address/modify")]
+    public async Task<IActionResult> ModifyAddressInfoAsync
+    (
+        [FromBody] ModifyAddressInfoCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 }

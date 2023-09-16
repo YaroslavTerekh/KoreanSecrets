@@ -50,7 +50,11 @@ builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 var emailConfig = builder.Configuration
         .GetSection("EmailConfiguration")
         .Get<EmailConfiguration>();
+var novaPostConfig = builder.Configuration
+        .GetSection("NovaPostConfiguration")
+        .Get<NovaPostConfiguration>();
 builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(novaPostConfig);
 builder.Services.InjectServices();
 
 builder.Services.AddControllers()

@@ -1,4 +1,6 @@
 ﻿using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
+using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
+using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
 using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetBrands;
 using KoreanSecrets.BL.Behaviors.Products.GetCategories;
@@ -129,4 +131,17 @@ public class ProductsController : BaseController
         [FromBody] GetPopularProductsQuery query,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpGet("all/cities")]
+    public async Task<IActionResult> GetAllCitiesAsync
+    (
+        [FromQuery] string data
+    ) => Ok(await _mediatr.Send(new GetAllCitiesQuery(data)));
+
+    [HttpGet("all/cities/warehouses")]
+    public async Task<IActionResult> GetAllCitiesAsync
+    (
+        [FromQuery] string data,
+        [FromQuery] string warehouse
+    ) => Ok(await _mediatr.Send(new GetWarehousesQuery(data, warehouse)));
 }
