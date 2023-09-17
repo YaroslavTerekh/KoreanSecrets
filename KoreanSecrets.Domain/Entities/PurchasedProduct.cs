@@ -12,5 +12,7 @@ public class PurchasedProduct : BaseEntity
 
     public Product Product { get; set; }
 
+    public Guid BucketId { get; set; }
+
     public int Amount { get; set; }
 }

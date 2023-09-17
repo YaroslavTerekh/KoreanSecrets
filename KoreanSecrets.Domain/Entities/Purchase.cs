@@ -21,9 +21,11 @@ public class Purchase : BaseEntity
 
     public string Comment { get; set; }
 
-    public string Promocode { get; set; }
-
     public List<PurchasedProduct> Products { get; set; }
 
     public long TotalPrice { get; set; }
+
+    public Guid? PromocodeId { get; set; }
+
+    public Promocode Promocode { get; set; }
 }

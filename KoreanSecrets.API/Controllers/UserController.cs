@@ -1,5 +1,6 @@
 ﻿using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
@@ -57,6 +58,19 @@ public class UserController : BaseController
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new RemoveProductFromBucketCommand(id, CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPatch("bucket/product/amount")]
+    public async Task<IActionResult> ChangeProductAmountAsync
+    (
+        [FromBody] ChangeProductAmountCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 
     [Authorize]
     [HttpPatch("bucket/get")]

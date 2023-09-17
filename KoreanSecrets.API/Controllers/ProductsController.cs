@@ -10,6 +10,7 @@ using KoreanSecrets.BL.Behaviors.Products.GetPopularProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Products.LikeProduct;
+using KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -139,9 +140,22 @@ public class ProductsController : BaseController
     ) => Ok(await _mediatr.Send(new GetAllCitiesQuery(data)));
 
     [HttpGet("all/cities/warehouses")]
-    public async Task<IActionResult> GetAllCitiesAsync
+    public async Task<IActionResult> GetWarehousesAsync
     (
         [FromQuery] string data,
         [FromQuery] string warehouse
     ) => Ok(await _mediatr.Send(new GetWarehousesQuery(data, warehouse)));
+
+    [Authorize]
+    [HttpPost("purchase/generate")]
+    public async Task<IActionResult> GeneratePurchaseAsync
+    (
+        [FromBody] GeneratePurchaseCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 }

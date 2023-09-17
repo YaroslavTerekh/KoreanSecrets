@@ -50,4 +50,6 @@ public static class ErrorMessages
     public const string PhoneNumberAlreadyConfirmed = "Ви вже підтвердили свій номер телефону";
     public const string PhoneNumberIsNotConfirmed = "Спочатку підтвердьте свій номер телефону";
     public const string ContentAccessForbidden = "Доступ до контенту заборонено";
+    public const string PurchaseProductNotRelatedToUser = "Ваша корзина пуста";
+    public const string BucketIsEmpty = "Ваша корзина пуста";
 }

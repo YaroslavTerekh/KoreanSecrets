@@ -29,5 +29,6 @@ public class MapperGlobalProfile : Profile
         CreateMap<Volume, VolumeDTO>();
         CreateMap<Banner, BannerDTO>();
         CreateMap<Category, CategoryDTO>();
+        CreateMap<PurchasedProduct, PurchaseProductDTO>();
     }
 }
