@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.Common.Constants;
+﻿using Hangfire;
+using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.Common.Enums;
 using KoreanSecrets.Domain.DbConnection;
@@ -43,7 +44,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand>
             PurchaseStatus = PurchaseStatus.Waiting,
             Comment = request.Comment,
             PayType = request.PayType,
-            PromocodeId = promocode.Id,
+            PromocodeId = promocode is null ? null : promocode.Id,
             Products = user.Bucket.PurchaseProducts
         };
 
@@ -59,6 +60,9 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand>
         await _context.Purchases.AddAsync(purchase, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
+        BackgroundJob.Schedule(() => ModifyPurchaseDeliveryState(purchase.Id, PurchaseStatus.Success), TimeSpan.FromDays(15));
+        BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromMinutes(15));
+
         return Unit.Value;
     }
 
@@ -70,9 +74,28 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand>
 
         long result = BitConverter.ToInt64(longBytes, 0);
 
-        // Отримати лише перші 5 цифр
         result = Math.Abs(result % 100000);
 
         return result;
+    }
+
+    public async Task ModifyPurchaseDeliveryState(Guid id, PurchaseStatus status)
+    {
+        var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == id);
+
+        purchase.PurchaseStatus = status;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteFailuredPurchase(Guid id)
+    {
+        var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == id);
+
+        if (purchase.PurchaseStatus == PurchaseStatus.Waiting || purchase.PurchaseStatus == PurchaseStatus.Failure)
+        { 
+            _context.Purchases.Remove(purchase);
+            await _context.SaveChangesAsync();
+        }
     }
 }
