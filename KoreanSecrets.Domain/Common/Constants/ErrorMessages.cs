@@ -11,6 +11,7 @@ public static class ErrorMessages
 {
     public const string ProductNotInStock = "Товару немає в наявності";
 
+    public const string AddressInfoNotFound = "Адреси, яка належить до користувача не знайдено";
     public const string BrandNotFound = "Бренд не знайдено";
     public const string BannerNotFound = "Банер не знайдено";
     public const string PromoNotFound = "Промокод не знайдено";
@@ -49,4 +50,6 @@ public static class ErrorMessages
     public const string PhoneNumberAlreadyConfirmed = "Ви вже підтвердили свій номер телефону";
     public const string PhoneNumberIsNotConfirmed = "Спочатку підтвердьте свій номер телефону";
     public const string ContentAccessForbidden = "Доступ до контенту заборонено";
+    public const string PurchaseProductNotRelatedToUser = "Ваша корзина пуста";
+    public const string BucketIsEmpty = "Ваша корзина пуста";
 }

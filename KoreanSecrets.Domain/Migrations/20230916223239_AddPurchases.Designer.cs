@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230916223239_AddPurchases")]
+    partial class AddPurchases
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,21 @@ namespace KoreanSecrets.Domain.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("BucketProduct", b =>
+                {
+                    b.Property<Guid>("BucketsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("BucketsId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("BucketProduct");
+                });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.AddressInfo", b =>
                 {
@@ -170,15 +187,10 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -391,8 +403,9 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<int>("PayType")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("PromocodeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Promocode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("PurchaseIdentifier")
                         .HasColumnType("bigint");
@@ -408,8 +421,6 @@ namespace KoreanSecrets.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PromocodeId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Purchases");
@@ -424,9 +435,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("BucketId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -437,8 +445,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BucketId");
 
                     b.HasIndex("ProductId");
 
@@ -737,6 +743,21 @@ namespace KoreanSecrets.Domain.Migrations
                     b.ToTable("ProductUserWaitForStock", (string)null);
                 });
 
+            modelBuilder.Entity("BucketProduct", b =>
+                {
+                    b.HasOne("KoreanSecrets.Domain.Entities.Bucket", null)
+                        .WithMany()
+                        .HasForeignKey("BucketsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KoreanSecrets.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.AddressInfo", b =>
                 {
                     b.HasOne("KoreanSecrets.Domain.Entities.User", "User")
@@ -810,10 +831,6 @@ namespace KoreanSecrets.Domain.Migrations
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Bucket", b =>
                 {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Product", null)
-                        .WithMany("Buckets")
-                        .HasForeignKey("ProductId");
-
                     b.HasOne("KoreanSecrets.Domain.Entities.User", "User")
                         .WithOne("Bucket")
                         .HasForeignKey("KoreanSecrets.Domain.Entities.Bucket", "UserId")
@@ -909,27 +926,17 @@ namespace KoreanSecrets.Domain.Migrations
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Purchase", b =>
                 {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Promocode", "Promocode")
-                        .WithMany()
-                        .HasForeignKey("PromocodeId");
-
                     b.HasOne("KoreanSecrets.Domain.Entities.User", "User")
                         .WithMany("Purchases")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Promocode");
-
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.PurchasedProduct", b =>
                 {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Bucket", null)
-                        .WithMany("PurchaseProducts")
-                        .HasForeignKey("BucketId");
-
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
@@ -1060,11 +1067,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Bucket", b =>
-                {
-                    b.Navigation("PurchaseProducts");
-                });
-
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Brands");
@@ -1090,8 +1092,6 @@ namespace KoreanSecrets.Domain.Migrations
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Product", b =>
                 {
-                    b.Navigation("Buckets");
-
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Guide")

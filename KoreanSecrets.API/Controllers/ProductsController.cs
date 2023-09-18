@@ -1,4 +1,6 @@
 ﻿using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
+using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
+using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
 using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetBrands;
 using KoreanSecrets.BL.Behaviors.Products.GetCategories;
@@ -8,7 +10,9 @@ using KoreanSecrets.BL.Behaviors.Products.GetPopularProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Products.LikeProduct;
+using KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
+using KoreanSecrets.BL.Services.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,10 +25,12 @@ namespace KoreanSecrets.API.Controllers;
 public class ProductsController : BaseController
 {
     private readonly IMediator _mediatr;
+    private readonly ILiqPayService _liqPayService;
 
-    public ProductsController(IMediator mediator)
+    public ProductsController(IMediator mediator, ILiqPayService liqPayService)
     {
         _mediatr = mediator;
+        _liqPayService = liqPayService;
     }
 
     [HttpPost("get")]
@@ -129,4 +135,40 @@ public class ProductsController : BaseController
         [FromBody] GetPopularProductsQuery query,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpGet("all/cities")]
+    public async Task<IActionResult> GetAllCitiesAsync
+    (
+        [FromQuery] string data
+    ) => Ok(await _mediatr.Send(new GetAllCitiesQuery(data)));
+
+    [HttpGet("all/cities/warehouses")]
+    public async Task<IActionResult> GetWarehousesAsync
+    (
+        [FromQuery] string data,
+        [FromQuery] string warehouse
+    ) => Ok(await _mediatr.Send(new GetWarehousesQuery(data, warehouse)));
+
+    [Authorize]
+    [HttpPost("purchase/generate")]
+    public async Task<IActionResult> GeneratePurchaseAsync
+    (
+        [FromBody] GeneratePurchaseCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [HttpPost("process-pay-response")]
+    public async Task<IActionResult> ProcessPayResponseAsync(
+        [FromForm] Dictionary<string, string> formData,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await _liqPayService.ProcessCallbackAsync(formData, cancellationToken);
+        return Ok();
+    }
 }

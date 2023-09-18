@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -33,13 +34,20 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
 
         var user = await _context.Users
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.Products)
+                .ThenInclude(t => t.PurchaseProducts)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
-        user.Bucket.Products.Add(product);
+        var purchaseProduct = new PurchasedProduct
+        {
+            Amount = 1,
+            ProductId = product.Id,
+            BucketId = user.BucketId
+        };
+
+        await _context.PurchasedProducts.AddAsync(purchaseProduct, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

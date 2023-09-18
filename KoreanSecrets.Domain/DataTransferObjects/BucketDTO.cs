@@ -9,5 +9,12 @@ namespace KoreanSecrets.Domain.DataTransferObjects;
 
 public class BucketDTO : BaseEntity
 {
-    public List<ListProductDTO> Products { get; set; }
+    public List<PurchaseProductDTO> PurchaseProducts { get; set; }
+}
+
+public class PurchaseProductDTO : BaseEntity
+{
+    public ListProductDTO Product { get; set; }
+
+    public int Amount { get; set; }
 }

@@ -13,7 +13,7 @@ public class BucketConfiguration : IEntityTypeConfiguration<Bucket>
 {
     public void Configure(EntityTypeBuilder<Bucket> builder)
     {
-        builder.HasMany(t => t.Products)
-            .WithMany(t => t.Buckets);
+        builder.HasMany(t => t.PurchaseProducts)
+            .WithOne();
     }
 }

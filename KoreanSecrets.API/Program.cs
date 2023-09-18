@@ -19,6 +19,8 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using KoreanSecrets.BL.Helpers;
 using KoreanSecrets.Domain.Common.Settings;
+using Hangfire;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,8 +52,24 @@ builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 var emailConfig = builder.Configuration
         .GetSection("EmailConfiguration")
         .Get<EmailConfiguration>();
+var novaPostConfig = builder.Configuration
+        .GetSection("NovaPostConfiguration")
+        .Get<NovaPostConfiguration>();
+var liqPayConfig = builder.Configuration
+        .GetSection("LiqPaySettings")
+        .Get<LiqPaySettings>();
+builder.Services.AddSingleton(liqPayConfig);
 builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(novaPostConfig);
 builder.Services.InjectServices();
+
+builder.Services.AddHangfire((sp, config) =>
+{
+    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
+    config.UseSerializerSettings(new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+}
+);
+builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -148,6 +166,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard();
 app.MapControllers();
 
 app.Run();

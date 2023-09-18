@@ -28,11 +28,13 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
     {
         var bucket = await _context.Users
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.Products)
-                .ThenInclude(t => t.MainPhoto)
+                .ThenInclude(t => t.PurchaseProducts)
+                    .ThenInclude(t => t.Product)
+                        .ThenInclude(t => t.MainPhoto)
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.Products)
-                .ThenInclude(t => t.Brand)
+                .ThenInclude(t => t.PurchaseProducts)
+                    .ThenInclude(t => t.Product)
+                        .ThenInclude(t => t.Brand)
             .Where(t => t.Id == request.CurrentUserId)
             .Select(t => _mapper.Map<BucketDTO>(t.Bucket))
             .FirstOrDefaultAsync(cancellationToken);

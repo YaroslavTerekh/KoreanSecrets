@@ -4,14 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.Domain.Entities;
+namespace KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 
-public class AddressInfo : BaseEntity
+public class ModifyAddressInfoCommand : IAuthorizedRequest
 {
-    public Guid UserId { get; set; }
-
-    public User User { get; set; }
-
     public string City { get; set; }
 
     public string Warehouse { get; set; }
