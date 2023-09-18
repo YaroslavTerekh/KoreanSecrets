@@ -12,6 +12,9 @@ public static class ValidationMessages
     public const string PhoneNumberTooLong = "Номер телефону задовгий";
     public const string PhoneNumberTooShort = "Номер телефону закороткий";
 
+    public const string CityToShort = "Назва населеного пункту закоротка";
+    public const string AddressToShort = "Адреса відділення закоротка";
+
     public const string IdRequired = "Необхідно вказати Id";
     public const string IdWrong = "Вказане Id некоректне";
 
