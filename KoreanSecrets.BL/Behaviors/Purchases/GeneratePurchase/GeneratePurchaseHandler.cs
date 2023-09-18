@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using KoreanSecrets.BL.Services.Abstractions;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.Common.Enums;
@@ -9,16 +10,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 
-public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand>
+public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, string>
 {
     private readonly DataContext _context;
+    private readonly ILiqPayService _liqPayService;
 
-    public GeneratePurchaseHandler(DataContext context)
+    public GeneratePurchaseHandler(DataContext context, ILiqPayService liqPayService)
     {
         _context = context;
+        _liqPayService = liqPayService;
     }
 
-    public async Task<Unit> Handle(GeneratePurchaseCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(GeneratePurchaseCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .Include(t => t.Bucket)
@@ -63,7 +66,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand>
         BackgroundJob.Schedule(() => ModifyPurchaseDeliveryState(purchase.Id, PurchaseStatus.Success), TimeSpan.FromDays(15));
         BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromMinutes(15));
 
-        return Unit.Value;
+        return await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
     }
 
     private long ConvertGuidToLong(Guid guid)

@@ -55,6 +55,10 @@ var emailConfig = builder.Configuration
 var novaPostConfig = builder.Configuration
         .GetSection("NovaPostConfiguration")
         .Get<NovaPostConfiguration>();
+var liqPayConfig = builder.Configuration
+        .GetSection("LiqPaySettings")
+        .Get<LiqPaySettings>();
+builder.Services.AddSingleton(liqPayConfig);
 builder.Services.AddSingleton(emailConfig);
 builder.Services.AddSingleton(novaPostConfig);
 builder.Services.InjectServices();

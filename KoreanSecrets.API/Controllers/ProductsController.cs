@@ -12,6 +12,7 @@ using KoreanSecrets.BL.Behaviors.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Products.LikeProduct;
 using KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
+using KoreanSecrets.BL.Services.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,10 +25,12 @@ namespace KoreanSecrets.API.Controllers;
 public class ProductsController : BaseController
 {
     private readonly IMediator _mediatr;
+    private readonly ILiqPayService _liqPayService;
 
-    public ProductsController(IMediator mediator)
+    public ProductsController(IMediator mediator, ILiqPayService liqPayService)
     {
         _mediatr = mediator;
+        _liqPayService = liqPayService;
     }
 
     [HttpPost("get")]
@@ -157,5 +160,15 @@ public class ProductsController : BaseController
         command.CurrentUserId = CurrentUserId;
 
         return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [HttpPost("process-pay-response")]
+    public async Task<IActionResult> ProcessPayResponseAsync(
+        [FromForm] Dictionary<string, string> formData,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await _liqPayService.ProcessCallbackAsync(formData, cancellationToken);
+        return Ok();
     }
 }

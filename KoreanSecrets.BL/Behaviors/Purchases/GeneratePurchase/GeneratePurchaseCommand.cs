@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 
-public class GeneratePurchaseCommand : IAuthorizedRequest
+public class GeneratePurchaseCommand : IAuthorizedRequest<string>
 {
     public PayType PayType { get; set; }
 

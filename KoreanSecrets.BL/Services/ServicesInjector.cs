@@ -21,6 +21,7 @@ public static class ServicesInjector
         services.AddTransient<IFileService, FileService>();
         services.AddTransient<IEmailService, EmailService>();
         services.AddTransient<INovaPostService, NovaPostService>();
+        services.AddTransient<ILiqPayService, LiqPayService>();
 
         return services;
     }
