@@ -24,6 +24,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
     public async Task<string> Handle(GeneratePurchaseCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
+            .Include(t => t.AddressInfo)
             .Include(t => t.Bucket)
                 .ThenInclude(t => t.PurchaseProducts)
                     .ThenInclude(t => t.Product)
@@ -31,6 +32,9 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
+
+        if (user.AddressInfo is null)
+            throw new NotFoundException(ErrorMessages.AddressInfoNotFound);
 
         if (user.Bucket.PurchaseProducts.Count < 1)
             throw new Exception(ErrorMessages.BucketIsEmpty);
