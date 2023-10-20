@@ -18,15 +18,22 @@ public class AddCountryHandler : IRequestHandler<AddCountryCommand>
         _context = context;
     }
 
+    //TODO: check-fix
     public async Task<Unit> Handle(AddCountryCommand request, CancellationToken cancellationToken)
     {
         var country = new Country
         {
-            Title = request.Title,
+            Title = request.Title
+        };
+
+        var categoryCountry = new CategoryCountry
+        {
+            CountryId = country.Id,
             CategoryId = request.CategoryId
         };
 
         await _context.Countries.AddAsync(country, cancellationToken);
+        await _context.CategoryCountries.AddAsync(categoryCountry, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

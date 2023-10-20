@@ -12,7 +12,5 @@ public class SubCategory : BaseEntity
 
     public List<Product> Products { get; set; } = new();
 
-    public Guid CategoryId { get; set; }
-
-    public Category Category { get; set; }
+    public List<CategorySubCategory> CategorySubCategories { get; set; } = new();
 }

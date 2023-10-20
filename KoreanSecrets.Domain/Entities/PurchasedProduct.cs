@@ -14,5 +14,7 @@ public class PurchasedProduct : BaseEntity
 
     public Guid BucketId { get; set; }
 
+    public Bucket Bucket { get; set; }
+
     public int Amount { get; set; }
 }

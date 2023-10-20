@@ -24,15 +24,20 @@ public class GetCategoryHandler : IRequestHandler<GetCategoryQuery, CategoryDTO>
         _mapper = mapper;
     }
 
+    //TODO: check-fix
     public async Task<CategoryDTO> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
     {
         var category = await _context.Categories
             .Where(t => t.Id == request.Id)
             .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
-            .Include(t => t.Brands)
-            .Include(t => t.SubCategories)
-            .Include(t => t.Countries)
-            .Include(t => t.Demands)
+            .Include(t => t.CategoryBrands)
+                .ThenInclude(t => t.Brand)
+            .Include(t => t.CategorySubCategories)
+                .ThenInclude(t => t.SubCategory)
+            .Include(t => t.CategoryCountries)
+                .ThenInclude(t => t.Country)
+            .Include(t => t.CategoryDemands)
+                .ThenInclude(t => t.Demand)
             .Select(t => _mapper.Map<CategoryDTO>(t))
             .FirstOrDefaultAsync(cancellationToken);
 

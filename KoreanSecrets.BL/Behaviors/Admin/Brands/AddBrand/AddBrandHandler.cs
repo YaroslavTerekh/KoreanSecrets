@@ -21,11 +21,17 @@ public class AddBrandHandler : IRequestHandler<AddBrandCommand>
         _fileService = fileService;
     }
 
+    //TODO: check-fix
     public async Task<Unit> Handle(AddBrandCommand request, CancellationToken cancellationToken)
     {
         var brand = new Brand
         {
-            Title = request.Title,
+            Title = request.Title
+        };
+
+        var categoryBrand = new CategoryBrand
+        {
+            BrandId = brand.Id,
             CategoryId = request.CategoryId
         };
 
@@ -35,6 +41,7 @@ public class AddBrandHandler : IRequestHandler<AddBrandCommand>
 
         await _context.Files.AddAsync(photoResult, cancellationToken);
         await _context.Brands.AddAsync(brand, cancellationToken);
+        await _context.CategoryBrands.AddAsync(categoryBrand, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

@@ -18,15 +18,22 @@ public class AddSubCategoryHandler : IRequestHandler<AddSubCategoryCommand>
         _context = context;
     }
 
+    //TODO: check-fix
     public async Task<Unit> Handle(AddSubCategoryCommand request, CancellationToken cancellationToken)
     {
         var subCategory = new SubCategory
         {
-            Title = request.Title,
+            Title = request.Title
+        };
+
+        var categorySubCategory = new CategorySubCategory
+        {
+            SubCategoryId = subCategory.Id,
             CategoryId = request.CategoryId
         };
 
         await _context.SubCategories.AddAsync(subCategory, cancellationToken);
+        await _context.CategorySubCategories.AddAsync(categorySubCategory, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

@@ -17,5 +17,11 @@ public class PurchaseProductConfiguration : IEntityTypeConfiguration<PurchasedPr
             .WithMany()
             .HasForeignKey(t => t.ProductId)
             .OnDelete(DeleteBehavior.ClientSetNull);
+
+        //TODO: fix
+        builder.HasOne(t => t.Bucket)
+            .WithMany(t => t.PurchaseProducts)
+            .HasForeignKey(t => t.BucketId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -12,11 +12,11 @@ public class Category : BaseEntity
 
     public List<Product> Products { get; set; } = new();
 
-    public List<Brand> Brands { get; set; } = new();
+    public List<CategoryBrand> CategoryBrands { get; set; } = new();
 
-    public List<Country> Countries { get; set; } = new();
+    public List<CategoryCountry> CategoryCountries { get; set; } = new();
 
-    public List<Demand> Demands { get; set; } = new();
+    public List<CategoryDemand> CategoryDemands { get; set; } = new();
     
-    public List<SubCategory> SubCategories { get; set; } = new();
+    public List<CategorySubCategory> CategorySubCategories { get; set; } = new();
 }

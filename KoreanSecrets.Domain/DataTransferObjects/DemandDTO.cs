@@ -10,6 +10,4 @@ namespace KoreanSecrets.Domain.DataTransferObjects;
 public class DemandDTO : BaseEntity
 {
     public string Title { get; set; }
-
-    public Guid CategoryId { get; set; }
 }

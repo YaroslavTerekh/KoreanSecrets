@@ -16,7 +16,5 @@ public class Brand : BaseEntity
 
     public List<Product> Products { get; set; } = new();
 
-    public Guid CategoryId { get; set; }
-
-    public Category Category { get; set; }
+    public List<CategoryBrand> CategoryBrands { get; set; } = new();
 }

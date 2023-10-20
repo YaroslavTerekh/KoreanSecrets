@@ -18,15 +18,22 @@ public class AddDemandHandler : IRequestHandler<AddDemandCommand>
         _context = context;
     }
 
+    //TODO: check-fix
     public async Task<Unit> Handle(AddDemandCommand request, CancellationToken cancellationToken)
     {
         var demand = new Demand
         {
-            Title = request.Title,
+            Title = request.Title
+        };
+
+        var categoryDemand = new CategoryDemand
+        {
+            DemandId = demand.Id,
             CategoryId = request.CategoryId
         };
 
         await _context.Demands.AddAsync(demand, cancellationToken);
+        await _context.CategoryDemands.AddAsync(categoryDemand, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

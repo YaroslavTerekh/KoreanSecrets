@@ -9,6 +9,4 @@ namespace KoreanSecrets.Domain.DataTransferObjects;
 public class SubCategoryDTO : BaseEntity
 {
     public string Title { get; set; }
-
-    public Guid CategoryId { get; set; }
 }
