@@ -30,9 +30,7 @@ public class DeleteSubCategoryHandler : IRequestHandler<DeleteSubCategoryCommand
         if (subCategory is null)
             throw new NotFoundException(ErrorMessages.SubCatNotFound);
 
-        if (subCategory.Products.Count > 0)
-            throw new DeleteException(ErrorMessages.DeleteProductsFirst(EntityErrorType.SubCategory, subCategory.Title));
-
+        subCategory.Products.ForEach(t => t.SubCategoryId = Guid.Empty);
         _context.SubCategories.Remove(subCategory);
         await _context.SaveChangesAsync(cancellationToken);
 

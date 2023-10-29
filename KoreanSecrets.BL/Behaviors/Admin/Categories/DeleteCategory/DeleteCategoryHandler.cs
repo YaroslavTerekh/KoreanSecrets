@@ -2,6 +2,7 @@
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.Common.Enums;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,9 +30,6 @@ public class DeleteCategoryHandler : IRequestHandler<DeleteCategoryCommand>
 
         if (category is null)
             throw new NotFoundException(ErrorMessages.CategoryNotFound);
-
-        if (category.Products.Count > 0)
-            throw new DeleteException(ErrorMessages.DeleteProductsFirst(EntityErrorType.Category, category.Title));
 
         _context.Categories.Remove(category);
         await _context.SaveChangesAsync(cancellationToken);

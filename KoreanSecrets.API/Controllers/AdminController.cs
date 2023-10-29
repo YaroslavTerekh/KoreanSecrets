@@ -5,15 +5,24 @@ using KoreanSecrets.BL.Behaviors.Admin.Banners.DeleteBanner;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.ChangeBrandPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.DeleteBrand;
+using KoreanSecrets.BL.Behaviors.Admin.Brands.GetBrands;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.ModifyBrand;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.AddCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.DeleteCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Categories.GetCategories;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.ModifyCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Common.GetBrandsWithNullCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Common.GetCountriesWithNullCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Common.GetDemandsWithNullCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Common.GetEntitiesWithNullGuids;
+using KoreanSecrets.BL.Behaviors.Admin.Common.GetSubCatsWithNullCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 using KoreanSecrets.BL.Behaviors.Admin.Countries.DeleteCountry;
+using KoreanSecrets.BL.Behaviors.Admin.Countries.GetCountries;
 using KoreanSecrets.BL.Behaviors.Admin.Countries.ModifyCountry;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.DeleteDemand;
+using KoreanSecrets.BL.Behaviors.Admin.Demands.GetDemands;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.ModifyDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
@@ -30,6 +39,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
+using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
@@ -318,4 +328,74 @@ public class AdminController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeleteBannerCommand(id), cancellationToken));
+
+    [HttpPost("get-invalid-products")]
+    public async Task<IActionResult> GetInvalidProductsAsync
+    (
+        [FromBody] GetEntitiesWithNullGuidsQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("get-invalid-demands")]
+    public async Task<IActionResult> GetInvalidDemandsAsync
+    (
+        [FromBody] GetDemandsWithNullCategoryQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("get-invalid-countries")]
+    public async Task<IActionResult> GetInvalidCountriesAsync
+    (
+        [FromBody] GetCountriesWithNullCategoryQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("get-invalid-subcategories")]
+    public async Task<IActionResult> GetInvalidCountriesAsync
+    (
+        [FromBody] GetSubCatWithNullCategoryQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("get-invalid-brands")]
+    public async Task<IActionResult> GetInvalidBrandsAsync
+    (
+        [FromBody] GetBrandsWithNullCategoryQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("brands/all")]
+    public async Task<IActionResult> GetAllBrandsAsync
+    (
+        [FromBody] GetBrandsQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("categories/all")]
+    public async Task<IActionResult> GetAllCategoriesAsync
+    (
+        [FromBody] GetCategoriesQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("countries/all")]
+    public async Task<IActionResult> GetAllCountriesAsync
+    (
+        [FromBody] GetCountriesQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("demands/all")]
+    public async Task<IActionResult> GetAllDemandsAsync
+    (
+        [FromBody] GetDemandsQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("subcategories/all")]
+    public async Task<IActionResult> GetAllSubCategoriesAsync
+    (
+        [FromBody] GetSubCategoriesQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
 }
