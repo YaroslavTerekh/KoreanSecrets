@@ -30,20 +30,30 @@ public class GetCategoryHandler : IRequestHandler<GetCategoryQuery, CategoryDTO>
         var category = await _context.Categories
             .Where(t => t.Id == request.Id)
             .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
-            .Include(t => t.CategoryBrands)
-                .ThenInclude(t => t.Brand)
-            .Include(t => t.CategorySubCategories)
                 .ThenInclude(t => t.SubCategory)
-            .Include(t => t.CategoryCountries)
+            .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
                 .ThenInclude(t => t.Country)
-            .Include(t => t.CategoryDemands)
+            .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
                 .ThenInclude(t => t.Demand)
-            .Select(t => _mapper.Map<CategoryDTO>(t))
+            .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
+                .ThenInclude(t => t.Brand)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (category is null)
             throw new NotFoundException(ErrorMessages.CategoryNotFound);
 
-        return category;
+        var result = new CategoryDTO
+        {
+            SubCategories = category.Products.Select(t => _mapper.Map<SubCategoryDTO>(t.SubCategory)).ToList(),
+            Demands = category.Products.Select(t => _mapper.Map<DemandDTO>(t.Demand)).ToList(),
+            Brands = category.Products.Select(t => _mapper.Map<BrandDTO>(t.Brand)).ToList(),
+            Products = category.Products.Select(t => _mapper.Map<ListProductDTO>(t)).ToList(),
+            Countries = category.Products.Select(t => _mapper.Map<CountryDTO>(t.Country)).ToList(),
+            Id = category.Id,
+            Title = category.Title,
+            CreatedDate = category.CreatedDate
+        };
+
+        return result;
     }
 }

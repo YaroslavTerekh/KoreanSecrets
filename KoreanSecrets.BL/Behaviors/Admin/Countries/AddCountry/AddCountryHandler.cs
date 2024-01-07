@@ -26,14 +26,7 @@ public class AddCountryHandler : IRequestHandler<AddCountryCommand>
             Title = request.Title
         };
 
-        var categoryCountry = new CategoryCountry
-        {
-            CountryId = country.Id,
-            CategoryId = request.CategoryId
-        };
-
         await _context.Countries.AddAsync(country, cancellationToken);
-        await _context.CategoryCountries.AddAsync(categoryCountry, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

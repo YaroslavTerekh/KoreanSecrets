@@ -13,9 +13,9 @@ public class SubCategoryConfiguration : IEntityTypeConfiguration<SubCategory>
 {
     public void Configure(EntityTypeBuilder<SubCategory> builder)
     {
-        builder.HasMany(t => t.CategorySubCategories)
-            .WithOne(t => t.SubCategory)
-            .HasForeignKey(t => t.SubCategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasMany(t => t.CategorySubCategories)
+        //    .WithOne(t => t.SubCategory)
+        //    .HasForeignKey(t => t.SubCategoryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

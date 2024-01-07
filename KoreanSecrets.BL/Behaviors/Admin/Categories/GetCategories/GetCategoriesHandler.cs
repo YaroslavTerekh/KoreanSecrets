@@ -33,7 +33,7 @@ public class GetCategoriesHandler : IRequestHandler<GetCategoriesQuery, Paginati
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken),
-            Products = await query.Select(t => _mapper.Map<CategoryDTO>(t)).ToListAsync(cancellationToken),
+            Products = await query.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize).Select(t => _mapper.Map<CategoryDTO>(t)).ToListAsync(cancellationToken),
         };
     }
 }

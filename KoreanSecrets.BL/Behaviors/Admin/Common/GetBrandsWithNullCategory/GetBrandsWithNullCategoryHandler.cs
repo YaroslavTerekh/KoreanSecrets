@@ -22,21 +22,21 @@ public class GetBrandsWithNullCategoryHandler : IRequestHandler<GetBrandsWithNul
 
     public async Task<AdminPaginationNullProperties<Brand>> Handle(GetBrandsWithNullCategoryQuery request, CancellationToken cancellationToken)
     {
-        var query = _context.Brands.Include(t => t.CategoryBrands).Where(t => t.CategoryBrands.Count < 1);
+        //var query = _context.Brands.Include(t => t.CategoryBrands).Where(t => t.CategoryBrands.Count < 1);
 
-        query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
+        //query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
 
-        var entities = await query
-            .Skip(request.CurrentPage * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+        //var entities = await query
+        //    .Skip(request.CurrentPage * request.PageSize)
+        //    .Take(request.PageSize)
+        //    .ToListAsync(cancellationToken);
 
         return new AdminPaginationNullProperties<Brand>
         {
             PageSize = request.PageSize,
             CurrentPage = request.CurrentPage,
-            Total = await query.CountAsync(cancellationToken),
-            Entities = entities
+            Total = 999,
+            Entities = null
         };
     }
 }

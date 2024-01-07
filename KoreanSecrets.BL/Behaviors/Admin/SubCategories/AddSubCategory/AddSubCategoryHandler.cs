@@ -26,14 +26,7 @@ public class AddSubCategoryHandler : IRequestHandler<AddSubCategoryCommand>
             Title = request.Title
         };
 
-        var categorySubCategory = new CategorySubCategory
-        {
-            SubCategoryId = subCategory.Id,
-            CategoryId = request.CategoryId
-        };
-
         await _context.SubCategories.AddAsync(subCategory, cancellationToken);
-        await _context.CategorySubCategories.AddAsync(categorySubCategory, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

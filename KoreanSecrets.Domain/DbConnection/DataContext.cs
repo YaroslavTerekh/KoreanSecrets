@@ -30,10 +30,10 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<Banner> Banners { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<PurchasedProduct> PurchasedProducts { get; set; }
-    public DbSet<CategoryBrand> CategoryBrands { get; set; }
-    public DbSet<CategoryCountry> CategoryCountries { get; set; }
-    public DbSet<CategoryDemand> CategoryDemands { get; set; }
-    public DbSet<CategorySubCategory> CategorySubCategories { get; set; }
+    //public DbSet<CategoryBrand> CategoryBrands { get; set; }
+    //public DbSet<CategoryCountry> CategoryCountries { get; set; }
+    //public DbSet<CategoryDemand> CategoryDemands { get; set; }
+    //public DbSet<CategorySubCategory> CategorySubCategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -48,9 +48,9 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         builder.ApplyConfiguration(new SubCategoryConfiguration());
         builder.ApplyConfiguration(new PurchaseConfiguration());
         builder.ApplyConfiguration(new PurchaseProductConfiguration());
-        builder.ApplyConfiguration(new CategoryBrandConfiguration());
-        builder.ApplyConfiguration(new CategorySubCategoryConfiguration());
-        builder.ApplyConfiguration(new CategoryCountryConfiguration());
-        builder.ApplyConfiguration(new CategoryDemandConfiguration());
+        //builder.ApplyConfiguration(new CategoryBrandConfiguration());
+        //builder.ApplyConfiguration(new CategorySubCategoryConfiguration());
+        //builder.ApplyConfiguration(new CategoryCountryConfiguration());
+        //builder.ApplyConfiguration(new CategoryDemandConfiguration());
     }
 }

@@ -14,16 +14,16 @@ public class CategorySubCategoryConfiguration : IEntityTypeConfiguration<Categor
 {
     public void Configure(EntityTypeBuilder<CategorySubCategory> builder)
     {
-        builder.HasKey(cb => new { cb.CategoryId, cb.SubCategoryId });
+        //builder.HasKey(cb => new { cb.CategoryId, cb.SubCategoryId });
 
-        builder.HasOne(cb => cb.Category)
-            .WithMany(c => c.CategorySubCategories)
-            .HasForeignKey(cb => cb.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(cb => cb.Category)
+        //    .WithMany(c => c.CategorySubCategories)
+        //    .HasForeignKey(cb => cb.CategoryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(cb => cb.SubCategory)
-            .WithMany(b => b.CategorySubCategories)
-            .HasForeignKey(cb => cb.SubCategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(cb => cb.SubCategory)
+        //    .WithMany(b => b.CategorySubCategories)
+        //    .HasForeignKey(cb => cb.SubCategoryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

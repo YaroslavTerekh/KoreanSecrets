@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetBrands;
 
-public class GetBrandsQuery : IRequest<PaginationModelDTO<BrandDTO>>
+public class GetAllBrandsQuery : IRequest<PaginationModelDTO<BrandDTO>>
 {
     public int CurrentPage { get; set; }
 

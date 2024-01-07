@@ -11,6 +11,4 @@ public class Country : BaseEntity
     public string Title { get; set; }
 
     public List<Product> Products { get; set; } = new();
-
-    public List<CategoryCountry> CategoryCountries { get; set; } = new();
 }

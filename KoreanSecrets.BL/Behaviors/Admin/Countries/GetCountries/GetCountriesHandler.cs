@@ -33,7 +33,7 @@ public class GetCountriesHandler : IRequestHandler<GetCountriesQuery, Pagination
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken),
-            Products = await query.Select(t => _mapper.Map<CountryDTO>(t)).ToListAsync(cancellationToken),
+            Products = await query.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize).Select(t => _mapper.Map<CountryDTO>(t)).ToListAsync(cancellationToken),
         };
     }
 }

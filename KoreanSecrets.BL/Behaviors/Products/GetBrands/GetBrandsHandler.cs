@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetBrands;
 
-public class GetBrandsHandler : IRequestHandler<GetBrandsQuery, PaginationModelDTO<BrandDTO>>
+public class GetBrandsHandler : IRequestHandler<GetAllBrandsQuery, PaginationModelDTO<BrandDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ public class GetBrandsHandler : IRequestHandler<GetBrandsQuery, PaginationModelD
         _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<BrandDTO>> Handle(GetBrandsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<BrandDTO>> Handle(GetAllBrandsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Brands
             .Include(t => t.Photo);

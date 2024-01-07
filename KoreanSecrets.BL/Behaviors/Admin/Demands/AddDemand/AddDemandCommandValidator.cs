@@ -21,13 +21,5 @@ public class AddDemandCommandValidator : AbstractValidator<AddDemandCommand>
             .WithMessage(ValidationMessages.TitleTooLong)
             .NotEmpty()
             .WithMessage(ValidationMessages.TitleRequired);
-
-        RuleFor(t => t.CategoryId)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                var exists = await context.Categories.AnyAsync(t => t.Id == id, cancellationToken);
-                return exists;
-            })
-            .WithMessage(ErrorMessages.CategoryNotFound);
     }
 }

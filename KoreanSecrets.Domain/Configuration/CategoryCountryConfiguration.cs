@@ -14,16 +14,16 @@ public class CategoryCountryConfiguration : IEntityTypeConfiguration<CategoryCou
 {
     public void Configure(EntityTypeBuilder<CategoryCountry> builder)
     {
-        builder.HasKey(cb => new { cb.CategoryId, cb.CountryId });
+        //builder.HasKey(cb => new { cb.CategoryId, cb.CountryId });
 
-        builder.HasOne(cb => cb.Category)
-            .WithMany(c => c.CategoryCountries)
-            .HasForeignKey(cb => cb.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(cb => cb.Category)
+        //    .WithMany(c => c.CategoryCountries)
+        //    .HasForeignKey(cb => cb.CategoryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(cb => cb.Country)
-            .WithMany(b => b.CategoryCountries)
-            .HasForeignKey(cb => cb.CountryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(cb => cb.Country)
+        //    .WithMany(b => b.CategoryCountries)
+        //    .HasForeignKey(cb => cb.CountryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

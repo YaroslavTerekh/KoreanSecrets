@@ -14,17 +14,17 @@ public class CategoryDemandConfiguration : IEntityTypeConfiguration<CategoryDema
 {
     public void Configure(EntityTypeBuilder<CategoryDemand> builder)
     {
-        builder.HasKey(cb => new { cb.CategoryId, cb.DemandId });
+        //builder.HasKey(cb => new { cb.CategoryId, cb.DemandId });
 
-        builder
-            .HasOne(cb => cb.Category)
-            .WithMany(c => c.CategoryDemands)
-            .HasForeignKey(cb => cb.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder
+        //    .HasOne(cb => cb.Category)
+        //    .WithMany(c => c.CategoryDemands)
+        //    .HasForeignKey(cb => cb.CategoryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(cb => cb.Demand)
-            .WithMany(b => b.CategoryDemands)
-            .HasForeignKey(cb => cb.DemandId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(cb => cb.Demand)
+        //    .WithMany(b => b.CategoryDemands)
+        //    .HasForeignKey(cb => cb.DemandId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

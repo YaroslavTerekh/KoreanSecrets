@@ -22,21 +22,21 @@ public class GetDemandsWithNullCategoryHandler : IRequestHandler<GetDemandsWithN
 
     public async Task<AdminPaginationNullProperties<Demand>> Handle(GetDemandsWithNullCategoryQuery request, CancellationToken cancellationToken)
     {
-        var query = _context.Demands.Include(t => t.CategoryDemands).Where(t => t.CategoryDemands.Count < 1);
+        //var query = _context.Demands.Include(t => t.CategoryDemands).Where(t => t.CategoryDemands.Count < 1);
 
-        query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
+        //query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
 
-        var entities = await query
-            .Skip(request.CurrentPage * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+        //var entities = await query
+        //    .Skip(request.CurrentPage * request.PageSize)
+        //    .Take(request.PageSize)
+        //    .ToListAsync(cancellationToken);
 
         return new AdminPaginationNullProperties<Demand>
         {
             PageSize = request.PageSize,
             CurrentPage = request.CurrentPage,
-            Total = await query.CountAsync(cancellationToken),
-            Entities = entities
+            Total = 999,
+            Entities = null
         };
     }
 }

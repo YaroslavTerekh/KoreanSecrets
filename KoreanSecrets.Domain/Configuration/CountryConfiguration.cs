@@ -13,9 +13,9 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
 {
     public void Configure(EntityTypeBuilder<Country> builder)
     {
-        builder.HasMany(t => t.CategoryCountries)
-            .WithOne(t => t.Country)
-            .HasForeignKey(t => t.CountryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasMany(t => t.CategoryCountries)
+        //    .WithOne(t => t.Country)
+        //    .HasForeignKey(t => t.CountryId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

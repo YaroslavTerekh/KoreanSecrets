@@ -11,6 +11,4 @@ public class SubCategory : BaseEntity
     public string Title { get; set; }
 
     public List<Product> Products { get; set; } = new();
-
-    public List<CategorySubCategory> CategorySubCategories { get; set; } = new();
 }

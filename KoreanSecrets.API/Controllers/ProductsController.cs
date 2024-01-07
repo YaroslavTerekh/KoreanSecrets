@@ -108,7 +108,7 @@ public class ProductsController : BaseController
     [HttpPost("brands/get")]
     public async Task<IActionResult> GetBrandsAsync
     (
-        [FromBody] GetBrandsQuery query,
+        [FromBody] GetAllBrandsQuery query,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
 

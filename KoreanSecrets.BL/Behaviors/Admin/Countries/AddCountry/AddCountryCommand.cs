@@ -9,7 +9,5 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Countries.AddCountry;
 
 public class AddCountryCommand : IRequest
 {
-    public Guid CategoryId { get; set; }
-
     public string Title { get; set; }
 }

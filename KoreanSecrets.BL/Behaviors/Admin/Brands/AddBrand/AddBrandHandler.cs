@@ -29,19 +29,12 @@ public class AddBrandHandler : IRequestHandler<AddBrandCommand>
             Title = request.Title
         };
 
-        var categoryBrand = new CategoryBrand
-        {
-            BrandId = brand.Id,
-            CategoryId = request.CategoryId
-        };
-
         var photoResult = await _fileService.UploadFileAsync(request.Photo, cancellationToken);
         photoResult.BrandPhotoId = brand.Id;
         brand.PhotoId = photoResult.Id;
 
         await _context.Files.AddAsync(photoResult, cancellationToken);
         await _context.Brands.AddAsync(brand, cancellationToken);
-        await _context.CategoryBrands.AddAsync(categoryBrand, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

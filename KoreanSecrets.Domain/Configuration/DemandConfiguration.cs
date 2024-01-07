@@ -13,9 +13,9 @@ public class DemandConfiguration : IEntityTypeConfiguration<Demand>
 {
     public void Configure(EntityTypeBuilder<Demand> builder)
     {
-        builder.HasMany(t => t.CategoryDemands)
-            .WithOne(t => t.Demand)
-            .HasForeignKey(t => t.DemandId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasMany(t => t.CategoryDemands)
+        //    .WithOne(t => t.Demand)
+        //    .HasForeignKey(t => t.DemandId)
+        //    .OnDelete(DeleteBehavior.Cascade);
     }
 }

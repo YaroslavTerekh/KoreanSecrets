@@ -9,7 +9,5 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 
 public class AddDemandCommand : IRequest
 {
-    public Guid CategoryId { get; set; }
-
     public string Title { get; set; }
 }

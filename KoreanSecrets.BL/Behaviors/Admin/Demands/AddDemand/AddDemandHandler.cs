@@ -26,14 +26,7 @@ public class AddDemandHandler : IRequestHandler<AddDemandCommand>
             Title = request.Title
         };
 
-        var categoryDemand = new CategoryDemand
-        {
-            DemandId = demand.Id,
-            CategoryId = request.CategoryId
-        };
-
         await _context.Demands.AddAsync(demand, cancellationToken);
-        await _context.CategoryDemands.AddAsync(categoryDemand, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

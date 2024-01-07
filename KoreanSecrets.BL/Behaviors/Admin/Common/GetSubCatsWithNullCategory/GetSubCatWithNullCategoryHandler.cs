@@ -22,21 +22,21 @@ public class GetSubCatWithNullCategoryHandler : IRequestHandler<GetSubCatWithNul
 
     public async Task<AdminPaginationNullProperties<SubCategory>> Handle(GetSubCatWithNullCategoryQuery request, CancellationToken cancellationToken)
     {
-        var query = _context.SubCategories.Include(t => t.CategorySubCategories).Where(t => t.CategorySubCategories.Count < 1);
+        //var query = _context.SubCategories.Include(t => t.CategorySubCategories).Where(t => t.CategorySubCategories.Count < 1);
 
-        query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
+        //query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
 
-        var entities = await query
-            .Skip(request.CurrentPage * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(cancellationToken);
+        //var entities = await query
+        //    .Skip(request.CurrentPage * request.PageSize)
+        //    .Take(request.PageSize)
+        //    .ToListAsync(cancellationToken);
 
         return new AdminPaginationNullProperties<SubCategory>
         {
             PageSize = request.PageSize,
             CurrentPage = request.CurrentPage,
-            Total = await query.CountAsync(cancellationToken),
-            Entities = entities
+            Total = 999,
+            Entities = null
         };
     }
 }
