@@ -16,6 +16,10 @@ public class PurchaseConfiguration : IEntityTypeConfiguration<Purchase>
         builder.Property(t => t.PurchaseIdentifier)
             .IsRequired(true);
 
+        builder.HasMany(p => p.Products)
+            .WithOne(pp => pp.Purchase)
+            .HasForeignKey(pp => pp.PurchaseId);
+
         builder.HasOne(t => t.User)
             .WithMany(t => t.Purchases)
             .HasForeignKey(t => t.UserId)
