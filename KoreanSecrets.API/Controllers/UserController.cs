@@ -2,6 +2,7 @@
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
@@ -22,6 +23,19 @@ public class UserController : BaseController
     public UserController(IMediator mediator)
     {
         _mediatr = mediator;
+    }
+
+    [Authorize]
+    [HttpPost("purchases/my")]
+    public async Task<IActionResult> GetPurchasesAsync
+    (
+        [FromBody] GetMyPurchasesQuery query,
+        CancellationToken cancellationToken = default
+    )
+    {
+        query.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(query, cancellationToken));
     }
 
     [HttpPost("feedbacks/add")]

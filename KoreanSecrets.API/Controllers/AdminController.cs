@@ -33,6 +33,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
@@ -383,6 +384,13 @@ public class AdminController : ControllerBase
     (
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetPromocodesQuery(), cancellationToken));
+
+
+    [HttpGet("purchases/all")]
+    public async Task<IActionResult> GetAllPurchasesAsync
+    (
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetPurchasesQuery(), cancellationToken));
 
     [HttpPost("countries/all")]
     public async Task<IActionResult> GetAllCountriesAsync
