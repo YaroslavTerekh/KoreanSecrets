@@ -11,6 +11,10 @@ using KoreanSecrets.BL.Behaviors.Admin.Categories.AddCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.DeleteCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.GetCategories;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.ModifyCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Charts.GetDayMoneyStatistic;
+using KoreanSecrets.BL.Behaviors.Admin.Charts.GetWeekUserChartStatistic;
+using KoreanSecrets.BL.Behaviors.Admin.Charts.GetYearMoneyStatistic;
+using KoreanSecrets.BL.Behaviors.Admin.Charts.GetYearUserChartStatistic;
 using KoreanSecrets.BL.Behaviors.Admin.Common.GetBrandsWithNullCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Common.GetCountriesWithNullCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Common.GetDemandsWithNullCategory;
@@ -61,6 +65,26 @@ public class AdminController : ControllerBase
     {
         _mediatr = mediatr;
     }
+
+    [HttpGet("chart/users-of-year")]
+    public async Task<IActionResult> GetChartForUsersOfYearAsync
+    (CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(new GetYearUserChartStatisticQuery(), cancellationToken));
+
+    [HttpGet("chart/users-of-weak")]
+    public async Task<IActionResult> GetChartForUsersOfWeakAsync
+    (CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(new GetWeekUserChartStatisticQuery(), cancellationToken));
+
+    [HttpGet("chart/money-of-year")]
+    public async Task<IActionResult> GetChartForMoneyOfYearAsync
+    (CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(new GetYearMoneyStatisticQuery(), cancellationToken));
+
+    [HttpGet("chart/money-of-day")]
+    public async Task<IActionResult> GetChartForMoneyOfDayAsync
+    (CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(new GetDayMoneyStatisticQuery(), cancellationToken));
 
     [HttpPost("products/all")]
     public async Task<IActionResult> GetProductsAsync
