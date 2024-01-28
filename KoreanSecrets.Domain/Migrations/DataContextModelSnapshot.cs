@@ -141,9 +141,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -155,8 +152,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("Brands");
                 });
@@ -210,9 +205,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -221,8 +213,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("Countries");
                 });
@@ -233,9 +223,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -244,8 +231,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("Demands");
                 });
@@ -290,23 +275,23 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<int>("AdditionalIcon")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("BrandId")
+                    b.Property<Guid?>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Characteristics")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CountryId")
+                    b.Property<Guid?>("CountryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DemandId")
+                    b.Property<Guid?>("DemandId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long?>("DiscountPrice")
@@ -324,7 +309,7 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid>("SubCategoryId")
+                    b.Property<Guid?>("SubCategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Syllabes")
@@ -424,7 +409,7 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("BucketId")
+                    b.Property<Guid>("BucketId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -433,7 +418,7 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PurchaseId")
+                    b.Property<Guid>("PurchaseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -453,9 +438,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -464,8 +446,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("SubCategories");
                 });
@@ -797,17 +777,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Brand", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
-                        .WithMany("Brands")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Bucket", b =>
                 {
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", null)
@@ -821,28 +790,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Country", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
-                        .WithMany("Countries")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Demand", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
-                        .WithMany("Demands")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Feedback", b =>
@@ -869,32 +816,27 @@ namespace KoreanSecrets.Domain.Migrations
                     b.HasOne("KoreanSecrets.Domain.Entities.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Country", "Country")
                         .WithMany("Products")
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Demand", "Demand")
                         .WithMany("Products")
                         .HasForeignKey("DemandId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("KoreanSecrets.Domain.Entities.SubCategory", "SubCategory")
                         .WithMany("Products")
                         .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Brand");
 
@@ -926,32 +868,28 @@ namespace KoreanSecrets.Domain.Migrations
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.PurchasedProduct", b =>
                 {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Bucket", null)
+                    b.HasOne("KoreanSecrets.Domain.Entities.Bucket", "Bucket")
                         .WithMany("PurchaseProducts")
-                        .HasForeignKey("BucketId");
+                        .HasForeignKey("BucketId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .IsRequired();
 
-                    b.HasOne("KoreanSecrets.Domain.Entities.Purchase", null)
+                    b.HasOne("KoreanSecrets.Domain.Entities.Purchase", "Purchase")
                         .WithMany("Products")
                         .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.SubCategory", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Category", "Category")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Bucket");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Purchase");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Volume", b =>
@@ -1067,15 +1005,7 @@ namespace KoreanSecrets.Domain.Migrations
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Category", b =>
                 {
-                    b.Navigation("Brands");
-
-                    b.Navigation("Countries");
-
-                    b.Navigation("Demands");
-
                     b.Navigation("Products");
-
-                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Country", b =>

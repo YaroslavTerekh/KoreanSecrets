@@ -16,27 +16,32 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasOne(t => t.Brand)
             .WithMany(t => t.Products)
             .HasForeignKey(t => t.BrandId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(t => t.SubCategory)
             .WithMany(t => t.Products)
             .HasForeignKey(t => t.SubCategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(t => t.Category)
             .WithMany(t => t.Products)
             .HasForeignKey(t => t.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(t => t.Country)
             .WithMany(t => t.Products)
             .HasForeignKey(t => t.CountryId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(t => t.Demand)
             .WithMany(t => t.Products)
             .HasForeignKey(t => t.DemandId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(t => t.Guide)
             .WithOne(t => t.Product)

@@ -56,14 +56,14 @@ public class FileService : IFileService
     {
         var file = await _context.Files.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
-        if (file is null)
-            throw new NotFoundException(ErrorMessages.FileNotFound);
+        if (file is not null)
+        {
+            var path = Path.Combine(_env.ContentRootPath, file.FilePath);
 
-        var path = Path.Combine(_env.ContentRootPath, file.FilePath);
+            _context.Files.Remove(file);
+            await _context.SaveChangesAsync(cancellationToken);
 
-        _context.Files.Remove(file);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        File.Delete(path);
+            File.Delete(path);
+        }
     }
 }

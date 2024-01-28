@@ -15,8 +15,4 @@ public class Brand : BaseEntity
     public AppFile Photo { get; set; }
 
     public List<Product> Products { get; set; } = new();
-
-    public Guid CategoryId { get; set; }
-
-    public Category Category { get; set; }
 }

@@ -9,7 +9,5 @@ namespace KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 
 public class AddSubCategoryCommand : IRequest
 {
-    public Guid CategoryId { get; set; }
-
     public string Title { get; set; }
 }

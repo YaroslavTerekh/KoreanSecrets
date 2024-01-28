@@ -29,6 +29,10 @@ public class MapperGlobalProfile : Profile
         CreateMap<Volume, VolumeDTO>();
         CreateMap<Banner, BannerDTO>();
         CreateMap<Category, CategoryDTO>();
+            //.ForMember(dest => dest.Demands, src => src.MapFrom(t => t.CategoryDemands.Select(t => t.Demand).ToList()))
+            //.ForMember(dest => dest.SubCategories, src => src.MapFrom(t => t.CategorySubCategories.Select(t => t.SubCategory).ToList()))
+            //.ForMember(dest => dest.Countries, src => src.MapFrom(t => t.CategoryCountries.Select(t => t.Country).ToList()))
+            //.ForMember(dest => dest.Brands, src => src.MapFrom(t => t.CategoryBrands.Select(t => t.Brand).ToList()));
         CreateMap<PurchasedProduct, PurchaseProductDTO>();
     }
 }

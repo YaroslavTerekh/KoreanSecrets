@@ -21,12 +21,12 @@ public class AddBrandHandler : IRequestHandler<AddBrandCommand>
         _fileService = fileService;
     }
 
+    //TODO: check-fix
     public async Task<Unit> Handle(AddBrandCommand request, CancellationToken cancellationToken)
     {
         var brand = new Brand
         {
-            Title = request.Title,
-            CategoryId = request.CategoryId
+            Title = request.Title
         };
 
         var photoResult = await _fileService.UploadFileAsync(request.Photo, cancellationToken);

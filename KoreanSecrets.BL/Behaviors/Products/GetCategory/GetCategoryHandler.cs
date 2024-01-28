@@ -24,21 +24,36 @@ public class GetCategoryHandler : IRequestHandler<GetCategoryQuery, CategoryDTO>
         _mapper = mapper;
     }
 
+    //TODO: check-fix
     public async Task<CategoryDTO> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
     {
         var category = await _context.Categories
             .Where(t => t.Id == request.Id)
             .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
-            .Include(t => t.Brands)
-            .Include(t => t.SubCategories)
-            .Include(t => t.Countries)
-            .Include(t => t.Demands)
-            .Select(t => _mapper.Map<CategoryDTO>(t))
+                .ThenInclude(t => t.SubCategory)
+            .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
+                .ThenInclude(t => t.Country)
+            .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
+                .ThenInclude(t => t.Demand)
+            .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
+                .ThenInclude(t => t.Brand)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (category is null)
             throw new NotFoundException(ErrorMessages.CategoryNotFound);
 
-        return category;
+        var result = new CategoryDTO
+        {
+            SubCategories = category.Products.Select(t => _mapper.Map<SubCategoryDTO>(t.SubCategory)).ToList(),
+            Demands = category.Products.Select(t => _mapper.Map<DemandDTO>(t.Demand)).ToList(),
+            Brands = category.Products.Select(t => _mapper.Map<BrandDTO>(t.Brand)).ToList(),
+            Products = category.Products.Select(t => _mapper.Map<ListProductDTO>(t)).ToList(),
+            Countries = category.Products.Select(t => _mapper.Map<CountryDTO>(t.Country)).ToList(),
+            Id = category.Id,
+            Title = category.Title,
+            CreatedDate = category.CreatedDate
+        };
+
+        return result;
     }
 }

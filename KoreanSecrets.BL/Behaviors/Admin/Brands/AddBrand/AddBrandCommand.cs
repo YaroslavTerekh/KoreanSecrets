@@ -10,8 +10,6 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
 
 public class AddBrandCommand : IRequest
 {
-    public Guid CategoryId { get; set; }
-
     public string Title { get; set; }
 
     public IFormFile Photo { get; set; }
