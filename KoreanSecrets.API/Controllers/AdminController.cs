@@ -37,6 +37,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
+using KoreanSecrets.BL.Behaviors.Admin.Promocodes.GetPromocodes;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
@@ -371,12 +372,17 @@ public class AdminController : ControllerBase
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
 
-    [HttpPost("categories/all")]
+    [HttpGet("categories/all")]
     public async Task<IActionResult> GetAllCategoriesAsync
     (
-        [FromBody] GetCategoriesQuery query,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(query, cancellationToken));
+    ) => Ok(await _mediatr.Send(new GetCategoriesQuery(), cancellationToken));
+
+    [HttpGet("promocodes/all")]
+    public async Task<IActionResult> GetAllPromocodesAsync
+    (
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetPromocodesQuery(), cancellationToken));
 
     [HttpPost("countries/all")]
     public async Task<IActionResult> GetAllCountriesAsync
