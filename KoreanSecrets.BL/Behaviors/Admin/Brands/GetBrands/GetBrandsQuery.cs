@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Brands.GetBrands;
 
-public class GetBrandsQuery : IAuthorizedRequest<PaginationModelDTO<BrandDTO>>
+public class GetBrandsQuery : IAuthorizedRequest<List<BrandDTO>>
 {
-    public int CurrentPage { get; set; }
-
-    public int PageSize { get; set; }
-
-    public bool Desc { get; set; }
 }

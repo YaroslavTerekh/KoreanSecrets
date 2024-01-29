@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Demands.GetDemands;
 
-public class GetDemandsHandler : IRequestHandler<GetDemandsQuery, PaginationModelDTO<DemandDTO>>
+public class GetDemandsHandler : IRequestHandler<GetDemandsQuery, List<DemandDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -22,18 +22,10 @@ public class GetDemandsHandler : IRequestHandler<GetDemandsQuery, PaginationMode
         _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<DemandDTO>> Handle(GetDemandsQuery request, CancellationToken cancellationToken)
+    public async Task<List<DemandDTO>> Handle(GetDemandsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Demands.AsQueryable();
 
-        query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
-
-        return new PaginationModelDTO<DemandDTO>
-        {
-            CurrentPage = request.CurrentPage,
-            PageSize = request.PageSize,
-            Total = await query.CountAsync(cancellationToken),
-            Products = await query.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize).Select(t => _mapper.Map<DemandDTO>(t)).ToListAsync(cancellationToken),
-        };
+        return await query.Select(t => _mapper.Map<DemandDTO>(t)).ToListAsync(cancellationToken);
     }
 }

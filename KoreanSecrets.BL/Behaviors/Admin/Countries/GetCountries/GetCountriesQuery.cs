@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Countries.GetCountries;
 
-public class GetCountriesQuery : IAuthorizedRequest<PaginationModelDTO<CountryDTO>>
+public class GetCountriesQuery : IAuthorizedRequest<List<CountryDTO>>
 {
-    public int CurrentPage { get; set; }
-
-    public int PageSize { get; set; }
-
-    public bool Desc { get; set; }
 }

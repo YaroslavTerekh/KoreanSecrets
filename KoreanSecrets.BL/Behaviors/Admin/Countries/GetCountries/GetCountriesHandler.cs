@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Countries.GetCountries;
 
-public class GetCountriesHandler : IRequestHandler<GetCountriesQuery, PaginationModelDTO<CountryDTO>>
+public class GetCountriesHandler : IRequestHandler<GetCountriesQuery, List<CountryDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -22,18 +22,10 @@ public class GetCountriesHandler : IRequestHandler<GetCountriesQuery, Pagination
         _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<CountryDTO>> Handle(GetCountriesQuery request, CancellationToken cancellationToken)
+    public async Task<List<CountryDTO>> Handle(GetCountriesQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Countries.AsQueryable();
 
-        query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
-
-        return new PaginationModelDTO<CountryDTO>
-        {
-            CurrentPage = request.CurrentPage,
-            PageSize = request.PageSize,
-            Total = await query.CountAsync(cancellationToken),
-            Products = await query.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize).Select(t => _mapper.Map<CountryDTO>(t)).ToListAsync(cancellationToken),
-        };
+        return await query.Select(t => _mapper.Map<CountryDTO>(t)).ToListAsync(cancellationToken);
     }
 }

@@ -390,12 +390,11 @@ public class AdminController : ControllerBase
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
 
-    [HttpPost("brands/all")]
+    [HttpGet("brands/all")]
     public async Task<IActionResult> GetAllBrandsAsync
     (
-        [FromBody] GetBrandsQuery query,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(query, cancellationToken));
+    ) => Ok(await _mediatr.Send(new GetBrandsQuery(), cancellationToken));
 
     [HttpGet("categories/all")]
     public async Task<IActionResult> GetAllCategoriesAsync
@@ -416,24 +415,21 @@ public class AdminController : ControllerBase
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetPurchasesQuery(), cancellationToken));
 
-    [HttpPost("countries/all")]
+    [HttpGet("countries/all")]
     public async Task<IActionResult> GetAllCountriesAsync
     (
-        [FromBody] GetCountriesQuery query,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(query, cancellationToken));
+    ) => Ok(await _mediatr.Send(new GetCountriesQuery(), cancellationToken));
 
-    [HttpPost("demands/all")]
+    [HttpGet("demands/all")]
     public async Task<IActionResult> GetAllDemandsAsync
     (
-        [FromBody] GetDemandsQuery query,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(query, cancellationToken));
+    ) => Ok(await _mediatr.Send(new GetDemandsQuery(), cancellationToken));
 
-    [HttpPost("subcategories/all")]
+    [HttpGet("subcategories/all")]
     public async Task<IActionResult> GetAllSubCategoriesAsync
     (
-        [FromBody] GetSubCategoriesQuery query,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(query, cancellationToken));
+    ) => Ok(await _mediatr.Send(new GetSubCategoriesQuery(), cancellationToken));
 }
