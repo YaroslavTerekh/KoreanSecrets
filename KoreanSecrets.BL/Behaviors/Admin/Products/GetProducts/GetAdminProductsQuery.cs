@@ -6,10 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetProducts;
 
-public class GetAllProductsQuery : IRequest<PaginationModelDTO<PageProductDTO>>
+public class GetAdminProductsQuery : IRequest<PaginationModelDTO<PageProductDTO>>
 {
+    public string SearchText { get; set; }
+
     public int CurrentPage { get; set; }
 
     public int PageSize { get; set; }

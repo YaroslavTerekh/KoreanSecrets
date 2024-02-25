@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
 
-public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, PaginationModelDTO<ListProductDTO>>
+public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, PaginationModelDTO<PageProductDTO>>
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
@@ -22,21 +22,29 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
         _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<ListProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<PageProductDTO>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Products
             .AsNoTracking()
             .Where(t => t.BrandId != null && t.CategoryId != null && t.CountryId != null && t.DemandId != null && t.SubCategoryId != null)
             .Include(t => t.Brand)
-            .Include(t => t.MainPhoto);
+            .Include(t => t.SubCategory)
+            .Include(t => t.Country)
+            .Include(t => t.Demand)
+            .Include(t => t.Photos)
+            .Include(t => t.Guide)
+            .Include(t => t.MainPhoto)
+            .Include(t => t.Feedbacks)
+                .ThenInclude(t => t.User)
+            .Include(t => t.Volumes);
 
-        return new PaginationModelDTO<ListProductDTO>
+        return new PaginationModelDTO<PageProductDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken),
             Products = await query
-                .Select(t => _mapper.Map<ListProductDTO>(t))
+                .Select(t => _mapper.Map<PageProductDTO>(t))
                 .Skip(request.CurrentPage * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken)

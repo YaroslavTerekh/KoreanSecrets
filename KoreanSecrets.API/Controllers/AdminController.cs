@@ -37,6 +37,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
@@ -47,6 +48,7 @@ using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -432,4 +434,18 @@ public class AdminController : ControllerBase
     (
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetSubCategoriesQuery(), cancellationToken));
+
+    [HttpPost("products/get-by-text")]
+    public async Task<IActionResult> GetProductsByPaginationAsync
+    (
+        [FromBody] GetAdminProductsQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpPost("users/get")]
+    public async Task<IActionResult> GetUsersAsync
+    (
+        [FromBody] GetUsersQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
 }

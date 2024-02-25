@@ -25,7 +25,9 @@ public class MapperGlobalProfile : Profile
         CreateMap<SubCategory, SubCategoryDTO>();
         CreateMap<AppFile, AppFileDTO>();
         CreateMap<Feedback, FeedbackDTO>();
-        CreateMap<User, UserDTO>();
+        CreateMap<User, UserDTO>()
+            .ForMember(dest => dest.OrdersCount, src => src.Ignore())
+            .ForMember(dest => dest.IsPhoneNumberConfirmed, src => src.Ignore()); // ToDo: add phone number confirmation
         CreateMap<Volume, VolumeDTO>();
         CreateMap<Banner, BannerDTO>();
         CreateMap<Category, CategoryDTO>();

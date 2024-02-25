@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+namespace KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 
-public class GetAllProductsQuery : IRequest<PaginationModelDTO<PageProductDTO>>
+public class GetUsersQuery : IRequest<PaginationModelDTO<UserDTO>>
 {
     public int CurrentPage { get; set; }
 
