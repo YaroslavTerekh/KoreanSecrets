@@ -30,12 +30,13 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             .AsNoTracking()
             .Include(t => t.Brand)
             .Include(t => t.MainPhoto)
-            .Where(t => t.CategoryId == request.CategoryId && t.CountryId != null && t.SubCategoryId != null && t.DemandId != null && t.BrandId != null);
+            .Where(t => t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null && t.DemandId != null && t.BrandId != null);
 
         if (request.CountriesIds.Count > 0) query = query.Where(t => request.CountriesIds.Contains(t.CountryId!.Value));
         if (request.SubCategoriesIds.Count > 0) query = query.Where(t => request.SubCategoriesIds.Contains(t.SubCategoryId!.Value));
         if (request.DemandsIds.Count > 0) query = query.Where(t => request.DemandsIds.Contains(t.DemandId!.Value));
         if (request.BrandsIds.Count > 0) query = query.Where(t => request.BrandsIds.Contains(t.BrandId!.Value));
+        if (request.CategoriesIds.Count > 0) query = query.Where(t => request.CategoriesIds.Contains(t.CategoryId!.Value));
 
         var products = await query
                 .Skip(request.CurrentPage * request.PageSize)

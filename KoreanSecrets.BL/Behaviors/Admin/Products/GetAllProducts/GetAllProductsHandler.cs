@@ -30,6 +30,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
             .Include(t => t.Brand)
             .Include(t => t.SubCategory)
             .Include(t => t.Country)
+            .Include(t => t.Category)
             .Include(t => t.Demand)
             .Include(t => t.Photos)
             .Include(t => t.Guide)

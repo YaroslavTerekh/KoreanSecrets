@@ -21,6 +21,7 @@ using KoreanSecrets.BL.Helpers;
 using KoreanSecrets.Domain.Common.Settings;
 using Hangfire;
 using Newtonsoft.Json;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +46,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = false;
 });
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddValidatorsFromAssembly(AppDomain.CurrentDomain.GetAssemblies().Where(t => t.FullName.Contains("BL")).First());
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -58,6 +58,10 @@ var novaPostConfig = builder.Configuration
 var liqPayConfig = builder.Configuration
         .GetSection("LiqPaySettings")
         .Get<LiqPaySettings>();
+var hostConfig = builder.Configuration
+        .GetSection("HostSettings")
+        .Get<HostSettings>();
+builder.Services.AddSingleton(hostConfig);
 builder.Services.AddSingleton(liqPayConfig);
 builder.Services.AddSingleton(emailConfig);
 builder.Services.AddSingleton(novaPostConfig);
@@ -70,6 +74,11 @@ builder.Services.AddHangfire((sp, config) =>
 }
 );
 builder.Services.AddHangfireServer();
+
+builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile(new MapperGlobalProfile(provider.GetRequiredService<HostSettings>()));
+}).CreateMapper());
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -147,6 +156,16 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 var scope = app.Services.CreateScope();
+
+var path = Path.Combine(app.Services.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "uploads");
+Directory.CreateDirectory(path);
+
+app.UseFileServer(new FileServerOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+    RequestPath = "/uploads",
+    EnableDefaultFiles = true
+});
 
 var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 dataContext.Database.Migrate();

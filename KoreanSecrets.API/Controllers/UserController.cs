@@ -58,12 +58,17 @@ public class UserController : BaseController
     ) => Ok(await _mediatr.Send(new SubscribeOnProductCommand(id, CurrentUserId), cancellationToken));
 
     [Authorize]
-    [HttpPatch("bucket/add/{id:guid}")]
+    [HttpPatch("bucket/add")]
     public async Task<IActionResult> AddProductToBucketAsync
     (
-        [FromRoute] Guid id,
+        [FromBody] AddProductToBucketCommand command,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(new AddProductToBucketCommand(id, CurrentUserId), cancellationToken));
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 
     [Authorize]
     [HttpPatch("bucket/remove/{id:guid}")]

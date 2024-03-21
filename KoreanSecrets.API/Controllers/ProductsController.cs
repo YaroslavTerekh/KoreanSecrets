@@ -3,12 +3,16 @@ using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
 using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetBrands;
+using KoreanSecrets.BL.Behaviors.Products.GetBrandsWIthoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetCategories;
+using KoreanSecrets.BL.Behaviors.Products.GetCategoriesWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetCategory;
+using KoreanSecrets.BL.Behaviors.Products.GetCountriesWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetPopularProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
+using KoreanSecrets.BL.Behaviors.Products.GetSubCategoriesWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.LikeProduct;
 using KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
@@ -171,4 +175,20 @@ public class ProductsController : BaseController
         await _liqPayService.ProcessCallbackAsync(formData, cancellationToken);
         return Ok();
     }
+
+    [HttpGet("brands/get-all")]
+    public async Task<IActionResult> GetAllBrandsWithoutPagination
+    (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetBrandsWithoutPaginationQuery(), cancellationToken));
+
+    [HttpGet("countries/get-all")]
+    public async Task<IActionResult> GetAllCountriesWithoutPagination
+    (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetCountriesWithoutPaginationQuery(), cancellationToken));
+
+    [HttpGet("categories/get-all")]
+    public async Task<IActionResult> GetAllCategoriesWithoutPagination
+    (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetCategoriesWithoutPaginationQuery(), cancellationToken));
+
+    [HttpGet("subcategories/get-all")]
+    public async Task<IActionResult> GetAllSubcategoriesWithoutPagination
+    (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetSubCategoriesWithoutPaginationQuery(), cancellationToken));
 }

@@ -42,7 +42,7 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
 
         var purchaseProduct = new PurchasedProduct
         {
-            Amount = 1,
+            Amount = request.Amount,
             ProductId = product.Id,
             BucketId = user.BucketId
         };

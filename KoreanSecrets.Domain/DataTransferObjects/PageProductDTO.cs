@@ -24,6 +24,8 @@ public class PageProductDTO : BaseEntity
 
     public Guid CategoryId { get; set; }
 
+    public CategoryDTO Category { get; set; }
+
     public Guid SubCategoryId { get; set; }
 
     public SubCategoryDTO SubCategory { get; set; }

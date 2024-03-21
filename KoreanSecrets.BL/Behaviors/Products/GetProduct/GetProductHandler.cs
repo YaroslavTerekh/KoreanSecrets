@@ -32,6 +32,7 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Include(t => t.SubCategory)
             .Include(t => t.Country)
             .Include(t => t.Demand)
+            .Include(t => t.Category)
             .Include(t => t.Photos)
             .Include(t => t.Guide)
             .Include(t => t.MainPhoto)

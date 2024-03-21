@@ -10,9 +10,5 @@ public class AddProductToBucketCommand : IAuthorizedRequest
 {
     public Guid ProductId { get; set; }
 
-    public AddProductToBucketCommand(Guid productId, Guid currentUserId)
-    {
-        ProductId = productId;
-        CurrentUserId = currentUserId;
-    }
+    public int Amount { get; set; }
 }
