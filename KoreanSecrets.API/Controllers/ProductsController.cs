@@ -8,12 +8,14 @@ using KoreanSecrets.BL.Behaviors.Products.GetCategories;
 using KoreanSecrets.BL.Behaviors.Products.GetCategoriesWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetCategory;
 using KoreanSecrets.BL.Behaviors.Products.GetCountriesWithoutPagination;
+using KoreanSecrets.BL.Behaviors.Products.GetDemandsWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetPopularProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Products.GetSubCategoriesWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.LikeProduct;
+using KoreanSecrets.BL.Behaviors.Products.SearchProduct;
 using KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
 using KoreanSecrets.BL.Services.Abstractions;
@@ -191,4 +193,15 @@ public class ProductsController : BaseController
     [HttpGet("subcategories/get-all")]
     public async Task<IActionResult> GetAllSubcategoriesWithoutPagination
     (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetSubCategoriesWithoutPaginationQuery(), cancellationToken));
+
+    [HttpGet("demands/get-all")]
+    public async Task<IActionResult> GetAllDemandsWithoutPagination
+    (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetDemandsWithoutPaginationQuery(), cancellationToken));
+
+    [HttpPost("products/search")]
+    public async Task<IActionResult> SearchProductAsync
+    (
+        [FromBody] SearchProductQuery query, 
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken)); 
 }

@@ -3,6 +3,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
+using KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
@@ -110,4 +111,9 @@ public class UserController : BaseController
 
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
+
+    [Authorize]
+    [HttpGet("get-info")]
+    public async Task<IActionResult> GetUserInfoAsync
+    (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetUserQuery(CurrentUserId), cancellationToken));
 }
