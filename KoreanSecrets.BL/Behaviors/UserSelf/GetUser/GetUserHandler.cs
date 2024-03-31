@@ -21,6 +21,7 @@ public class GetUserHandler : IRequestHandler<GetUserQuery, User>
 
     public async Task<User> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Users.FirstOrDefaultAsync(t => t.Id == request.CurrentUserId);
+        return await _context.Users
+            .Include(t => t.AddressInfo).FirstOrDefaultAsync(t => t.Id == request.CurrentUserId);
     }
 }

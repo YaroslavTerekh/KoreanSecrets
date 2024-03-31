@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
+using KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
 using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
 using KoreanSecrets.BL.Behaviors.Products.GetBrands;
 using KoreanSecrets.BL.Behaviors.Products.GetBrandsWIthoutPagination;
@@ -203,5 +204,12 @@ public class ProductsController : BaseController
     (
         [FromBody] SearchProductQuery query, 
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(query, cancellationToken)); 
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpGet("promocode/check-if-exists")]
+    public async Task<IActionResult> CheckPromocodeAsync
+    (
+        [FromBody] CheckPromocodeCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
 }
