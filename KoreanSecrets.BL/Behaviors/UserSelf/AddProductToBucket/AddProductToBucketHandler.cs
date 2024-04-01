@@ -40,10 +40,17 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
+        var volume = await _context.Volume
+            .FirstOrDefaultAsync(t => t.Id == request.VolumeId, cancellationToken);
+
+        if (volume is null)
+            throw new NotFoundException(ErrorMessages.ProductNotFound("Об'єкту об'єму"));
+
         var purchaseProduct = new PurchasedProduct
         {
             Amount = request.Amount,
             ProductId = product.Id,
+            VolumeId = request.VolumeId,
             BucketId = user.BucketId
         };
 

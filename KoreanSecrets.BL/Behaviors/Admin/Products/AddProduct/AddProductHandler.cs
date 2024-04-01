@@ -28,8 +28,7 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             Title = request.Title,
             Characteristics = request.Characteristics,
             Syllabes = request.Syllabes,
-            Usage = request.Usage,
-            Price = request.Price,            
+            Usage = request.Usage,           
             BrandId = request.BrandId,
             CategoryId = request.CategoryId,
             CountryId = request.CountryId,
@@ -41,7 +40,9 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
 
         product.MainPhoto.ProductMainPhotoId = product.Id;
         product.MainPhotoId = product.MainPhoto.Id;
-        product.Volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = product.Id }).ToList();
+        var volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = product.Id, Price = t.Price }).ToList();
+
+        await _context.Volume.AddRangeAsync(volumes, cancellationToken);
 
         List<AppFile> photos = new List<AppFile>();
 

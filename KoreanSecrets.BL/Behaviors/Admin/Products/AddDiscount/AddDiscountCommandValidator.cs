@@ -23,16 +23,6 @@ public class AddDiscountCommandValidator : AbstractValidator<AddDiscountCommand>
 
         RuleFor(t => t.NewPrice)
             .NotEmpty()
-            .WithMessage(ErrorMessages.WrongNewPrice)
-            .MustAsync(async (command, price, cancellationToken) =>
-            {
-                var product = await context.Products.FirstOrDefaultAsync(t => t.Id == command.ProductId, cancellationToken);
-
-                if (product is null)
-                    throw new ValidationException(ErrorMessages.SomeProductNotFound);
-
-                return price < product.Price;
-            })
             .WithMessage(ErrorMessages.WrongNewPrice);
     }
 }

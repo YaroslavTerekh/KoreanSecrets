@@ -21,8 +21,6 @@ public class AddProductCommand : IRequest
 
     public string Syllabes { get; set; }
 
-    public long Price { get; set; }
-
     public Guid CategoryId { get; set; }
 
     public Guid BrandId { get; set; }

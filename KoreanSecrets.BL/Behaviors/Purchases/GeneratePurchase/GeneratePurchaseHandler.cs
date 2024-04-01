@@ -28,21 +28,24 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             .Include(t => t.Bucket)
                 .ThenInclude(t => t.PurchaseProducts)
                     .ThenInclude(t => t.Product)
+            .Include(t => t.Bucket)
+                .ThenInclude(t => t.PurchaseProducts)
+                    .ThenInclude(t => t.Volume)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
-        if (user.AddressInfo is null)
+        if (user.AddressInfo is null && request.Address is null)
             throw new NotFoundException(ErrorMessages.AddressInfoNotFound);
 
         if (user.Bucket.PurchaseProducts.Count < 1)
             throw new Exception(ErrorMessages.BucketIsEmpty);
 
         var promocode = await _context.Promocodes
-            .FirstOrDefaultAsync(t => t.Code == request.Promocode, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Code == request.Promocode && t.IsActive, cancellationToken);
 
-        if (promocode is null && request.Promocode is not null)
+        if (promocode is null && request.Promocode != "")
             throw new NotFoundException(ErrorMessages.PromoNotFound);
 
         var purchase = new Purchase
@@ -57,12 +60,34 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
-        var totalPrice = purchase.Products.Select(t => t.Product.Price * t.Amount).Sum();
+        var totalPrice = purchase.Products.Select(t => t.Volume.Price * t.Amount).Sum();
 
         if(promocode is not null)
             totalPrice -= (long)((totalPrice * promocode.Discount) / 100);
 
         purchase.TotalPrice = totalPrice;
+
+        if(request.Address is not null)
+        {
+            if(user.AddressInfoId is not null)
+            {
+                var addressInfo = await _context.Addresses.FirstOrDefaultAsync(t => t.Id == user.AddressInfoId, cancellationToken);
+
+                addressInfo.Warehouse = request.Address.Warehouse;
+                addressInfo.City = request.Address.City;
+            } 
+            else
+            {
+                var addressOfUser = new AddressInfo
+                {
+                    City = request.Address.City,
+                    Warehouse = request.Address.Warehouse,
+                    UserId = user.Id
+                };
+
+                await _context.Addresses.AddAsync(addressOfUser, cancellationToken);
+            }
+        }
 
         await _context.Purchases.AddAsync(purchase, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

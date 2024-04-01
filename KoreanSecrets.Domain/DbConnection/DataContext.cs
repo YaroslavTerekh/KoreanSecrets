@@ -30,6 +30,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<Banner> Banners { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<PurchasedProduct> PurchasedProducts { get; set; }
+    public DbSet<Volume> Volume { get; set; }
     //public DbSet<CategoryBrand> CategoryBrands { get; set; }
     //public DbSet<CategoryCountry> CategoryCountries { get; set; }
     //public DbSet<CategoryDemand> CategoryDemands { get; set; }

@@ -10,5 +10,7 @@ public class AddProductToBucketCommand : IAuthorizedRequest
 {
     public Guid ProductId { get; set; }
 
+    public Guid VolumeId { get; set; }
+
     public int Amount { get; set; }
 }

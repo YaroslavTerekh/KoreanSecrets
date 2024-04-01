@@ -33,7 +33,6 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
         product.Characteristics = request.Characteristics;
         product.Syllabes = request.Syllabes;
         product.Usage = request.Usage;
-        product.Price = request.Price;
         product.AdditionalIcon = request.Icon;
 
         await _context.SaveChangesAsync(cancellationToken);

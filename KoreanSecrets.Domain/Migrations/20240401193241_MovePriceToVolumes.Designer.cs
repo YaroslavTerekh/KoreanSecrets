@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240401193241_MovePriceToVolumes")]
+    partial class MovePriceToVolumes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,10 +420,7 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PurchaseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("VolumeId")
+                    b.Property<Guid>("PurchaseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -431,8 +430,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasIndex("PurchaseId");
-
-                    b.HasIndex("VolumeId");
 
                     b.ToTable("PurchasedProducts");
                 });
@@ -890,21 +887,17 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasForeignKey("ProductId")
                         .IsRequired();
 
-                    b.HasOne("KoreanSecrets.Domain.Entities.Purchase", null)
+                    b.HasOne("KoreanSecrets.Domain.Entities.Purchase", "Purchase")
                         .WithMany("Products")
                         .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("KoreanSecrets.Domain.Entities.Volume", "Volume")
-                        .WithMany()
-                        .HasForeignKey("VolumeId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Bucket");
 
                     b.Navigation("Product");
 
-                    b.Navigation("Volume");
+                    b.Navigation("Purchase");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Volume", b =>

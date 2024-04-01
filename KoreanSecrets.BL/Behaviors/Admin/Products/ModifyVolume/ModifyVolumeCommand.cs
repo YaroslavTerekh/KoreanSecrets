@@ -1,13 +1,16 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoreanSecrets.Domain.DataTransferObjects;
+namespace KoreanSecrets.BL.Behaviors.Admin.Products.ModifyVolume;
 
-public class VolumeDTO
+public class ModifyVolumeCommand : IRequest
 {
+    public Guid VolumeId { get; set; }
+
     public long Value { get; set; }
 
     public string Unit { get; set; }

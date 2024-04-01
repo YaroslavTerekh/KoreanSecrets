@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240401201032_AddVolumeToPurchase")]
+    partial class AddVolumeToPurchase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,7 +420,7 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PurchaseId")
+                    b.Property<Guid>("PurchaseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("VolumeId")
@@ -890,10 +892,11 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasForeignKey("ProductId")
                         .IsRequired();
 
-                    b.HasOne("KoreanSecrets.Domain.Entities.Purchase", null)
+                    b.HasOne("KoreanSecrets.Domain.Entities.Purchase", "Purchase")
                         .WithMany("Products")
                         .HasForeignKey("PurchaseId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("KoreanSecrets.Domain.Entities.Volume", "Volume")
                         .WithMany()
@@ -903,6 +906,8 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Bucket");
 
                     b.Navigation("Product");
+
+                    b.Navigation("Purchase");
 
                     b.Navigation("Volume");
                 });

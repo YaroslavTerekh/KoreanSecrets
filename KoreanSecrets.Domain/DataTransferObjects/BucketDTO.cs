@@ -16,5 +16,7 @@ public class PurchaseProductDTO : BaseEntity
 {
     public ListProductDTO Product { get; set; }
 
+    public VolumeDTO Volume { get; set; }
+
     public int Amount { get; set; }
 }

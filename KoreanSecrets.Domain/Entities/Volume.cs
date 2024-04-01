@@ -12,6 +12,8 @@ public class Volume : BaseEntity
 
     public string Unit { get; set; }
 
+    public long Price { get; set; }
+
     public Guid ProductId { get; set; }
 
     public Product Product { get; set; }

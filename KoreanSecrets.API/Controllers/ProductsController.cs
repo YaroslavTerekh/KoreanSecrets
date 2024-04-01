@@ -1,4 +1,7 @@
-﻿using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
+﻿using KoreanSecrets.BL.Behaviors.Admin.Products.AddNewVolume;
+using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteVolume;
+using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyVolume;
+using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
 using KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
@@ -206,10 +209,31 @@ public class ProductsController : BaseController
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
 
-    [HttpGet("promocode/check-if-exists")]
+    [HttpPost("promocode/check-if-exists")]
     public async Task<IActionResult> CheckPromocodeAsync
     (
         [FromBody] CheckPromocodeCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPost("volumes/add")]
+    public async Task<IActionResult> AddVolumeAsync
+    (
+        [FromBody] AddNewVolumeCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPut("volumes/modify")]
+    public async Task<IActionResult> ModifyVolumeAsync
+    (
+        [FromBody] ModifyVolumeCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpDelete("volumes/{id:guid}/delete")]
+    public async Task<IActionResult> DeleteVolumeAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeleteVolumeCommand(id), cancellationToken));
 }

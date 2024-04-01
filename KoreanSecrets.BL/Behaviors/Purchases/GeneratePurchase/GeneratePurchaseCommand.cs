@@ -15,4 +15,13 @@ public class GeneratePurchaseCommand : IAuthorizedRequest<string>
     public string? Comment { get; set; }
 
     public string? Promocode { get; set; }
+
+    public Address Address { get; set; }
+}
+
+public class Address
+{
+    public string City { get; set; }
+
+    public string Warehouse { get; set; }
 }
