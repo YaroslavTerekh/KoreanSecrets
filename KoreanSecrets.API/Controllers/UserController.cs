@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
+﻿using KoreanSecrets.BL.Behaviors.Products.TogglePromocodeStatus;
+using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
@@ -7,6 +8,8 @@ using KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
+using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePassword;
+using KoreanSecrets.BL.Behaviors.UserSelf.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -116,4 +119,37 @@ public class UserController : BaseController
     [HttpGet("get-info")]
     public async Task<IActionResult> GetUserInfoAsync
     (CancellationToken cancellationToken = default) => Ok(await _mediatr.Send(new GetUserQuery(CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPut("info/update")]
+    public async Task<IActionResult> UpdateUserInfoAsync
+    (
+        [FromBody] UpdateUserCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [Authorize]
+    [HttpPut("password/update")]
+    public async Task<IActionResult> UpdateUserPasswordAsync
+    (
+        [FromBody] UpdatePasswordCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [Authorize]
+    [HttpPatch("promocode/{id:guid}/toggle")]
+    public async Task<IActionResult> TogglePromocodeAsync
+    (
+        [FromRoute]Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new TogglePromocodeStatusCommand(id), cancellationToken));
+
 }

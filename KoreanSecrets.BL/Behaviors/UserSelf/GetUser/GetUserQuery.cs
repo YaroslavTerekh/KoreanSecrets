@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
 
-public class GetUserQuery : IAuthorizedRequest<User>
+public class GetUserQuery : IAuthorizedRequest<UserDTO>
 {
     public GetUserQuery(Guid userId)
     {

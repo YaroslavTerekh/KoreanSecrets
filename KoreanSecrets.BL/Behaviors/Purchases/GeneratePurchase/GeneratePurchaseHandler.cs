@@ -50,6 +50,8 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         var purchase = new Purchase
         {
+            Warehouse = request.Address.Warehouse,
+            City = request.Address.City,
             UserId = user.Id,
             PurchaseStatus = PurchaseStatus.Waiting,
             Comment = request.Comment,
@@ -67,7 +69,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         purchase.TotalPrice = totalPrice;
 
-        if(request.Address is not null)
+        if(request.Address is not null && request.SaveAddress)
         {
             if(user.AddressInfoId is not null)
             {

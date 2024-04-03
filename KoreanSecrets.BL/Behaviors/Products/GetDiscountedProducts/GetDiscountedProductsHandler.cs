@@ -28,6 +28,7 @@ public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProduct
         var query = _context.Products
             .Include(t => t.Brand)
             .Include(t => t.MainPhoto)
+            .Include(t => t.Volumes)
             .Where(t => t.DiscountPrice != null && t.AdditionalIcon == ProductIcon.Sale);
 
         var products = await query

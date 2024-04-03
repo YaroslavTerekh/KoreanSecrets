@@ -26,6 +26,7 @@ public class SearchProductHandler : IRequestHandler<SearchProductQuery, List<Lis
     {
         return await _context.Products
             .Where(t => t.Title.Contains(request.SearchText))
+            .Include(t => t.Volumes)
             .Select(t => _mapper.Map<ListProductDTO>(t))
             .ToListAsync(cancellationToken);
     }

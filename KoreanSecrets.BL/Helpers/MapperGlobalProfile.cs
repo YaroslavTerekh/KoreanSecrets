@@ -16,8 +16,10 @@ public class MapperGlobalProfile : Profile
     {
         CreateMap<Product, PageProductDTO>()
             .ForMember(dest => dest.SameProducts, src => src.Ignore())
+            .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Product, ListProductDTO>()
+            .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Bucket, BucketDTO>();
         CreateMap<Brand, BrandDTO>();

@@ -29,6 +29,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
         var query = _context.Products
             .AsNoTracking()
             .Include(t => t.Brand)
+            .Include(t => t.Volumes)
             .Include(t => t.MainPhoto)
             .Where(t => t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null && t.DemandId != null && t.BrandId != null);
 

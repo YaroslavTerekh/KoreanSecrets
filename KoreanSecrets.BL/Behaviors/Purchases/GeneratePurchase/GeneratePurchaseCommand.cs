@@ -17,6 +17,8 @@ public class GeneratePurchaseCommand : IAuthorizedRequest<string>
     public string? Promocode { get; set; }
 
     public Address Address { get; set; }
+
+    public bool SaveAddress { get; set; }
 }
 
 public class Address

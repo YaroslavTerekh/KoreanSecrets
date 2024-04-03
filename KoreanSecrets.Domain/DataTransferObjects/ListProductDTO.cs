@@ -12,7 +12,7 @@ public class ListProductDTO : BaseEntity
 {
     public string Title { get; set; }
 
-    public long Price { get; set; }
+    public List<VolumeDTO> Volumes { get; set; }
 
     public long? DiscountPrice { get; set; }
 

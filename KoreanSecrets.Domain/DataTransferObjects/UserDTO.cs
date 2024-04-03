@@ -18,4 +18,10 @@ public class UserDTO : BaseEntity
     public bool IsPhoneNumberConfirmed { get; set; }
 
     public int OrdersCount { get; set; }
+
+    public Guid? AddressInfoId { get; set; }
+
+    public AddressInfo? AddressInfo { get; set; }
+
+    public Guid BucketId { get; set; }
 }

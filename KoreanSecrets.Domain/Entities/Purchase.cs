@@ -11,6 +11,10 @@ public class Purchase : BaseEntity
 {
     public long PurchaseIdentifier { get; set; }
 
+    public string City { get; set; }
+
+    public string Warehouse { get; set; }
+
     public Guid UserId { get; set; }
 
     public User User { get; set; }    

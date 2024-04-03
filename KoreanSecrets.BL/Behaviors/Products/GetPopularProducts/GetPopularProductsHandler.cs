@@ -28,6 +28,7 @@ public class GetPopularProductsHandler : IRequestHandler<GetPopularProductsQuery
             .Where(t => t.BrandId != null && t.CategoryId != null && t.CountryId != null && t.DemandId != null && t.SubCategoryId != null)
             .Include(t => t.MainPhoto)
             .Include(t => t.Brand)
+            .Include(t => t.Volumes)
             .Include(t => t.Feedbacks)
             .OrderByDescending(t => t.Feedbacks.Count)
             .Skip(request.PageSize * request.CurrentPage)
