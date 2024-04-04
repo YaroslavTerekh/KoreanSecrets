@@ -39,6 +39,7 @@ public class MapperGlobalProfile : Profile
             //.ForMember(dest => dest.Countries, src => src.MapFrom(t => t.CategoryCountries.Select(t => t.Country).ToList()))
             //.ForMember(dest => dest.Brands, src => src.MapFrom(t => t.CategoryBrands.Select(t => t.Brand).ToList()));
         CreateMap<PurchasedProduct, PurchaseProductDTO>();
+        CreateMap<AddressInfo, AddressInfoDTO>();
         CreateMap<AppFile, AppFileDTO>()
             .ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => String.Concat(hostSettings.ApplicationUrl, src.FilePath.Replace(@"\", "/"))));
     }

@@ -85,6 +85,16 @@ public class LiqPayService : ILiqPayService
         if (purchase is null)
             throw new NotFoundException(ErrorMessages.PurchaseProductNotRelatedToUser);
 
+        if(status == PurchaseStatus.Success)
+        {
+            var bucket = await _context.Users
+                .Include(t => t.Bucket)
+                .Select(t => t.Bucket)
+                .FirstOrDefaultAsync(t => t.Id == purchase.UserId, cancellationToken);
+
+            bucket.PurchaseProducts.Clear();
+        }
+
         purchase.PurchaseStatus = status;
         await _context.SaveChangesAsync(cancellationToken);
     }

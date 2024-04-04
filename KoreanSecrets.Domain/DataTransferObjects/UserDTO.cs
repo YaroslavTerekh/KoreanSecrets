@@ -22,7 +22,7 @@ public class UserDTO : BaseEntity
 
     public Guid? AddressInfoId { get; set; }
 
-    public AddressInfo? AddressInfo { get; set; }
+    public AddressInfoDTO? AddressInfo { get; set; }
 
     public Guid BucketId { get; set; }
 }

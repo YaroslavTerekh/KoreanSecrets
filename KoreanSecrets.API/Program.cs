@@ -154,6 +154,14 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+builder.Services.AddCors(options => options.AddPolicy(
+            "CORS",
+            builder => builder
+                .SetIsOriginAllowed(_ => true)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()));
+
 var app = builder.Build();
 var scope = app.Services.CreateScope();
 
@@ -184,6 +192,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("CORS");
 
 app.UseHangfireDashboard();
 app.MapControllers();
