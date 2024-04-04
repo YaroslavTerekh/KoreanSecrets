@@ -25,9 +25,10 @@ public class GetUserHandler : IRequestHandler<GetUserQuery, UserDTO>
 
     public async Task<UserDTO> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Users
+        var user =  await _context.Users
             .Include(t => t.AddressInfo)
-            .Select(t => _mapper.Map<UserDTO>(t))
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
+
+        return  _mapper.Map<UserDTO>(user);
     }
 }
