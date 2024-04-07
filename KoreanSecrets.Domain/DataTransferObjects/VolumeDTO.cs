@@ -8,6 +8,7 @@ namespace KoreanSecrets.Domain.DataTransferObjects;
 
 public class VolumeDTO
 {
+    public Guid Id { get; set; }
     public long Value { get; set; }
 
     public string Unit { get; set; }
