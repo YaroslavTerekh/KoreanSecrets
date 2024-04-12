@@ -9,6 +9,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePassword;
+using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePasswordUnauthorized;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdateUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -141,6 +142,16 @@ public class UserController : BaseController
     )
     {
         command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [HttpPut("password/update-unauth")]
+    public async Task<IActionResult> UpdatePasswordAsync
+    (
+        [FromBody] UpdatePasswordUnauthorizedCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
 

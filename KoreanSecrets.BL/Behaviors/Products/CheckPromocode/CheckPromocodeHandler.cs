@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
 
-public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, bool>
+public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, PromocodeUI?>
 {
     private readonly DataContext _context;
 
@@ -20,11 +21,16 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, bool
         _context = context;
     }
 
-    public async Task<bool> Handle(CheckPromocodeCommand request, CancellationToken cancellationToken)
+    public async Task<PromocodeUI?> Handle(CheckPromocodeCommand request, CancellationToken cancellationToken)
     {
         var promocode = await _context.Promocodes
             .FirstOrDefaultAsync(t => t.Code == request.Promocode && t.IsActive, cancellationToken);
 
-        return promocode is not null;
+        return promocode is null ? null : new PromocodeUI
+        {
+            Id = promocode.Id,
+            Discount = promocode.Discount,
+            Title = promocode.Code
+        };
     }
 }

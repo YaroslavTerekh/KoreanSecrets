@@ -27,13 +27,13 @@ public class UpdatePasswordHandler : IRequestHandler<UpdatePasswordCommand>
 
     public async Task<Unit> Handle(UpdatePasswordCommand request, CancellationToken cancellationToken)
     {
-        if (request.OldPassword != request.Password) throw new Exception("Паролі не збігаються!");
+        if (request.ConfirmPassword != request.Password) throw new Exception("Паролі не збігаються!");
 
         var user = await _context.Users.FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         var result = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.Password);
 
-        if (result.Succeeded) throw new Exception(result.Errors.Select(t => t.Description).ToList().ToString());
+        if (!result.Succeeded) throw new Exception(result.Errors.Select(t => t.Description).ToList().ToString());
 
         return Unit.Value;
     }
