@@ -29,7 +29,7 @@ public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProduct
             .Include(t => t.Brand)
             .Include(t => t.MainPhoto)
             .Include(t => t.Volumes)
-            .Where(t => t.DiscountPrice != null && t.AdditionalIcon == ProductIcon.Sale);
+            .Where(t => t.AdditionalIcon == ProductIcon.Sale);
 
         var products = await query
             .Skip(request.CurrentPage * request.PageSize)

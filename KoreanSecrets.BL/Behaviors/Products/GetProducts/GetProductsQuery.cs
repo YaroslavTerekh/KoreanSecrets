@@ -20,7 +20,9 @@ public class GetProductsQuery : IAuthorizedRequest<PaginationModelDTO<ListProduc
     public List<Guid> SubCategoriesIds { get; set; } = new();
 
     public List<Guid> CategoriesIds { get; set; } = new();
-
+    
+    public bool Sale { get; set; }
+    public bool NewProduct { get; set; }
     public int CurrentPage { get; set; }
 
     public int PageSize { get; set; }

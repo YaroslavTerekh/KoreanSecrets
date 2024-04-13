@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.Domain.Common.Enums;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetProducts;
 
@@ -38,7 +39,9 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
         if (request.DemandsIds.Count > 0) query = query.Where(t => request.DemandsIds.Contains(t.DemandId!.Value));
         if (request.BrandsIds.Count > 0) query = query.Where(t => request.BrandsIds.Contains(t.BrandId!.Value));
         if (request.CategoriesIds.Count > 0) query = query.Where(t => request.CategoriesIds.Contains(t.CategoryId!.Value));
-
+        if (request.Sale) query = query.Where(t => t.AdditionalIcon == ProductIcon.Sale);
+        if (request.NewProduct) query = query.Where(t => t.AdditionalIcon == ProductIcon.New);
+        
         var products = await query
                 .Skip(request.CurrentPage * request.PageSize)
                 .Take(request.PageSize)
