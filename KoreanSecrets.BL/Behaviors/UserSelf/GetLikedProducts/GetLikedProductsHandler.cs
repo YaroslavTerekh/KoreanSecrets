@@ -29,7 +29,7 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
         var likes = await _context.Users
             .Skip(request.PageSize * request.CurrentPage)
             .Take(request.PageSize)
-            .SelectMany(t => t.Likes).Select(t => _mapper.Map<ListProductDTO>(t))
+            .SelectMany(t => t.Likes).Include(x=>x.MainPhoto).Select(t => _mapper.Map<ListProductDTO>(t))
             .ToListAsync(cancellationToken);
 
         foreach (var likedProduct in likes)

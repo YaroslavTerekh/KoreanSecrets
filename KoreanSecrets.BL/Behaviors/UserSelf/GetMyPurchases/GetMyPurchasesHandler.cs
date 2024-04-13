@@ -24,7 +24,10 @@ public class GetMyPurchasesHandler : IRequestHandler<GetMyPurchasesQuery, Pagina
     {
         var userPurchases = _context.Purchases.Where(t => t.UserId == request.CurrentUserId);
 
-        var result = await userPurchases.Skip(request.PageSize * request.CurrentPage)
+        var result = await userPurchases
+            .Include(x=>x.Products)
+                .ThenInclude(p => p.Product)
+                    .ThenInclude(x=>x.MainPhoto).Skip(request.PageSize * request.CurrentPage)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
