@@ -35,7 +35,8 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             DemandId = request.DemandId,
             SubCategoryId = request.SubCategoryId,
             AdditionalIcon = request.Icon,
-            MainPhoto = await _fileService.UploadFileAsync(request.MainPhoto, cancellationToken)
+            MainPhoto = await _fileService.UploadFileAsync(request.MainPhoto, cancellationToken),
+            IsInStock = true
         };
 
         product.MainPhoto.ProductMainPhotoId = product.Id;
