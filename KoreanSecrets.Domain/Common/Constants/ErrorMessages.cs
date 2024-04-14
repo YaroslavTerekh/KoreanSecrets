@@ -20,6 +20,7 @@ public static class ErrorMessages
     public const string DemandNotFound = "Необхідність не знайдено";
     public const string CategoryNotFound = "Необхідність не знайдено";
     public const string SomeProductNotFound = "Товару не знайдено";
+    public const string PurchaseNotFound = "Замовлення не знайдено";
 
     public const string WrongPassword = "Пароль неправильний";
     public const string WrongPhoneNumber = "Номер телефону неправильний";
@@ -51,5 +52,6 @@ public static class ErrorMessages
     public const string PhoneNumberIsNotConfirmed = "Спочатку підтвердьте свій номер телефону";
     public const string ContentAccessForbidden = "Доступ до контенту заборонено";
     public const string PurchaseProductNotRelatedToUser = "Ваша корзина пуста";
+    public const string PurchaseNotRelatedToUser = "Це не Ваша покупка";
     public const string BucketIsEmpty = "Ваша корзина пуста";
 }

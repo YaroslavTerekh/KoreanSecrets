@@ -8,6 +8,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
+using KoreanSecrets.BL.Behaviors.UserSelf.UpdateOrderStatus;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePassword;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePasswordUnauthorized;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdateUser;
@@ -159,8 +160,20 @@ public class UserController : BaseController
     [HttpPatch("promocode/{id:guid}/toggle")]
     public async Task<IActionResult> TogglePromocodeAsync
     (
-        [FromRoute]Guid id,
+        [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new TogglePromocodeStatusCommand(id), cancellationToken));
 
+
+    [Authorize]
+    [HttpPatch("purchase/{id:guid}/status/update")]
+    public async Task<IActionResult> ChangePurchaseStatusAsync
+    (
+        [FromBody] UpdateOrderStatusCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 }
