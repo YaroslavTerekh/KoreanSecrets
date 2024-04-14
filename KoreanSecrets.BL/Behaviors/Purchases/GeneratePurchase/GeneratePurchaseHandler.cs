@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 
-public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, string>
+public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, object>
 {
     private readonly DataContext _context;
     private readonly ILiqPayService _liqPayService;
@@ -21,7 +21,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         _liqPayService = liqPayService;
     }
 
-    public async Task<string> Handle(GeneratePurchaseCommand request, CancellationToken cancellationToken)
+    public async Task<object> Handle(GeneratePurchaseCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .Include(t => t.AddressInfo)
@@ -96,8 +96,10 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         BackgroundJob.Schedule(() => ModifyPurchaseDeliveryState(purchase.Id, PurchaseStatus.Success), TimeSpan.FromDays(15));
         BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromMinutes(15));
+ 
+        var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
 
-        return await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
+        return new { Form = form };
     }
 
     private long ConvertGuidToLong(Guid guid)

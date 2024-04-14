@@ -49,7 +49,8 @@ public class LiqPayService : ILiqPayService
         };
 
         var liqPayClient = new LiqPayClient(_liqPaySettings.PublicKey, _liqPaySettings.PrivateKey);
-        return liqPayClient.CNBForm(invoiceRequest);
+        var form =  liqPayClient.CNBForm(invoiceRequest);
+        return form;
     }
 
     public async Task ProcessCallbackAsync(Dictionary<string, string> data, CancellationToken cancellationToken = default)
