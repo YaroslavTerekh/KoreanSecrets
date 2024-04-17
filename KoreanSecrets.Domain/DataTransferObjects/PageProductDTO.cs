@@ -14,6 +14,8 @@ public class PageProductDTO : BaseEntity
 
     public bool? IsLikedByUser { get; set; }
 
+    public int Quantity { get; set; }
+
     public Guid MainPhotoId { get; set; }
 
     public AppFileDTO MainPhoto { get; set; }

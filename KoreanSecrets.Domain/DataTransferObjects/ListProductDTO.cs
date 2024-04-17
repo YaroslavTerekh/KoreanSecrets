@@ -18,6 +18,8 @@ public class ListProductDTO : BaseEntity
 
     public Guid MainPhotoId { get; set; }
 
+    public int Quantity { get; set; }
+
     public AppFileDTO MainPhoto { get; set; }
 
     public Guid BrandId { get; set; }

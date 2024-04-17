@@ -43,6 +43,8 @@ public class Product : BaseEntity
 
     public string Syllabes { get; set; }
 
+    public int Quantity { get; set; }
+
     public Guid? GuideId { get; set; }
 
     public AppFile Guide { get; set; }

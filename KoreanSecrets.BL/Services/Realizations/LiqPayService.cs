@@ -81,6 +81,7 @@ public class LiqPayService : ILiqPayService
     {
         var orderId = Guid.Parse(response.OrderId);
         var purchase = await _context.Purchases
+            .Include(t => t.Products)
             .FirstOrDefaultAsync(t => t.Id == orderId, cancellationToken);
 
         if (purchase is null)
@@ -96,6 +97,15 @@ public class LiqPayService : ILiqPayService
             bucket.PurchaseProducts.Clear();
         }
 
+        var purchaseProductsIds = purchase.Products.Select(t => t.Id).ToList();
+        var purchaseProducts = await _context.PurchasedProducts
+            .Where(t => purchaseProductsIds.Contains(t.Id))
+            .ToListAsync(cancellationToken);
+
+        var productsIds = purchaseProducts.Select(t => t.ProductId).ToList();
+        var products = await _context.Products.Where(t => productsIds.Contains(t.Id)).ToListAsync(cancellationToken);
+
+        products.ForEach(t => t.Quantity--);
         purchase.PurchaseStatus = status;
         await _context.SaveChangesAsync(cancellationToken);
     }

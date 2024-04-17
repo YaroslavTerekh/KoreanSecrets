@@ -3,6 +3,7 @@ using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -44,6 +45,16 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
 
         if (bucket is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
+
+        var productsIds = bucket.PurchaseProducts.Select(t => t.Product.Id).ToList();
+        var products = await _context.Products.Where(t => productsIds.Contains(t.Id)).ToListAsync(cancellationToken);
+
+        var lowQuantityIds = products.Where(t => t.Quantity <= 0).Select(t => t.Id).ToList();
+        var purchasesToDeleteIds = bucket.PurchaseProducts.Where(t => lowQuantityIds.Contains(t.Product.Id)).Select(t => t.Id).ToList();
+
+        var purchases = await _context.PurchasedProducts.Where(t => purchasesToDeleteIds.Contains(t.Id)).ToListAsync(cancellationToken);
+
+        _context.PurchasedProducts.RemoveRange(purchases);
 
         return bucket;
     }
