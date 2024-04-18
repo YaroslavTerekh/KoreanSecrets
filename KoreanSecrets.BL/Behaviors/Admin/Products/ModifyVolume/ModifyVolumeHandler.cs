@@ -23,7 +23,7 @@ public class ModifyVolumeHandler : IRequestHandler<ModifyVolumeCommand>
     public async Task<Unit> Handle(ModifyVolumeCommand request, CancellationToken cancellationToken)
     {
         var volume = await _context.Volume
-            .FirstOrDefaultAsync(t => t.Id == request.VolumeId, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
         if (volume is null) throw new Exception(ErrorMessages.ProductNotFound("Об'єкту об'єму для модифікації"));
 

@@ -9,7 +9,7 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Products.ModifyVolume;
 
 public class ModifyVolumeCommand : IRequest
 {
-    public Guid VolumeId { get; set; }
+    public Guid Id { get; set; }
 
     public long Value { get; set; }
 

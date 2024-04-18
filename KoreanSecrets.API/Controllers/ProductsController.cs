@@ -23,6 +23,7 @@ using KoreanSecrets.BL.Behaviors.Products.SearchProduct;
 using KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetLikedProducts;
 using KoreanSecrets.BL.Services.Abstractions;
+using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -223,6 +224,7 @@ public class ProductsController : BaseController
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 
+    [Authorize(Policy = AuthPolicies.Admins)]
     [HttpPut("volumes/modify")]
     public async Task<IActionResult> ModifyVolumeAsync
     (
