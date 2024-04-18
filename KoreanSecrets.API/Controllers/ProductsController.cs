@@ -232,6 +232,7 @@ public class ProductsController : BaseController
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 
+    [Authorize(Policy = AuthPolicies.Admins)]
     [HttpDelete("volumes/{id:guid}/delete")]
     public async Task<IActionResult> DeleteVolumeAsync
     (
