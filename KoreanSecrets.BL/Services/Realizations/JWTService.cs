@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.Domain.Common.Constants;
 
 namespace KoreanSecrets.BL.Services.Realizations;
 
@@ -45,6 +46,11 @@ public class JWTService : IJWTService
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new AuthToken(jwt, expireDate);
+        var data = new AuthToken(jwt, expireDate)
+        {
+            UseLocalData = roles.Contains(Roles.Admin)
+        };
+
+        return data;
     }
 }

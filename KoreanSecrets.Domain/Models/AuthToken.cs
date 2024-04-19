@@ -11,6 +11,7 @@ public class AuthToken
     public string Token { get; set; }
 
     public DateTime Expires { get; set; }
+    public bool UseLocalData { get; set; }
 
     public AuthToken(string token, DateTime expires)
     {
