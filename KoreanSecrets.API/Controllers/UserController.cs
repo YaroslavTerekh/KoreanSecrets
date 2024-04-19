@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.BL.Behaviors.Products.TogglePromocodeStatus;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.AddReport;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
@@ -170,6 +171,18 @@ public class UserController : BaseController
     public async Task<IActionResult> ChangePurchaseStatusAsync
     (
         [FromBody] UpdateOrderStatusCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [Authorize]
+    [HttpPost("report/create")]
+    public async Task<IActionResult> AddReportAsync
+    (
+        [FromBody] AddReportCommand command,
         CancellationToken cancellationToken = default
     )
     {

@@ -48,6 +48,8 @@ using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Users.ChangeReportStatus;
+using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
@@ -72,6 +74,11 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> GetChartForUsersOfYearAsync
     (CancellationToken cancellationToken = default)
         => Ok(await _mediatr.Send(new GetYearUserChartStatisticQuery(), cancellationToken));
+
+    [HttpGet("reports")]
+    public async Task<IActionResult> GetReportsAsync
+    (CancellationToken cancellationToken = default)
+    => Ok(await _mediatr.Send(new GetReportsQuery(), cancellationToken));
 
     [HttpGet("chart/users-of-weak")]
     public async Task<IActionResult> GetChartForUsersOfWeakAsync
@@ -212,6 +219,13 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> ChangeBrandPhotoAsync
     (
         [FromForm] ChangeBrandPhotoCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("report/status/change")]
+    public async Task<IActionResult> ChangeReportStatusAsync
+    (
+        [FromForm] ChangeReportStatusCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 

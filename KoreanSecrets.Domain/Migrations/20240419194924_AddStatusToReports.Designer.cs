@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240419194924_AddStatusToReports")]
+    partial class AddStatusToReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -464,12 +466,7 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Reports");
                 });
@@ -944,17 +941,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Volume");
                 });
 
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Report", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.User", "User")
-                        .WithMany("Reports")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Volume", b =>
                 {
                     b.HasOne("KoreanSecrets.Domain.Entities.Product", "Product")
@@ -1118,8 +1104,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Purchases");
-
-                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }
