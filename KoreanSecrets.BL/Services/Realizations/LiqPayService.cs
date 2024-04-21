@@ -44,7 +44,7 @@ public class LiqPayService : ILiqPayService
             OrderId = purchase.Id.ToString(),
             Action = LiqPayRequestAction.Pay,
             Language = LiqPayRequestLanguage.UK,
-            Description = $"Оплата замовлення №{purchase.PurchaseIdentifier} | Korean Secrets",
+            Description = $"Оплата замовлення №{purchase.PurchaseIdentifier} | Secrets of care",
             ServerUrl = _liqPaySettings.ServerUrl,
         };
 
