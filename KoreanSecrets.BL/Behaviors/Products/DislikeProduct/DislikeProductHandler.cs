@@ -37,6 +37,7 @@ public class DislikeProductHandler : IRequestHandler<DislikeProductCommand>
         if(user.Likes.Contains(product))
         {
             user.Likes.Remove(product);
+            product.Likes.Remove(user);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
