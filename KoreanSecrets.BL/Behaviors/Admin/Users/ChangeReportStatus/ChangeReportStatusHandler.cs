@@ -22,8 +22,9 @@ public class ChangeReportStatusHandler : IRequestHandler<ChangeReportStatusComma
     {
         var report = await _context.Reports.FirstOrDefaultAsync(t => t.Id == request.ReportId, cancellationToken);
 
-        report.Status = report.Status;
+        report.Status = request.Status;
 
+        _context.Reports.Update(report);
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
