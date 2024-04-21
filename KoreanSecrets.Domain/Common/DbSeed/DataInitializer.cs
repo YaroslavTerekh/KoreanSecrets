@@ -42,6 +42,19 @@ public static class DataInitializer
 
             await userManager.CreateAsync(admin, "Pa$$word123!");
             await userManager.AddToRoleAsync(admin, Roles.Admin);
+
+            var admin2 = new User
+            {
+                UserName = "Nightmare",
+                FirstName = "Nightmare",
+                LastName = "Nightmare",
+                PhoneNumber = "+380666666666",
+                Email = "Nightmarea@gmail.com",
+                PhoneNumberConfirmed = true
+            };
+
+            await userManager.CreateAsync(admin2, "Pa$$word123!");
+            await userManager.AddToRoleAsync(admin2, Roles.Admin);
         }
 
         return services;
