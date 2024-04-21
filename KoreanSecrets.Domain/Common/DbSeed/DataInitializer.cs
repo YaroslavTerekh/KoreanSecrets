@@ -27,8 +27,9 @@ public static class DataInitializer
             roleManager.CreateAsync(new ApplicationRole(Roles.User)).GetAwaiter().GetResult();
 
         var admins = await userManager.GetUsersInRoleAsync(Roles.Admin);
+        var phoneNumbers = admins.Select(t => t.PhoneNumber).ToList();
 
-        if (admins.Count < 1)
+        if (!phoneNumbers.Contains("+380999999999"))
         {
             var admin = new User
             {
@@ -43,6 +44,10 @@ public static class DataInitializer
             await userManager.CreateAsync(admin, "Pa$$word123!");
             await userManager.AddToRoleAsync(admin, Roles.Admin);
 
+        }
+
+        if (!phoneNumbers.Contains("+380666666666"))
+        {
             var admin2 = new User
             {
                 UserName = "Nightmare",
