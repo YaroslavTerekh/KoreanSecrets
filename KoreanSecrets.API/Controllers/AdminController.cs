@@ -225,7 +225,7 @@ public class AdminController : ControllerBase
     [HttpPatch("report/status/change")]
     public async Task<IActionResult> ChangeReportStatusAsync
     (
-        [FromForm] ChangeReportStatusCommand command,
+        [FromBody] ChangeReportStatusCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 

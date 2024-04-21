@@ -26,6 +26,7 @@ public class GetReportsHandler : IRequestHandler<GetReportsQuery, List<ReportDTO
     {
         var reports = await _context.Reports
             .Include(t => t.User)
+            .ThenInclude(x=>x.AddressInfo)
             .Select(t => _mapper.Map<ReportDTO>(t))
             .ToListAsync(cancellationToken);
 
