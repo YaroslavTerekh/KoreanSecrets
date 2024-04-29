@@ -36,6 +36,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
+using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
@@ -462,4 +463,11 @@ public class AdminController : ControllerBase
         [FromBody] GetUsersQuery query,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(query, cancellationToken));
+    
+    [HttpDelete("product/delete/{id:guid}")]
+    public async Task<IActionResult> DeleteProductAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeleteProductCommand(id), cancellationToken));
 }
