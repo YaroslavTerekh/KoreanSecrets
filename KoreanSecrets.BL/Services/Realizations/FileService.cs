@@ -1,11 +1,15 @@
-﻿using KoreanSecrets.BL.Services.Abstractions;
+﻿using Firebase.Auth;
+using Firebase.Storage;
+using KoreanSecrets.BL.Services.Abstractions;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
+using KoreanSecrets.Domain.Common.Settings;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace KoreanSecrets.BL.Services.Realizations;
 
@@ -13,41 +17,54 @@ public class FileService : IFileService
 {
     private readonly DataContext _context;
     private readonly IWebHostEnvironment _env;
-
-    public FileService(DataContext context, IWebHostEnvironment env)
+    private readonly FirebaseSettings _firebaseSettings;
+    public FileService(DataContext context, IWebHostEnvironment env, FirebaseSettings firebaseSettings)
     {
         _context = context;
         _env = env;
+        _firebaseSettings = firebaseSettings;
     }
 
     public async Task<AppFile> UploadFileAsync(IFormFile file, CancellationToken cancellationToken = default)
     {
         var extension = Path.GetExtension(file.FileName);
-
         var fileName = Path.GetFileName(file.FileName);
-        var filePathName = fileName + "_" + Guid.NewGuid() + extension;
-        var path = Path.Combine("uploads", filePathName);
-        var uploadPath = Path.Combine(_env.ContentRootPath, "uploads", filePathName);
 
         try
         {
             var newFile = new AppFile
             {
-                FilePath = path,
                 FileExtension = extension,
                 FileName = fileName
             };
 
-            using (var fs = new FileStream(uploadPath, FileMode.CreateNew))
-            {
-                await file.CopyToAsync(fs, cancellationToken);
-            }
+            var stream = file.OpenReadStream();
+
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseSettings.ApiKey));
+            var a = await auth.SignInWithEmailAndPasswordAsync(_firebaseSettings.Email, _firebaseSettings.Password);
+
+            var cancellation = new CancellationTokenSource();
+
+            var task = new FirebaseStorage(
+                _firebaseSettings.StorageLink,
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true
+                })
+                .Child("uploads")
+                .Child(fileName)
+                .PutAsync(stream, cancellation.Token);
+
+            task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
+
+            var videoLink = await task;
+            newFile.FilePath = videoLink;
 
             return newFile;
         }
         catch (Exception e)
         {
-            File.Delete(uploadPath);
             throw;
         }
     }
@@ -58,12 +75,23 @@ public class FileService : IFileService
 
         if (file is not null)
         {
-            var path = Path.Combine(_env.ContentRootPath, file.FilePath);
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseSettings.ApiKey));
+            var a = await auth.SignInWithEmailAndPasswordAsync(_firebaseSettings.Email, _firebaseSettings.Password);
 
-            _context.Files.Remove(file);
-            await _context.SaveChangesAsync(cancellationToken);
+            var cancellation = new CancellationTokenSource();
 
-            File.Delete(path);
+            var task = new FirebaseStorage(
+                _firebaseSettings.StorageLink,
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true
+                })
+                .Child("uploads")
+                .Child(file.FileName)
+                .DeleteAsync();
+
+            await task;
         }
     }
 }

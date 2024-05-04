@@ -21,6 +21,8 @@ public class GetPromocodesHandler : IRequestHandler<GetPromocodesQuery, List<Pro
 
     public async Task<List<Promocode>> Handle(GetPromocodesQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Promocodes.ToListAsync(cancellationToken);
+        return await _context.Promocodes
+            .Include(t => t.Brand)
+            .ToListAsync(cancellationToken);
     }
 }

@@ -15,11 +15,11 @@ public class AddProductCommand : IRequest
 {
     public string Title { get; set; }
 
-    public string Characteristics { get; set; }
+    public string? Characteristics { get; set; }
 
-    public string Usage { get; set; }
+    public string? Usage { get; set; }
 
-    public string Syllabes { get; set; }
+    public string? Syllabes { get; set; }
 
     public Guid CategoryId { get; set; }
 

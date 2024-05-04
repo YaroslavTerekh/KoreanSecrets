@@ -1,6 +1,9 @@
-﻿using KoreanSecrets.Domain.DataTransferObjects;
+﻿using KoreanSecrets.Domain.Common.Constants;
+using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,15 +17,19 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Charts.GetWeekUserChartStatistic;
 public class GetWeekUserChartStatisticHandler : IRequestHandler<GetWeekUserChartStatisticQuery, ChartDTO>
 {
     private readonly DataContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public GetWeekUserChartStatisticHandler(DataContext context)
+    public GetWeekUserChartStatisticHandler(DataContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<ChartDTO> Handle(GetWeekUserChartStatisticQuery request, CancellationToken cancellationToken)
     {
-        var total = await _context.Users.Where(t => t.CreatedTime >= DateTime.UtcNow.AddDays(-7)).CountAsync(cancellationToken);
+        var users = await _context.Users.Where(t => t.CreatedTime >= DateTime.UtcNow.AddDays(-7)).ToListAsync(cancellationToken);
+        var admins = users.Where(t => _userManager.IsInRoleAsync(t, Roles.Admin).GetAwaiter().GetResult()).ToList();
+        var total = users.Where(t => !admins.Contains(t)).Count();
 
         return new ChartDTO
         {
@@ -42,7 +49,12 @@ public class GetWeekUserChartStatisticHandler : IRequestHandler<GetWeekUserChart
 
     private async Task<int> GetValue(int val)
     {
-        return await _context.Users.Where(t => t.CreatedTime.DayOfYear == DateTime.UtcNow.AddDays(val).DayOfYear
-            && t.CreatedTime.Year == DateTime.UtcNow.AddDays(val).Year).CountAsync();
+        var users = await _context.Users
+            .Where(t => t.CreatedTime.DayOfYear == DateTime.UtcNow.AddDays(val).DayOfYear && t.CreatedTime.Year == DateTime.UtcNow.AddDays(val).Year)
+            .ToListAsync();
+        var admins = users.Where(t => _userManager.IsInRoleAsync(t, Roles.Admin).GetAwaiter().GetResult()).ToList();
+        var total = users.Where(t => !admins.Contains(t)).Count();
+
+        return total;
     }
 }

@@ -15,4 +15,6 @@ public class Brand : BaseEntity
     public AppFile Photo { get; set; }
 
     public List<Product> Products { get; set; } = new();
+
+    public List<Promocode> Promocodes { get; set; } = new();
 }

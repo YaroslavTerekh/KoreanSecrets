@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240501083502_MakeProductsAsNullable")]
+    partial class MakeProductsAsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -342,9 +344,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BrandId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -359,8 +358,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BrandId");
 
                     b.ToTable("Promocodes");
                 });
@@ -899,17 +896,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("SubCategory");
                 });
 
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.Promocode", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.Brand", "Brand")
-                        .WithMany("Promocodes")
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Brand");
-                });
-
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Purchase", b =>
                 {
                     b.HasOne("KoreanSecrets.Domain.Entities.Promocode", "Promocode")
@@ -1072,8 +1058,6 @@ namespace KoreanSecrets.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Products");
-
-                    b.Navigation("Promocodes");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Bucket", b =>

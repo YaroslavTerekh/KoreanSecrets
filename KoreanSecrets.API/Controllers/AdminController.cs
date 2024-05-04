@@ -34,6 +34,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.AddPhotoToList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
+using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeProductQuantity;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProduct;
@@ -52,6 +53,7 @@ using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Users.ChangeReportStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
+using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -220,6 +222,13 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> ChangeBrandPhotoAsync
     (
         [FromForm] ChangeBrandPhotoCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("product/quantity/change")]
+    public async Task<IActionResult> ChangeProductQuantityAsync
+    (
+        [FromBody] ChangeProductQuantityCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 

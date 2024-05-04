@@ -1,6 +1,9 @@
-﻿using KoreanSecrets.Domain.DataTransferObjects;
+﻿using KoreanSecrets.Domain.Common.Constants;
+using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,15 +16,19 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Charts.GetYearUserChartStatistic;
 public class GetYearUserChartStatisticHandler : IRequestHandler<GetYearUserChartStatisticQuery, ChartDTO>
 {
     private readonly DataContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public GetYearUserChartStatisticHandler(DataContext context)
+    public GetYearUserChartStatisticHandler(DataContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<ChartDTO> Handle(GetYearUserChartStatisticQuery request, CancellationToken cancellationToken)
     {
-        var total = await _context.Users.Where(t => t.CreatedTime >= DateTime.UtcNow.AddMonths(-12)).CountAsync(cancellationToken);
+        var users = await _context.Users.Where(t => t.CreatedTime >= DateTime.UtcNow.AddMonths(-12)).ToListAsync(cancellationToken);
+        var admins = users.Where(t => _userManager.IsInRoleAsync(t, Roles.Admin).GetAwaiter().GetResult()).ToList();
+        var total = users.Where(t => !admins.Contains(t)).Count();
 
         return new ChartDTO
         {
@@ -46,7 +53,12 @@ public class GetYearUserChartStatisticHandler : IRequestHandler<GetYearUserChart
 
     private async Task<int> GetValue(int val)
     {
-        return await _context.Users.Where(t => t.CreatedTime.Month == val
-            && t.CreatedTime.Year == DateTime.UtcNow.Year).CountAsync();
+        var users = await _context.Users
+            .Where(t => t.CreatedTime.Month == val && t.CreatedTime.Year == DateTime.UtcNow.Year)
+            .ToListAsync();
+        var admins = users.Where(t => _userManager.IsInRoleAsync(t, Roles.Admin).GetAwaiter().GetResult()).ToList();
+        var total = users.Where(t => !admins.Contains(t)).Count();
+
+        return total;
     }
 }

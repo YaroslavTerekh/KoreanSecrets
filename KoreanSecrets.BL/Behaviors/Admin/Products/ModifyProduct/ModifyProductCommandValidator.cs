@@ -22,30 +22,6 @@ public class ModifyProductCommandValidator : AbstractValidator<ModifyProductComm
             .NotEmpty()
             .WithMessage(ValidationMessages.TitleRequired);
 
-        RuleFor(t => t.Characteristics)
-            .MinimumLength(100)
-            .WithMessage(ValidationMessages.DescriptionTooShort)
-            .MaximumLength(3000)
-            .WithMessage(ValidationMessages.DescriptionTooLong)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.DescriptionRequired);
-
-        RuleFor(t => t.Syllabes)
-            .MinimumLength(100)
-            .WithMessage(ValidationMessages.DescriptionTooShort)
-            .MaximumLength(3000)
-            .WithMessage(ValidationMessages.DescriptionTooLong)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.DescriptionRequired);
-
-        RuleFor(t => t.Usage)
-            .MinimumLength(100)
-            .WithMessage(ValidationMessages.DescriptionTooShort)
-            .MaximumLength(3000)
-            .WithMessage(ValidationMessages.DescriptionTooLong)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.DescriptionRequired);
-
         RuleFor(t => t.BrandId)
             .MustAsync(async (id, cancellationToken) =>
             {

@@ -18,6 +18,11 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
             .HasForeignKey<AppFile>(t => t.BrandPhotoId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.HasMany(t => t.Promocodes)
+            .WithOne(t => t.Brand)
+            .HasForeignKey(t => t.BrandId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         //builder.HasMany(t => t.CategoryBrands)
         //    .WithOne(t => t.Brand)
         //    .HasForeignKey(t => t.BrandId)

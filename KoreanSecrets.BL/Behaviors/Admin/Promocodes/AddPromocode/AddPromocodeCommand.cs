@@ -11,4 +11,6 @@ public class AddPromocodeCommand : IAuthorizedRequest
     public string Title { get; set; }
 
     public double Discount { get; set; }
+
+    public Guid BrandId { get; set; }
 }

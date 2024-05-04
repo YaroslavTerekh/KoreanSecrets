@@ -37,11 +37,11 @@ public class Product : BaseEntity
 
     public long? DiscountPrice { get; set; }
 
-    public string Characteristics { get; set; }
+    public string? Characteristics { get; set; }
 
-    public string Usage { get; set; }
+    public string? Usage { get; set; }
 
-    public string Syllabes { get; set; }
+    public string? Syllabes { get; set; }
 
     public int Quantity { get; set; }
 

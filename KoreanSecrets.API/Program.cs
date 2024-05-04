@@ -80,7 +80,11 @@ var liqPayConfig = builder.Configuration
 var hostConfig = builder.Configuration
         .GetSection("HostSettings")
         .Get<HostSettings>();
+var firebaseConfig = builder.Configuration
+        .GetSection("FirebaseSettings")
+        .Get<FirebaseSettings>();
 builder.Services.AddSingleton(hostConfig);
+builder.Services.AddSingleton(firebaseConfig);
 builder.Services.AddSingleton(liqPayConfig);
 builder.Services.AddSingleton(emailConfig);
 builder.Services.AddSingleton(novaPostConfig);
@@ -210,11 +214,11 @@ await builder.Services.SeedDatabase(scope.ServiceProvider.GetRequiredService<Rol
     scope.ServiceProvider.GetRequiredService<UserManager<User>>());
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();

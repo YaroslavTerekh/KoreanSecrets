@@ -23,6 +23,7 @@ public class AddPromocodeHandler : IRequestHandler<AddPromocodeCommand>
         var promocode = new Promocode
         {
             Code = request.Title,
+            BrandId = request.BrandId,
             Discount = request.Discount
         };
 
