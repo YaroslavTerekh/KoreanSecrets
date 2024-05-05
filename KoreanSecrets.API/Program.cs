@@ -24,6 +24,10 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,6 +175,40 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = async context =>
+            {
+                // Call this to skip the default logic and avoid using the default response
+                context.HandleResponse();
+
+                var httpContext = context.HttpContext;
+                var statusCode = StatusCodes.Status401Unauthorized;
+
+                var routeData = httpContext.GetRouteData();
+                var actionContext = new ActionContext(httpContext, routeData, new ActionDescriptor());
+
+                var factory = httpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+                var problemDetails = factory.CreateProblemDetails(httpContext, statusCode);
+
+                var result = new ObjectResult(problemDetails) { StatusCode = statusCode };
+                await result.ExecuteResultAsync(actionContext);
+            },
+            OnForbidden = async context =>
+            {
+                var httpContext = context.HttpContext;
+                var statusCode = StatusCodes.Status403Forbidden;
+
+                var routeData = httpContext.GetRouteData();
+                var actionContext = new ActionContext(httpContext, routeData, new ActionDescriptor());
+
+                var factory = httpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+                var problemDetails = factory.CreateProblemDetails(httpContext, statusCode);
+
+                var result = new ObjectResult(problemDetails) { StatusCode = StatusCodes.Status403Forbidden };
+                await result.ExecuteResultAsync(actionContext);
+            }
         };
     });
 
