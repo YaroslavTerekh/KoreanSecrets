@@ -99,7 +99,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
  
         var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
 
-        return new { Form = form };
+        return new { Form = form, Id = purchase.PurchaseIdentifier };
     }
 
     private long ConvertGuidToLong(Guid guid)

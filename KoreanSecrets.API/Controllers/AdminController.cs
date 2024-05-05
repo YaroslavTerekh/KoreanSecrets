@@ -435,11 +435,12 @@ public class AdminController : ControllerBase
     ) => Ok(await _mediatr.Send(new GetPromocodesQuery(), cancellationToken));
 
 
-    [HttpGet("purchases/all")]
+    [HttpPost("purchases/all")]
     public async Task<IActionResult> GetAllPurchasesAsync
     (
+        [FromBody] GetPurchasesQuery query,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(new GetPurchasesQuery(), cancellationToken));
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
 
     [HttpGet("countries/all")]
     public async Task<IActionResult> GetAllCountriesAsync
