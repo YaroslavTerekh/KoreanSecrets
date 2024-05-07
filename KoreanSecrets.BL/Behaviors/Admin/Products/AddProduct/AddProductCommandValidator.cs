@@ -21,45 +21,5 @@ public class AddProductCommandValidator : AbstractValidator<AddProductCommand>
             .WithMessage(ValidationMessages.TitleTooLong)
             .NotEmpty()
             .WithMessage(ValidationMessages.TitleRequired);
-
-        RuleFor(t => t.BrandId)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                var exists = await context.Brands.AnyAsync(t => t.Id == id, cancellationToken);
-                return exists;
-            })
-            .WithMessage(ErrorMessages.BrandNotFound);
-
-        RuleFor(t => t.CategoryId)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                var exists = await context.Categories.AnyAsync(t => t.Id == id, cancellationToken);
-                return exists;
-            })
-            .WithMessage(ErrorMessages.CategoryNotFound);
-
-        RuleFor(t => t.SubCategoryId)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                var exists = await context.SubCategories.AnyAsync(t => t.Id == id, cancellationToken);
-                return exists;
-            })
-            .WithMessage(ErrorMessages.SubCatNotFound);
-
-        RuleFor(t => t.DemandId)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                var exists = await context.Demands.AnyAsync(t => t.Id == id, cancellationToken);
-                return exists;
-            })
-            .WithMessage(ErrorMessages.DemandNotFound);
-
-        RuleFor(t => t.CountryId)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                var exists = await context.Countries.AnyAsync(t => t.Id == id, cancellationToken);
-                return exists;
-            })
-            .WithMessage(ErrorMessages.CountryNotFound);
     }
 }

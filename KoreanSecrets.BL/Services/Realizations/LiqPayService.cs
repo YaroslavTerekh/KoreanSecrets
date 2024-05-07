@@ -59,7 +59,7 @@ public class LiqPayService : ILiqPayService
         var newStatus = response.Status switch
         {
             LiqPayResponseStatus.Success => PurchaseStatus.Success,
-            LiqPayResponseStatus.Failure => PurchaseStatus.Failure,
+            LiqPayResponseStatus.Failure => PurchaseStatus.Failure, 
             _ => PurchaseStatus.Failure
         };
 
@@ -94,19 +94,18 @@ public class LiqPayService : ILiqPayService
                 .Select(t => t.Bucket)
                 .FirstOrDefaultAsync(t => t.Id == purchase.UserId, cancellationToken);
 
-            bucket.PurchaseProducts.Clear();
-        }
+            var purchaseProductsIds = purchase.Products.Select(t => t.Id).ToList();
+            var purchaseProducts = await _context.PurchasedProducts
+                .Where(t => purchaseProductsIds.Contains(t.Id))
+                .ToListAsync(cancellationToken);
 
-        var purchaseProductsIds = purchase.Products.Select(t => t.Id).ToList();
-        var purchaseProducts = await _context.PurchasedProducts
-            .Where(t => purchaseProductsIds.Contains(t.Id))
-            .ToListAsync(cancellationToken);
+            var productsIds = purchaseProducts.Select(t => t.ProductId).ToList();
+            var products = await _context.Products.Where(t => productsIds.Contains(t.Id)).ToListAsync(cancellationToken);
 
-        var productsIds = purchaseProducts.Select(t => t.ProductId).ToList();
-        var products = await _context.Products.Where(t => productsIds.Contains(t.Id)).ToListAsync(cancellationToken);
-
-        products.ForEach(t => t.Quantity--);
-        purchase.PurchaseStatus = status;
-        await _context.SaveChangesAsync(cancellationToken);
+            products.ForEach(t => t.Quantity--);
+            purchase.PurchaseStatus = status;
+            _context.PurchasedProducts.RemoveRange(purchaseProducts);
+            await _context.SaveChangesAsync(cancellationToken);
+        }        
     }
 }

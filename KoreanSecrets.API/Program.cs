@@ -180,7 +180,6 @@ builder.Services.AddAuthentication(options =>
         {
             OnChallenge = async context =>
             {
-                // Call this to skip the default logic and avoid using the default response
                 context.HandleResponse();
 
                 var httpContext = context.HttpContext;

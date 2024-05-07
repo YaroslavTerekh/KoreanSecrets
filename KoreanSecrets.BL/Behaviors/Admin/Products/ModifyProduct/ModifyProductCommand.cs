@@ -26,15 +26,15 @@ public class ModifyProductCommand : IRequest
 
     public string? Syllabes { get; set; }
 
-    public Guid CategoryId { get; set; }
+    public Guid? CategoryId { get; set; }
 
-    public Guid BrandId { get; set; }
+    public Guid? BrandId { get; set; }
 
-    public Guid SubCategoryId { get; set; }
+    public Guid? SubCategoryId { get; set; }
 
-    public Guid CountryId { get; set; }
+    public Guid? CountryId { get; set; }
 
-    public Guid DemandId { get; set; }
+    public Guid? DemandId { get; set; }
 
     public ProductIcon Icon { get; set; } = ProductIcon.None;
 }

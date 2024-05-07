@@ -8,7 +8,8 @@ namespace KoreanSecrets.Domain.Common.Enums;
 
 public enum PurchaseStatus
 {
-    Waiting = 0,
-    Success = 1,
-    Failure = 2
+    New = 0,
+    Waiting = 1,
+    Success = 2,
+    Failure = 3
 }

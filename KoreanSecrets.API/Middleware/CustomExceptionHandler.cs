@@ -33,6 +33,11 @@ public class CustomExceptionHandler
 
         switch (exception)
         {
+            case UnauthorizedAccessException unauthorizedAccessException:
+                code = HttpStatusCode.Unauthorized;
+                result = "Ви не ввійшли в акаунт";
+                break;
+
             case ValidationException validationException:
                 code = HttpStatusCode.BadRequest;
                 result = validationException.Errors.Select(e => e.ErrorMessage).ToList();
