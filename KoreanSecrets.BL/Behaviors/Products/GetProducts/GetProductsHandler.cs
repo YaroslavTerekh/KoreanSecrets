@@ -41,6 +41,11 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
         if (request.CategoriesIds.Count > 0) query = query.Where(t => request.CategoriesIds.Contains(t.CategoryId!.Value));
         if (request.Sale) query = query.Where(t => t.AdditionalIcon == ProductIcon.Sale);
         if (request.NewProduct) query = query.Where(t => t.AdditionalIcon == ProductIcon.New);
+
+        if (!string.IsNullOrEmpty(request.Text) && !string.IsNullOrWhiteSpace(request.Text))
+        {
+            query = query.Where(t => t.Title.Contains(request.Text) || t.Brand.Title.Contains(request.Text));
+        }
         
         var products = await query
                 .Skip(request.CurrentPage * request.PageSize)

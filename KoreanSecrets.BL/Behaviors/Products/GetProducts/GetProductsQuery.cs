@@ -11,6 +11,7 @@ namespace KoreanSecrets.BL.Behaviors.Products.GetProducts;
 
 public class GetProductsQuery : IAuthorizedRequest<PaginationModelDTO<ListProductDTO>>
 {
+    public string? Text { get; set; }
     public List<Guid> BrandsIds { get; set; } = new();
 
     public List<Guid> DemandsIds { get; set; } = new();
