@@ -29,7 +29,6 @@ public class DeleteBrandHandler : IRequestHandler<DeleteBrandCommand>
             throw new NotFoundException(ErrorMessages.BrandNotFound);
 
         await _fileService.DeleteFileAsync(brand.PhotoId, cancellationToken);
-        //brand.Products.ForEach(t => t.BrandId = null);
         _context.Brands.Remove(brand);
         await _context.SaveChangesAsync(cancellationToken);
 

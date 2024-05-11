@@ -26,7 +26,6 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
     {
         var query = _context.Products
             .AsNoTracking()
-            .Where(t => t.BrandId != null && t.CategoryId != null && t.CountryId != null && t.DemandId != null && t.SubCategoryId != null)
             .Include(t => t.Brand)
             .Include(t => t.SubCategory)
             .Include(t => t.Country)

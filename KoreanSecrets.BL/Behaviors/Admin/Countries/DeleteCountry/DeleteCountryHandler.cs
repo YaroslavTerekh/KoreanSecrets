@@ -30,7 +30,6 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountryCommand>
         if (country is null)
             throw new NotFoundException(ErrorMessages.CountryNotFound);
 
-        country.Products.ForEach(t => t.CountryId = Guid.Empty);
         _context.Countries.Remove(country);
         await _context.SaveChangesAsync(cancellationToken);
 

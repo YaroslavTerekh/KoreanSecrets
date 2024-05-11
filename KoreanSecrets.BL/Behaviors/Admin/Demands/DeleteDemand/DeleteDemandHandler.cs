@@ -30,7 +30,6 @@ public class DeleteDemandHandler : IRequestHandler<DeleteDemandCommand>
         if (demand is null)
             throw new NotFoundException(ErrorMessages.DemandNotFound);
 
-        demand.Products.ForEach(t => t.DemandId = Guid.Empty);
         _context.Demands.Remove(demand);
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -28,7 +28,7 @@ public class FileService : IFileService
     public async Task<AppFile> UploadFileAsync(IFormFile file, CancellationToken cancellationToken = default)
     {
         var extension = Path.GetExtension(file.FileName);
-        var fileName = Path.GetFileName(file.FileName);
+        var fileName = String.Concat(Path.GetFileName(file.FileName), Guid.NewGuid().ToString());
 
         try
         {
