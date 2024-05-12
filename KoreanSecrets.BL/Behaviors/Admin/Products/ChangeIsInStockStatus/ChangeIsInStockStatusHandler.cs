@@ -35,16 +35,25 @@ public class ChangeIsInStockStatusHandler : IRequestHandler<ChangeIsInStockStatu
 
         product.IsInStock = !product.IsInStock;
 
-        if (product.IsInStock)
-        {
-            var message = new Message(product.UsersWaitingForStock.Select(t => t.Email).ToArray(), "Товар в наявності!", product.Title);
-
-            await _emailService.SendEmailAsync(message, "Товар в наявності");
-
-            product.UsersWaitingForStock.Clear();
-        }
-
         await _context.SaveChangesAsync(cancellationToken);
+        
+        try
+        {
+            if (product.IsInStock)
+            {
+                var message = new Message(product.UsersWaitingForStock.Select(t => t.Email).ToArray(), "Товар в наявності!", product.Title);
+        
+                await _emailService.SendEmailAsync(message, "Товар в наявності");
+        
+                product.UsersWaitingForStock.Clear();
+                
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
 
         return Unit.Value;
     }

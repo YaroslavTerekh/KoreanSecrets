@@ -34,6 +34,11 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             .Include(t => t.MainPhoto)
             .Where(t => t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null && t.DemandId != null && t.BrandId != null);
 
+        if (!string.IsNullOrEmpty(request.Text) && !string.IsNullOrWhiteSpace(request.Text))
+        {
+            query = query.Where(t => t.Title.Contains(request.Text));
+        }
+        
         if (request.CountriesIds.Count > 0) query = query.Where(t => request.CountriesIds.Contains(t.CountryId!.Value));
         if (request.SubCategoriesIds.Count > 0) query = query.Where(t => request.SubCategoriesIds.Contains(t.SubCategoryId!.Value));
         if (request.DemandsIds.Count > 0) query = query.Where(t => request.DemandsIds.Contains(t.DemandId!.Value));
@@ -42,11 +47,6 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
         if (request.Sale) query = query.Where(t => t.AdditionalIcon == ProductIcon.Sale);
         if (request.NewProduct) query = query.Where(t => t.AdditionalIcon == ProductIcon.New);
 
-        if (!string.IsNullOrEmpty(request.Text) && !string.IsNullOrWhiteSpace(request.Text))
-        {
-            query = query.Where(t => t.Title.Contains(request.Text) || t.Brand.Title.Contains(request.Text));
-        }
-        
         var products = await query
                 .Skip(request.CurrentPage * request.PageSize)
                 .Take(request.PageSize)

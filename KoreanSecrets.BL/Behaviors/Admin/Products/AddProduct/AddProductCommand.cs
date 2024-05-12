@@ -33,7 +33,7 @@ public class AddProductCommand : IRequest
 
     public IFormFile MainPhoto { get; set; }
 
-    public List<IFormFile> Photos { get; set; }
+    public List<IFormFile>? Photos { get; set; }
 
     public IFormFile? VideoGuide { get; set; }
 

@@ -45,7 +45,7 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
         var purchasesEntities = await purchases
             .Skip(request.CurrentPage * request.PageSize)
             .Take(request.PageSize)
-            .Include(t => t.Products)
+            .Include(t => t.Products).ThenInclude(x=>x.Product)
             .Include(t => t.User)
             .Include(t => t.Promocode)
             .ToListAsync(cancellationToken);

@@ -48,12 +48,14 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
 
         List<AppFile> photos = new List<AppFile>();
 
-        foreach (var photo in request.Photos)
-        {
-            var result = await _fileService.UploadFileAsync(photo, cancellationToken);
-            result.ProductPhotoId = product.Id;
-            photos.Add(result);
-        }
+        if (request.Photos != null)
+            foreach (var photo in request.Photos)
+            {
+                var result = await _fileService.UploadFileAsync(photo, cancellationToken);
+                result.ProductPhotoId = product.Id;
+                photos.Add(result);
+            }
+
         product.Photos = photos;
 
         if (request.VideoGuide is not null)

@@ -13,11 +13,11 @@ public class ModifyAddressInfoCommandValidator : AbstractValidator<ModifyAddress
     public ModifyAddressInfoCommandValidator()
     {
         RuleFor(t => t.City)
-            .MinimumLength(6)
+            .MinimumLength(1)
             .WithMessage(ValidationMessages.CityToShort);
 
         RuleFor(t => t.Warehouse)
-            .MinimumLength(5)
+            .MinimumLength(1)
             .WithMessage(ValidationMessages.AddressToShort);
     }
 }
