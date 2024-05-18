@@ -31,7 +31,7 @@ public class MapperGlobalProfile : Profile
         CreateMap<AppFile, AppFileDTO>();
         CreateMap<Feedback, FeedbackDTO>();
         CreateMap<User, UserDTO>()
-            .ForMember(dest => dest.OrdersCount, src => src.Ignore())
+            .ForMember(dest => dest.OrdersCount, src => src.MapFrom(t => t.Purchases.Count))
             .ForMember(dest => dest.IsPhoneNumberConfirmed, src => src.Ignore()); // ToDo: add phone number confirmation
         CreateMap<Volume, VolumeDTO>();
         CreateMap<Report, ReportDTO>();

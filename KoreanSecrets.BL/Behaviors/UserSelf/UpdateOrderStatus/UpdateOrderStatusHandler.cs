@@ -1,7 +1,9 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,19 +16,24 @@ namespace KoreanSecrets.BL.Behaviors.UserSelf.UpdateOrderStatus;
 public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand>
 {
     private readonly DataContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public UpdateOrderStatusHandler(DataContext context)
+    public UpdateOrderStatusHandler(DataContext context, UserManager<User> roleManager)
     {
         _context = context;
+        _userManager = roleManager;
     }
 
     public async Task<Unit> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
     {
         var order = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
+        var currentUser = await _context.Users.FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         if (order is null) throw new NotFoundException(ErrorMessages.PurchaseNotFound);
 
-        if (order.UserId != request.CurrentUserId) throw new Exception(ErrorMessages.PurchaseNotRelatedToUser);
+        if (currentUser is null) throw new NotFoundException(ErrorMessages.UserNotFound);
+
+        if (order.UserId != request.CurrentUserId && !await _userManager.IsInRoleAsync(currentUser, Roles.Admin)) throw new Exception(ErrorMessages.PurchaseNotRelatedToUser);
 
         order.PurchaseStatus = request.Status;
         await _context.SaveChangesAsync(cancellationToken);
