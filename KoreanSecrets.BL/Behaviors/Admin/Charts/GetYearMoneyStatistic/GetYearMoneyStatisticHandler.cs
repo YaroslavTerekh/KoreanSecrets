@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.DataTransferObjects;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ public class GetYearMoneyStatisticHandler : IRequestHandler<GetYearMoneyStatisti
 
     public async Task<ChartDTO> Handle(GetYearMoneyStatisticQuery request, CancellationToken cancellationToken)
     {
-        var total = await _context.Purchases.Where(t => t.CreatedDate >= DateTime.UtcNow.AddMonths(-12)).Select(t => t.TotalPrice).SumAsync(cancellationToken);
+        var total = await _context.Purchases.Where(t => t.CreatedDate >= DateTime.UtcNow.AddMonths(-12) && t.PurchaseStatus == PurchaseStatus.Success).Select(t => t.TotalPrice).SumAsync(cancellationToken);
 
         return new ChartDTO
         {

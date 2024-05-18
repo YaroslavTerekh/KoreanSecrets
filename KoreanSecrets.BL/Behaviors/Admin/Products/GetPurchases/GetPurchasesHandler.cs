@@ -24,6 +24,7 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
     public async Task<PaginationModelDTO<Purchase>> Handle(GetPurchasesQuery request, CancellationToken cancellationToken)
     {
         var purchases = _context.Purchases
+            .Include(t => t.Products)
             .OrderBy(t => t.CreatedDate)
             .AsQueryable();
 

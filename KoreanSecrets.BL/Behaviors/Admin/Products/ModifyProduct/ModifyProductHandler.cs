@@ -24,11 +24,11 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        product.BrandId = request.BrandId;
-        product.CategoryId = request.CategoryId;
-        product.CountryId = request.CountryId;
-        product.DemandId = request.DemandId;
-        product.SubCategoryId = request.SubCategoryId;
+        product.BrandId = request.BrandId == Guid.Empty ? null : request.BrandId;
+        product.CategoryId = request.CategoryId == Guid.Empty ? null : request.CategoryId;
+        product.CountryId = request.CountryId == Guid.Empty ? null : request.CountryId;
+        product.DemandId = request.DemandId == Guid.Empty ? null : request.DemandId;
+        product.SubCategoryId = request.SubCategoryId == Guid.Empty ? null : request.SubCategoryId;
         product.Title = request.Title;
         product.Characteristics = request.Characteristics;
         product.Syllabes = request.Syllabes;

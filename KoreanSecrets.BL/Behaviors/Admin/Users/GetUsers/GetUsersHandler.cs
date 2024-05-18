@@ -31,6 +31,7 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
     {
         var query = _context.Users.AsQueryable();
         var users = await query
+            .Include(t => t.Purchases)
             .Skip(request.CurrentPage * request.PageSize)
             .Take(request.PageSize)            
             .ToListAsync(cancellationToken);
@@ -42,7 +43,7 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
-            Total = await query.CountAsync(cancellationToken),
+            Total = await query.CountAsync(cancellationToken) - admins.Count,
             Products = users.Select(t => _mapper.Map<UserDTO>(t)).ToList()
         };
     }

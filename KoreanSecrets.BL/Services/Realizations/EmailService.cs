@@ -22,8 +22,14 @@ public class EmailService : IEmailService
     }
     public async Task SendEmailAsync(Message message, string name)
     {
-        var emailMessage = CreateEmailMessage(message, name);
-        await SendAsync(emailMessage);
+        try
+        {
+            var emailMessage = CreateEmailMessage(message, name);
+            await SendAsync(emailMessage);
+        } catch 
+        {
+            throw;
+        }
     }
 
     private MimeMessage CreateEmailMessage(Message message, string name)

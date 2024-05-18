@@ -102,7 +102,7 @@ public class LiqPayService : ILiqPayService
             var productsIds = purchaseProducts.Select(t => t.ProductId).ToList();
             var products = await _context.Products.Where(t => productsIds.Contains(t.Id)).ToListAsync(cancellationToken);
 
-            products.ForEach(t => t.Quantity--);
+            products.ForEach(t => t.Quantity = t.Quantity - purchaseProducts.FirstOrDefault(pp => pp.ProductId == t.Id)!.Amount);
             purchase.PurchaseStatus = status;
             _context.PurchasedProducts.RemoveRange(purchaseProducts);
             await _context.SaveChangesAsync(cancellationToken);
