@@ -34,12 +34,16 @@ public class DislikeProductHandler : IRequestHandler<DislikeProductCommand>
         if (user is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        if(user.Likes.Contains(product))
-        {
-            user.Likes.Remove(product);
-            product.Likes.Remove(user);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        var dislike = await _context.ProductUser.FirstOrDefaultAsync(t => t.LikesId == product.Id && t.LikesId1 == user.Id, cancellationToken);
+        _context.ProductUser.Remove(dislike);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        //if(user.Likes.Contains(product))
+        //{
+        //    user.Likes.Remove(product);
+        //    product.Likes.Remove(user);
+        //    await _context.SaveChangesAsync(cancellationToken);
+        //}
 
         return Unit.Value;
     }

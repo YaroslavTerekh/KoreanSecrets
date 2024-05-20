@@ -28,8 +28,6 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
             .OrderBy(t => t.CreatedDate)
             .AsQueryable();
 
-        var total = await purchases.CountAsync(cancellationToken);
-
         if(request.Status is not null)
         {
             if (request.Status == PurchaseStatus.New || request.Status == PurchaseStatus.Waiting)
@@ -42,6 +40,8 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
                 purchases = purchases.Where(t => (t.PurchaseStatus == PurchaseStatus.Success || t.PurchaseStatus == PurchaseStatus.Failure));
             }
         }
+
+        var total = await purchases.CountAsync(cancellationToken);
 
         var purchasesEntities = await purchases
             .Skip(request.CurrentPage * request.PageSize)

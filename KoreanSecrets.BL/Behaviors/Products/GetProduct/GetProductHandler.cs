@@ -52,7 +52,7 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             var likes = await _context.Products
                     .AsNoTracking()
                     .Where(t => product.Id == t.Id)
-                    .SelectMany(t => t.Likes.Select(t => t.Id)).ToListAsync(cancellationToken);
+                    .SelectMany(t => t.Likes.Select(t => t.LikesId1)).ToListAsync(cancellationToken);
 
             if (likes.Contains(request.CurrentUserId))
                 product.IsLikedByUser = true;

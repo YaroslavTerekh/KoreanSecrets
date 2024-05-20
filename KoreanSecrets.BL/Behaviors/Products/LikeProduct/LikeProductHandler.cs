@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -34,7 +35,13 @@ public class LikeProductHandler : IRequestHandler<LikeProductCommand>
         if (user is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        user.Likes.Add(product);
+        var like = new ProductUser
+        {
+            LikesId = product.Id,
+            LikesId1 = user.Id
+        };
+
+        await _context.ProductUser.AddAsync(like, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

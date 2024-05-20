@@ -32,6 +32,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<PurchasedProduct> PurchasedProducts { get; set; }
     public DbSet<Volume> Volume { get; set; }
     public DbSet<Report> Reports { get; set; }
+    public DbSet<ProductUser> ProductUser { get; set; }
     //public DbSet<CategoryBrand> CategoryBrands { get; set; }
     //public DbSet<CategoryCountry> CategoryCountries { get; set; }
     //public DbSet<CategoryDemand> CategoryDemands { get; set; }
@@ -50,6 +51,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         builder.ApplyConfiguration(new SubCategoryConfiguration());
         builder.ApplyConfiguration(new PurchaseConfiguration());
         builder.ApplyConfiguration(new PurchaseProductConfiguration());
+        builder.ApplyConfiguration(new ProductUserConfiguration());
         //builder.ApplyConfiguration(new CategoryBrandConfiguration());
         //builder.ApplyConfiguration(new CategorySubCategoryConfiguration());
         //builder.ApplyConfiguration(new CategoryCountryConfiguration());

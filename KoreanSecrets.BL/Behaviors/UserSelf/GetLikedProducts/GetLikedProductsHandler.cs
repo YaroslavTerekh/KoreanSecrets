@@ -21,16 +21,24 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
     {
         var query = _context.Users
             .Include(t => t.Likes)
-                .ThenInclude(t => t.Brand)
+                .ThenInclude(t => t.Likes)   
+                    .ThenInclude(t => t.Volumes)
             .Include(t => t.Likes)
-                .ThenInclude(t => t.MainPhoto)
+                .ThenInclude(t => t.Likes)
+                    .ThenInclude(t => t.Brand)
+            .Include(t => t.Likes)
+                .ThenInclude(t => t.Likes)
+                    .ThenInclude(t => t.MainPhoto)
             .Where(t => t.Id == request.CurrentUserId);
 
         var likes = await _context.Users
             .Skip(request.PageSize * request.CurrentPage)
             .Take(request.PageSize)
-            .SelectMany(t => t.Likes).Include(x=>x.MainPhoto).Select(t => _mapper.Map<ListProductDTO>(t))
-            .ToListAsync(cancellationToken);
+            .SelectMany(t => t.Likes)
+                .Include (t => t.Likes)
+                .ThenInclude(x=>x.MainPhoto)
+                    .Select(t => _mapper.Map<ListProductDTO>(t))
+                        .ToListAsync(cancellationToken);
 
         foreach (var likedProduct in likes)
             likedProduct.IsLikedByUser = true;

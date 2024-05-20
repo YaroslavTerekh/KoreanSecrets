@@ -26,7 +26,7 @@ public class User : IdentityUser<Guid>
 
     public List<Feedback> Feedbacks { get; set; } = new();
 
-    public List<Product> Likes { get; set; } = new();
+    public List<ProductUser> Likes { get; set; } = new();
     
     public List<Product> ProductsWaitingForStock { get; set; } = new();
 

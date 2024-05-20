@@ -34,6 +34,45 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             .Include(t => t.MainPhoto)
             .Where(t => t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null && t.DemandId != null && t.BrandId != null);
 
+        List<ListProductDTO> products = new();
+
+        if(
+            request.CountriesIds.Count < 1 &&
+            request.SubCategoriesIds.Count < 1 &&
+            request.DemandsIds.Count < 1 &&
+            request.CategoriesIds.Count < 1 &&
+            request.BrandsIds.Count < 1 &&
+            !request.Sale &&
+            !request.NewProduct &&
+            string.IsNullOrEmpty(request.Text) && 
+            string.IsNullOrWhiteSpace(request.Text)
+        )
+        {
+            if (request.CurrentUserId != Guid.Empty)
+            {
+                foreach (var product in products)
+                {
+                    var likes = await _context.Products
+                        .AsNoTracking()
+                        .Where(t => product.Id == t.Id)
+                        .SelectMany(t => t.Likes.Select(t => t.LikesId1)).ToListAsync(cancellationToken);
+
+                    if (likes.Contains(request.CurrentUserId))
+                        product.IsLikedByUser = true;
+                    else
+                        product.IsLikedByUser = false;
+                }
+            }
+
+            return new PaginationModelDTO<ListProductDTO>
+            {
+                CurrentPage = request.CurrentPage,
+                PageSize = request.PageSize,
+                Total = await query.CountAsync(cancellationToken),
+                Products = products
+            };
+        }
+
         if (!string.IsNullOrEmpty(request.Text) && !string.IsNullOrWhiteSpace(request.Text))
         {
             query = query.Where(t => t.Title.Contains(request.Text));
@@ -47,7 +86,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
         if (request.Sale) query = query.Where(t => t.AdditionalIcon == ProductIcon.Sale);
         if (request.NewProduct) query = query.Where(t => t.AdditionalIcon == ProductIcon.New);
 
-        var products = await query
+        products = await query
                 .Skip(request.CurrentPage * request.PageSize)
                 .Take(request.PageSize)
                 .Select(t => _mapper.Map<ListProductDTO>(t))
@@ -60,7 +99,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
                 var likes = await _context.Products
                     .AsNoTracking()
                     .Where(t => product.Id == t.Id)
-                    .SelectMany(t => t.Likes.Select(t => t.Id)).ToListAsync(cancellationToken);
+                    .SelectMany(t => t.Likes.Select(t => t.LikesId1)).ToListAsync(cancellationToken);
 
                 if (likes.Contains(request.CurrentUserId))
                     product.IsLikedByUser = true;
