@@ -44,6 +44,19 @@ public class MapperGlobalProfile : Profile
         CreateMap<PurchasedProduct, PurchaseProductDTO>();
         CreateMap<AddressInfo, AddressInfoDTO>();
         CreateMap<AppFile, AppFileDTO>();
-            //.ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => String.Concat(hostSettings.ApplicationUrl, src.FilePath.Replace(@"\", "/"))));
+        //.ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => String.Concat(hostSettings.ApplicationUrl, src.FilePath.Replace(@"\", "/"))));
+        CreateMap<ProductUser, ListProductDTO>()
+            .ForMember(dest => dest.MainPhoto, src => src.MapFrom(t => t.Likes.MainPhoto))
+            .ForMember(dest => dest.MainPhotoId, src => src.MapFrom(t => t.Likes.MainPhotoId))
+            .ForMember(dest => dest.Quantity, src => src.MapFrom(t => t.Likes.Quantity))
+            .ForMember(dest => dest.CreatedDate, src => src.MapFrom(t => t.Likes.CreatedDate))
+            .ForMember(dest => dest.Brand, src => src.MapFrom(t => t.Likes.Brand))
+            .ForMember(dest => dest.BrandId, src => src.MapFrom(t => t.Likes.BrandId))
+            .ForMember(dest => dest.DiscountPrice, src => src.MapFrom(t => t.Likes.DiscountPrice))
+            .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.Likes.AdditionalIcon))
+            .ForMember(dest => dest.Id, src => src.MapFrom(t => t.Likes.Id))
+            .ForMember(dest => dest.IsInStock, src => src.MapFrom(t => t.Likes.IsInStock))
+            .ForMember(dest => dest.IsLikedByUser, src => src.Ignore())
+            .ReverseMap();
     }
 }

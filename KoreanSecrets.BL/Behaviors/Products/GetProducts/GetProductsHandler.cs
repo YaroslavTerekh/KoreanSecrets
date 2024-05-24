@@ -32,7 +32,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             .Include(t => t.Brand)
             .Include(t => t.Volumes)
             .Include(t => t.MainPhoto)
-            .Where(t => t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null && t.DemandId != null && t.BrandId != null);
+            .AsQueryable();
 
         List<ListProductDTO> products = new();
 
@@ -48,6 +48,12 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             string.IsNullOrWhiteSpace(request.Text)
         )
         {
+            products = await query
+                .Skip(request.CurrentPage * request.PageSize)
+                .Take(request.PageSize)
+                .Select(t => _mapper.Map<ListProductDTO>(t))
+                .ToListAsync(cancellationToken);
+
             if (request.CurrentUserId != Guid.Empty)
             {
                 foreach (var product in products)

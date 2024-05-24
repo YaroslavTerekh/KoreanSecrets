@@ -30,12 +30,12 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
 
         if(request.Status is not null)
         {
-            if (request.Status == PurchaseStatus.New || request.Status == PurchaseStatus.Waiting)
+            if (request.Status == PurchaseStatus.New)
             {
                 purchases = purchases.Where(t => (t.PurchaseStatus == PurchaseStatus.New || t.PurchaseStatus == PurchaseStatus.Waiting));
             }
             
-            if (request.Status == PurchaseStatus.Success || request.Status == PurchaseStatus.Failure)
+            if (request.Status == PurchaseStatus.Success)
             {
                 purchases = purchases.Where(t => (t.PurchaseStatus == PurchaseStatus.Success || t.PurchaseStatus == PurchaseStatus.Failure));
             }
