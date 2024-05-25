@@ -35,12 +35,18 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
             .Skip(request.PageSize * request.CurrentPage)
             .Take(request.PageSize)
             .SelectMany(t => t.Likes.Where(l => l.LikesId1 == request.CurrentUserId))
-                .Include (t => t.Likes)
-                .ThenInclude(x=>x.MainPhoto)
-                    .Select(t => _mapper.Map<ListProductDTO>(t))
+                .Include(t => t.Likes)
+                .ThenInclude(x => x.MainPhoto)
+                .Include(t => t.Likes)
+                .ThenInclude(x => x.Volumes)
+                .Include(t => t.Likes)
+                .ThenInclude(x => x.Brand)
                         .ToListAsync(cancellationToken);
 
-        foreach (var likedProduct in likes)
+        var mappedLikes = likes
+                    .Select(t => _mapper.Map<ListProductDTO>(t.Likes))
+                    .ToList();
+        foreach (var likedProduct in mappedLikes)
             likedProduct.IsLikedByUser = true;
 
         return new PaginationModelDTO<ListProductDTO>
@@ -48,7 +54,7 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.Select(t => t.Likes).CountAsync(cancellationToken),
-            Products = likes
+            Products = mappedLikes
         };
     }
 }

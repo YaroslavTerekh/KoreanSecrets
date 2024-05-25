@@ -75,23 +75,32 @@ public class FileService : IFileService
 
         if (file is not null)
         {
-            var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseSettings.ApiKey));
-            var a = await auth.SignInWithEmailAndPasswordAsync(_firebaseSettings.Email, _firebaseSettings.Password);
+            try
+            {
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseSettings.ApiKey));
+                var a = await auth.SignInWithEmailAndPasswordAsync(_firebaseSettings.Email, _firebaseSettings.Password);
 
-            var cancellation = new CancellationTokenSource();
+                var cancellation = new CancellationTokenSource();
 
-            var task = new FirebaseStorage(
-                _firebaseSettings.StorageLink,
-                new FirebaseStorageOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
-                    ThrowOnCancel = true
-                })
-                .Child("uploads")
-                .Child(file.FileName)
-                .DeleteAsync();
+                var task = new FirebaseStorage(
+                    _firebaseSettings.StorageLink,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                        ThrowOnCancel = true
+                    })
+                    .Child("uploads")
+                    .Child(file.FileName)
+                    .DeleteAsync();
 
-            await task;
+                await task;
+            }
+            catch { }
+            finally
+            {
+                _context.Files.Remove(file);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

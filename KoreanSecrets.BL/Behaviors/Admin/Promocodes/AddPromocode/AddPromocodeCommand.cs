@@ -13,4 +13,8 @@ public class AddPromocodeCommand : IAuthorizedRequest
     public double Discount { get; set; }
 
     public Guid BrandId { get; set; }
+
+    public DateTime StartDate { get; set; }
+
+    public DateTime EndDate { get; set; }
 }

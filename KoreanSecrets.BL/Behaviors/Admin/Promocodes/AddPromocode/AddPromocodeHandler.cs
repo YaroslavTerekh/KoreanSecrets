@@ -24,7 +24,9 @@ public class AddPromocodeHandler : IRequestHandler<AddPromocodeCommand>
         {
             Code = request.Title,
             BrandId = request.BrandId,
-            Discount = request.Discount
+            Discount = request.Discount,
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
         };
 
         await _context.Promocodes.AddAsync(promocode, cancellationToken);

@@ -48,6 +48,8 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         if (promocode is null && request.Promocode != "")
             throw new NotFoundException(ErrorMessages.PromoNotFound);
 
+        var productIds = user.Bucket.PurchaseProducts.Select(t => t.Id).ToList();
+
         var purchase = new Purchase
         {
             Warehouse = request.Address.Warehouse,
@@ -57,8 +59,10 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             Comment = request.Comment,
             PayType = request.PayType,
             PromocodeId = promocode is null ? null : promocode.Id,
-            Products = user.Bucket.PurchaseProducts
+            Products = await _context.PurchasedProducts.Where(t => productIds.Contains(t.Id)).ToListAsync(),
         };
+
+        
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
