@@ -24,6 +24,6 @@ public class GetDemandsWithoutPaginationHandler : IRequestHandler<GetDemandsWith
 
     public async Task<List<DemandDTO>> Handle(GetDemandsWithoutPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Demands.Select(t => _mapper.Map<DemandDTO>(t)).ToListAsync(cancellationToken);
+        return await _context.Demands.OrderBy(t => t.Title).Select(t => _mapper.Map<DemandDTO>(t)).ToListAsync(cancellationToken);
     }
 }

@@ -24,6 +24,6 @@ public class GetSubCategoriesWithoutPaginationHandler : IRequestHandler<GetSubCa
 
     public async Task<List<SubCategoryDTO>> Handle(GetSubCategoriesWithoutPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.SubCategories.Select(t => _mapper.Map<SubCategoryDTO>(t)).ToListAsync(cancellationToken);
+        return await _context.SubCategories.OrderBy(t => t.Title).Select(t => _mapper.Map<SubCategoryDTO>(t)).ToListAsync(cancellationToken);
     }
 }

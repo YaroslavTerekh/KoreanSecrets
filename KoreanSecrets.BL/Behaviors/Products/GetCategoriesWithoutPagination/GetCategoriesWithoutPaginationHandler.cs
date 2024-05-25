@@ -24,6 +24,6 @@ public class GetCategoriesWithoutPaginationHandler : IRequestHandler<GetCategori
 
     public async Task<List<CategoryDTO>> Handle(GetCategoriesWithoutPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Categories.Select(t => _mapper.Map<CategoryDTO>(t)).ToListAsync(cancellationToken);
+        return await _context.Categories.OrderBy(t => t.Title).Select(t => _mapper.Map<CategoryDTO>(t)).ToListAsync(cancellationToken);
     }
 }

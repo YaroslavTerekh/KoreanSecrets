@@ -25,6 +25,7 @@ public class GetCategoriesHandler : IRequestHandler<GetCategoriesQuery, List<Cat
     public async Task<List<CategoryDTO>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
         return await _context.Categories
+            .OrderBy(t => t.Title)
             .Select(t => _mapper.Map<CategoryDTO>(t))
             .ToListAsync(cancellationToken);
     }

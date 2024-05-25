@@ -24,6 +24,6 @@ public class GetCountriesWithoutPaginationHandler : IRequestHandler<GetCountries
 
     public async Task<List<CountryDTO>> Handle(GetCountriesWithoutPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Countries.Select(t => _mapper.Map<CountryDTO>(t)).ToListAsync(cancellationToken);
+        return await _context.Countries.OrderBy(t => t.Title).Select(t => _mapper.Map<CountryDTO>(t)).ToListAsync(cancellationToken);
     }
 }

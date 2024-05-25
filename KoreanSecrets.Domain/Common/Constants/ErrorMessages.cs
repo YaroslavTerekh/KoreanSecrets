@@ -15,6 +15,7 @@ public static class ErrorMessages
     public const string BrandNotFound = "Бренд не знайдено";
     public const string BannerNotFound = "Банер не знайдено";
     public const string PromoNotFound = "Промокод не знайдено";
+    public const string PromotionNotFound = "Акцію не знайдено";
     public const string CountryNotFound = "Країну не знайдено";
     public const string SubCatNotFound = "Підкатегорію не знайдено";
     public const string DemandNotFound = "Необхідність не знайдено";

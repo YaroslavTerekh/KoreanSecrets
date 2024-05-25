@@ -46,6 +46,10 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.GetPromocodes;
+using KoreanSecrets.BL.Behaviors.Admin.Promotions.AddPromotion;
+using KoreanSecrets.BL.Behaviors.Admin.Promotions.DeletePromotion;
+using KoreanSecrets.BL.Behaviors.Admin.Promotions.GetAllPromotions;
+using KoreanSecrets.BL.Behaviors.Admin.Promotions.ModifyPromotion;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
@@ -72,6 +76,33 @@ public class AdminController : ControllerBase
     {
         _mediatr = mediatr;
     }
+
+    [HttpPost("promotions/add")]
+    public async Task<IActionResult> AddPromotionAsync
+    (
+        [FromBody] AddPromotionCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpDelete("promotions/{id:guid}/delete")]
+    public async Task<IActionResult> AddPromotionAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeletePromotionCommand(id), cancellationToken));
+
+    [HttpGet("promotions/get")]
+    public async Task<IActionResult> GetPromotionAsync
+    (
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetAllPromotionsQuery(), cancellationToken));
+
+    [HttpPut("promotions/modify")]
+    public async Task<IActionResult> ModifyPromotionAsync
+    (
+        [FromBody] ModifyPromotionCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
 
     [HttpGet("chart/users-of-year")]
     public async Task<IActionResult> GetChartForUsersOfYearAsync

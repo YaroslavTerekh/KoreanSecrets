@@ -9,4 +9,5 @@ namespace KoreanSecrets.Domain.Common.Enums;
 public enum PayType
 {
     FullPay = 0,
+    Terminal = 1,
 }

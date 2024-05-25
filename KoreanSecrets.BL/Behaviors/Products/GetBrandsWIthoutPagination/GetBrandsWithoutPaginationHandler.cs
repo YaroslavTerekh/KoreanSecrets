@@ -25,6 +25,7 @@ public class GetBrandsWithoutPaginationHandler : IRequestHandler<GetBrandsWithou
     public async Task<List<BrandDTO>> Handle(GetBrandsWithoutPaginationQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Brands
+            .OrderBy(t => t.Title)
             .Include(t => t.Photo);
 
         return await query.Select(t => _mapper.Map<BrandDTO>(t)).ToListAsync(cancellationToken);

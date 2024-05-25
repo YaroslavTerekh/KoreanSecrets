@@ -25,6 +25,7 @@ public class GetBrandsHandler : IRequestHandler<GetAllBrandsQuery, PaginationMod
     public async Task<PaginationModelDTO<BrandDTO>> Handle(GetAllBrandsQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Brands
+            .OrderBy(t => t.Title)
             .Include(t => t.Photo);
 
         return new PaginationModelDTO<BrandDTO>

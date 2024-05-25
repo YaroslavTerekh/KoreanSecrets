@@ -49,6 +49,8 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             throw new NotFoundException(ErrorMessages.PromoNotFound);
 
         var productIds = user.Bucket.PurchaseProducts.Select(t => t.Id).ToList();
+        //var productsIds = user.Bucket.PurchaseProducts.Select(t => t.ProductId).ToList();
+        //var totalProductDiscount = await _context.Products.Where(t => productsIds.Contains(t.Id)).Select(t => t.)
 
         var purchase = new Purchase
         {
@@ -66,12 +68,20 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
-        var totalPrice = purchase.Products.Select(t => t.Volume.Price * t.Amount).Sum();
+        var totalPrice = purchase.Products.Select(t => t.Product.DiscountPrice is not null ? (t.Volume.Price - ((t.Volume.Price * t.Amount * t.Product.DiscountPrice) / 100)) : t.Volume.Price * t.Amount).Sum();
 
-        if(promocode is not null)
-            totalPrice -= (long)((totalPrice * promocode.Discount) / 100);
+        if (promocode is not null)
+        {
+            var total = purchase.Products.Select(t => t.Volume.Price * t.Amount).Sum();
+            totalPrice -= (long)((total * promocode.Discount) / 100);
+        }
 
-        purchase.TotalPrice = totalPrice;
+        var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        totalPrice -= (long)promotions.Select(t => t.Discount).Sum();
+
+
+        purchase.TotalPrice = (long)totalPrice!;
 
         if(request.Address is not null && request.SaveAddress)
         {
@@ -98,8 +108,13 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         await _context.Purchases.AddAsync(purchase, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        BackgroundJob.Schedule(() => ModifyPurchaseDeliveryState(purchase.Id, PurchaseStatus.Success), TimeSpan.FromDays(15));
-        BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromMinutes(15));
+        if(request.PayType == PayType.Terminal)
+        {
+            return new { Id = purchase.PurchaseIdentifier };
+        }
+
+        BackgroundJob.Schedule(() => ModifyPurchaseDeliveryState(purchase.Id, PurchaseStatus.Success), TimeSpan.FromHours(24));
+        BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromHours(3));
  
         var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
 
