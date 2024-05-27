@@ -25,7 +25,7 @@ public class GetPopularProductsHandler : IRequestHandler<GetPopularProductsQuery
     public async Task<List<ListProductDTO>> Handle(GetPopularProductsQuery request, CancellationToken cancellationToken)
     {
         return await _context.Products
-            .Where(t => t.BrandId != null && t.CategoryId != null && t.CountryId != null && t.DemandId != null && t.SubCategoryId != null)
+            .Where(t => t.BrandId != null && t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null)
             .Include(t => t.MainPhoto)
             .Include(t => t.Brand)
             .Include(t => t.Volumes)

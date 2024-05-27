@@ -23,6 +23,6 @@ public class GetAllPromotionsHandler : IRequestHandler<GetAllPromotionsQuery, Li
     {
         return await _context.Promotions
             .Include(t => t.Brand)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
     }
 }
