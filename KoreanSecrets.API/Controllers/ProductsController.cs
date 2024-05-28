@@ -46,7 +46,7 @@ public class ProductsController : BaseController
         _liqPayService = liqPayService;
     }
 
-    [HttpGet("subcategory/{id:guid}/brands")]
+    [HttpGet("brand/{id:guid}/categories")]
     public async Task<IActionResult> GetBrandsBySubcatAsync
     (
         [FromRoute] Guid id,

@@ -26,9 +26,9 @@ public class GetCategoriesBySubcatHandler : IRequestHandler<GetCategoriesBySubca
     {
         var entities = _context.Products
             .Include(t => t.Category)
-            .Where(t => t.SubCategoryId == request.SubcategoryId)
+            .Where(t => t.SubCategoryId == request.SubcategoryId && t.Category != null)
             .Select(t => _mapper.Map<CategoryDTO>(t.Category));
 
-        return await entities.DistinctBy(t => t.Id).ToListAsync(cancellationToken);
+        return await entities.Distinct().ToListAsync(cancellationToken);
     }
 }

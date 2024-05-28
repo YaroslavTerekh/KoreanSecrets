@@ -27,10 +27,10 @@ public class GetBrandBySubcatHandler : IRequestHandler<GetBrandBySubcatQuery, Li
         var entities = _context.Products
             .Include(t => t.Category)
             .Include(t => t.Brand)
-            .Where(t => t.Brand.Id == request.BrandId)
+            .Where(t => t.Brand.Id == request.BrandId && t.Category != null)
             .Select(t => _mapper.Map<CategoryDTO>(t.Category));
 
-        return await entities.DistinctBy(t => t.Id).ToListAsync(cancellationToken);
+        return await entities.Distinct().ToListAsync(cancellationToken);
 
     }
 }
