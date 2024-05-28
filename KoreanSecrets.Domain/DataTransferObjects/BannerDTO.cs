@@ -13,5 +13,5 @@ public class BannerDTO : BaseEntity
 
     public AppFileDTO BannerPhoto { get; set; }
 
-    public Guid ProductId { get; set; }
+    public Guid BrandId { get; set; }
 }

@@ -34,7 +34,7 @@ public class ChangeBrandPhotoHandler : IRequestHandler<ChangeBrandPhotoCommand>
 
         if (brand.Photo is not null)
         {
-            await _fileService.DeleteFileAsync(brand.PhotoId, cancellationToken);
+            await _fileService.DeleteFileAsync((Guid)brand.PhotoId!, cancellationToken);
         }
 
         var photoResult = await _fileService.UploadFileAsync(request.Photo, cancellationToken);

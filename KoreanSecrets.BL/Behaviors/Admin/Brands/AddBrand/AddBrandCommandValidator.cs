@@ -15,19 +15,7 @@ public class AddBrandCommandValidator : AbstractValidator<AddBrandCommand>
     public AddBrandCommandValidator(DataContext context)
     {
         RuleFor(t => t.Title)
-            .MinimumLength(4)
-            .WithMessage(ValidationMessages.TitleTooShort)
-            .MaximumLength(30)
-            .WithMessage(ValidationMessages.TitleTooLong)
             .NotEmpty()
             .WithMessage(ValidationMessages.TitleRequired);
-
-        //RuleFor(t => t.CategoryId)
-        //    .MustAsync(async (id, cancellationToken) =>
-        //    {
-        //        var exists = await context.Categories.AnyAsync(t => t.Id == id, cancellationToken);
-        //        return exists;
-        //    })
-        //    .WithMessage(ErrorMessages.CategoryNotFound);
     }
 }

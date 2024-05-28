@@ -10,9 +10,9 @@ public class Brand : BaseEntity
 {
     public string Title { get; set; }
 
-    public Guid PhotoId { get; set; }
+    public Guid? PhotoId { get; set; }
 
-    public AppFile Photo { get; set; }
+    public AppFile? Photo { get; set; }
 
     public List<Product> Products { get; set; } = new();
 

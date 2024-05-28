@@ -6,9 +6,11 @@ using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
 using KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
 using KoreanSecrets.BL.Behaviors.Products.DislikeProduct;
+using KoreanSecrets.BL.Behaviors.Products.GetBrandBySubcat;
 using KoreanSecrets.BL.Behaviors.Products.GetBrands;
 using KoreanSecrets.BL.Behaviors.Products.GetBrandsWIthoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetCategories;
+using KoreanSecrets.BL.Behaviors.Products.GetCategoriesBySubcat;
 using KoreanSecrets.BL.Behaviors.Products.GetCategoriesWithoutPagination;
 using KoreanSecrets.BL.Behaviors.Products.GetCategory;
 using KoreanSecrets.BL.Behaviors.Products.GetCountriesWithoutPagination;
@@ -43,6 +45,20 @@ public class ProductsController : BaseController
         _mediatr = mediator;
         _liqPayService = liqPayService;
     }
+
+    [HttpGet("subcategory/{id:guid}/brands")]
+    public async Task<IActionResult> GetBrandsBySubcatAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetBrandBySubcatQuery(id), cancellationToken));
+
+    [HttpGet("subcategory/{id:guid}/categories")]
+    public async Task<IActionResult> GetCatsBySubcatAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetCategoriesBySubcatQuery(id), cancellationToken));
 
     [HttpPost("get")]
     public async Task<IActionResult> GetProductsAsync

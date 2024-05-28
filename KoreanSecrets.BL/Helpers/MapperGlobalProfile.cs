@@ -35,7 +35,8 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.IsPhoneNumberConfirmed, src => src.Ignore()); // ToDo: add phone number confirmation
         CreateMap<Volume, VolumeDTO>();
         CreateMap<Report, ReportDTO>();
-        CreateMap<Banner, BannerDTO>();
+        CreateMap<Banner, BannerDTO>()
+            .ForMember(dest => dest.BrandId, src => src.MapFrom(t => t.Product.Brand.Id));
         CreateMap<Category, CategoryDTO>();
             //.ForMember(dest => dest.Demands, src => src.MapFrom(t => t.CategoryDemands.Select(t => t.Demand).ToList()))
             //.ForMember(dest => dest.SubCategories, src => src.MapFrom(t => t.CategorySubCategories.Select(t => t.SubCategory).ToList()))

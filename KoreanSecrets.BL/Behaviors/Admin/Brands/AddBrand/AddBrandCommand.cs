@@ -12,5 +12,5 @@ public class AddBrandCommand : IRequest
 {
     public string Title { get; set; }
 
-    public IFormFile Photo { get; set; }
+    public IFormFile? Photo { get; set; }
 }

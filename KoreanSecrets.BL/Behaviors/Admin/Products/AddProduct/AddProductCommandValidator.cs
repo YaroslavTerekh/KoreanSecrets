@@ -15,10 +15,6 @@ public class AddProductCommandValidator : AbstractValidator<AddProductCommand>
     public AddProductCommandValidator(DataContext context)
     {
         RuleFor(t => t.Title)
-            .MinimumLength(5)
-            .WithMessage(ValidationMessages.TitleTooShort)
-            .MaximumLength(200)
-            .WithMessage(ValidationMessages.TitleTooLong)
             .NotEmpty()
             .WithMessage(ValidationMessages.TitleRequired);
     }
