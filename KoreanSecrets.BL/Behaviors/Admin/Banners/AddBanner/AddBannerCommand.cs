@@ -14,5 +14,5 @@ public class AddBannerCommand : IRequest
 
     public IFormFile Photo { get; set; }
 
-    public Guid ProductId { get; set; }
+    public Guid BrandId { get; set; }
 }
