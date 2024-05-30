@@ -14,7 +14,7 @@ public class Banner : BaseEntity
 
     public AppFile BannerPhoto { get; set; }
 
-    public Guid ProductId { get; set; }
+    public Guid BrandId { get; set; }
 
-    public Product Product { get; set; }
+    public Brand Brand { get; set; }
 }

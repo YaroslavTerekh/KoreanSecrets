@@ -11,7 +11,7 @@ public class AddNewVolumeCommand : IRequest
 {
     public Guid ProductId { get; set; }
 
-    public long Value { get; set; }
+    public string Value { get; set; }
 
     public string Unit { get; set; }
 

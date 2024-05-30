@@ -25,8 +25,7 @@ public class GetAllBannersHandler : IRequestHandler<GetAllBannersQuery, List<Ban
     public async Task<List<BannerDTO>> Handle(GetAllBannersQuery request, CancellationToken cancellationToken)
     {
         var banners = await _context.Banners
-            .Include(t => t.Product)
-                .ThenInclude(t => t.Brand)
+            .Include(t => t.Brand)
             .Include(t => t.BannerPhoto)
             .Select(t => _mapper.Map<BannerDTO>(t))
             .ToListAsync(cancellationToken);

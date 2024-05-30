@@ -26,7 +26,7 @@ public class AddBannerHandler : IRequestHandler<AddBannerCommand>
         var banner = new Banner
         {
             Text = request.Title,
-            ProductId = request.ProductId
+            BrandId = request.ProductId
         };
 
         var resultFile = await _fileService.UploadFileAsync(request.Photo, cancellationToken);

@@ -8,7 +8,7 @@ namespace KoreanSecrets.Domain.Entities;
 
 public class Volume : BaseEntity
 {
-    public long Value { get; set; }
+    public string Value { get; set; }
 
     public string Unit { get; set; }
 

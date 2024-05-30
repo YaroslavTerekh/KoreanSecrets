@@ -17,5 +17,10 @@ public class BannerConfiguration : IEntityTypeConfiguration<Banner>
             .WithOne(t => t.Banner)
             .HasForeignKey<AppFile>(t => t.BannerId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasOne(t => t.Brand)
+            .WithOne()
+            .HasForeignKey<Banner>(t => t.BrandId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
