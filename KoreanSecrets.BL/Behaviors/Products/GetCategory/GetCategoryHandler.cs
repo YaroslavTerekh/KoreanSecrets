@@ -34,7 +34,8 @@ public class GetCategoryHandler : IRequestHandler<GetCategoryQuery, CategoryDTO>
             .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
                 .ThenInclude(t => t.Country)
             .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
-                .ThenInclude(t => t.Demand)
+                .ThenInclude(t => t.ProductDemands)
+                    .ThenInclude(t => t.Demand)
             .Include(t => t.Products.Skip(request.CurrentPage * request.PageSize).Take(request.PageSize))
                 .ThenInclude(t => t.Brand)
             .FirstOrDefaultAsync(cancellationToken);
@@ -45,7 +46,7 @@ public class GetCategoryHandler : IRequestHandler<GetCategoryQuery, CategoryDTO>
         var result = new CategoryDTO
         {
             SubCategories = category.Products.Select(t => _mapper.Map<SubCategoryDTO>(t.SubCategory)).ToList(),
-            Demands = category.Products.Select(t => _mapper.Map<DemandDTO>(t.Demand)).ToList(),
+            Demands = category.Products.Select(t => _mapper.Map<DemandDTO>(t.ProductDemands)).ToList(),
             Brands = category.Products.Select(t => _mapper.Map<BrandDTO>(t.Brand)).ToList(),
             Products = category.Products.Select(t => _mapper.Map<ListProductDTO>(t)).ToList(),
             Countries = category.Products.Select(t => _mapper.Map<CountryDTO>(t.Country)).ToList(),

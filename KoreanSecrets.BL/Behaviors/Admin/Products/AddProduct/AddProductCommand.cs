@@ -29,7 +29,7 @@ public class AddProductCommand : IRequest
 
     public Guid? CountryId { get; set; }
 
-    public Guid? DemandId { get; set; }
+    public List<Guid>? DemandId { get; set; }
 
     public IFormFile MainPhoto { get; set; }
 

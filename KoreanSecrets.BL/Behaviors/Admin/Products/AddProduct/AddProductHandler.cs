@@ -32,13 +32,23 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             BrandId = request.BrandId == Guid.Empty ? null : request.BrandId,
             CategoryId = request.CategoryId == Guid.Empty ? null : request.CategoryId,
             CountryId = request.CountryId == Guid.Empty ? null : request.CountryId,
-            DemandId = request.DemandId == Guid.Empty ? null : request.DemandId,
             SubCategoryId = request.SubCategoryId == Guid.Empty ? null : request.SubCategoryId,
             AdditionalIcon = request.Icon,
             MainPhoto = await _fileService.UploadFileAsync(request.MainPhoto, cancellationToken),
             IsInStock = true,
             Quantity = request.Quantity,
         };
+
+        foreach(var guid in request.DemandId)
+        {
+            var newProductDemand = new ProductDemand
+            {
+                DemandId = guid,
+                ProductId = product.Id
+            };
+
+            await _context.AddAsync(newProductDemand, cancellationToken);
+        }
 
         product.MainPhoto.ProductMainPhotoId = product.Id;
         product.MainPhotoId = product.MainPhoto.Id;

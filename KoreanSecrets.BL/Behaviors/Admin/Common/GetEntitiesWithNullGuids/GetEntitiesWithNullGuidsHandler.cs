@@ -30,7 +30,8 @@ public class GetEntitiesWithNullGuidsHandler : IRequestHandler<GetEntitiesWithNu
                                                     t.CountryId == null ||
                                                     t.BrandId == null ||
                                                     t.SubCategoryId == null ||
-                                                    t.DemandId == null);
+                                                    t.ProductDemands.Count < 1
+                                                    );
 
         query = request.Desc ? query.OrderByDescending(t => t.Title) : query;
 

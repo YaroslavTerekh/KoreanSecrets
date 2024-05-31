@@ -86,7 +86,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
         
         if (request.CountriesIds.Count > 0) query = query.Where(t => request.CountriesIds.Contains(t.CountryId!.Value));
         if (request.SubCategoriesIds.Count > 0) query = query.Where(t => request.SubCategoriesIds.Contains(t.SubCategoryId!.Value));
-        if (request.DemandsIds.Count > 0) query = query.Where(t => request.DemandsIds.Contains(t.DemandId!.Value));
+        if (request.DemandsIds.Count > 0) query = query.Where(t => t.ProductDemands.Select(t => t.DemandId).Any(id => request.DemandsIds.Contains(id)));
         if (request.BrandsIds.Count > 0) query = query.Where(t => request.BrandsIds.Contains(t.BrandId!.Value));
         if (request.CategoriesIds.Count > 0) query = query.Where(t => request.CategoriesIds.Contains(t.CategoryId!.Value));
         if (request.Sale) query = query.Where(t => t.AdditionalIcon == ProductIcon.Sale);

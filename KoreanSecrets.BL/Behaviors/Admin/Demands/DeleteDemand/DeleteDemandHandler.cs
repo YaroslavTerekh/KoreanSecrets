@@ -24,7 +24,6 @@ public class DeleteDemandHandler : IRequestHandler<DeleteDemandCommand>
     public async Task<Unit> Handle(DeleteDemandCommand request, CancellationToken cancellationToken)
     {
         var demand = await _context.Demands
-            .Include(t => t.Products)
             .FirstOrDefaultAsync(t => t.Id == request.DemandId, cancellationToken);
 
         if (demand is null)

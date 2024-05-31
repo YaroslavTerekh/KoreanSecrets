@@ -10,5 +10,5 @@ public class Demand : BaseEntity
 {
     public string Title { get; set; }
 
-    public List<Product> Products { get; set; } = new();
+    public List<ProductDemand> ProductDemands { get; set; } = new();
 }

@@ -27,9 +27,7 @@ public class Product : BaseEntity
 
     public Country Country { get; set; }
 
-    public Guid? DemandId { get; set; }
-
-    public Demand Demand { get; set; }
+    public List<ProductDemand> ProductDemands { get; set; }
 
     public ProductIcon AdditionalIcon { get; set; }
 

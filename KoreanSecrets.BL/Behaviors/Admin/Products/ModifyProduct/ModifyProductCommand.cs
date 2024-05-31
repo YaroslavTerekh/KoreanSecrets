@@ -34,7 +34,7 @@ public class ModifyProductCommand : IRequest
 
     public Guid? CountryId { get; set; }
 
-    public Guid? DemandId { get; set; }
+    public List<Guid>? DemandId { get; set; }
 
     public ProductIcon Icon { get; set; } = ProductIcon.None;
 }

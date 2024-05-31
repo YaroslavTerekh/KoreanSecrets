@@ -36,9 +36,7 @@ public class PageProductDTO : BaseEntity
 
     public CountryDTO Country { get; set; }
 
-    public Guid DemandId { get; set; }
-
-    public DemandDTO Demand { get; set; }
+    public List<DemandDTO> Demand { get; set; }
 
     public List<VolumeDTO> Volumes { get; set; }
 

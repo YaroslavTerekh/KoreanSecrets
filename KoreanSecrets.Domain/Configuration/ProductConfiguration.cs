@@ -37,11 +37,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasOne(t => t.Demand)
-            .WithMany(t => t.Products)
-            .HasForeignKey(t => t.DemandId)
+        builder.HasMany(t => t.ProductDemands)
+            .WithOne(t => t.Product)
+            .HasForeignKey(t => t.ProductId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(t => t.Guide)
             .WithOne(t => t.Product)

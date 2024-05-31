@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.Domain.Entities;
 
-public class CategoryDemand
+public class ProductDemand
 {
     public Guid Id { get; set; }
 
-    public Guid CategoryId { get; set; }
+    public Guid ProductId { get; set; }
 
-    public Category Category { get; set; }
+    public Product Product { get; set; }
 
     public Guid DemandId { get; set; }
 

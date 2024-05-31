@@ -26,6 +26,11 @@ public class MapperGlobalProfile : Profile
         CreateMap<Bucket, BucketDTO>();
         CreateMap<Brand, BrandDTO>();
         CreateMap<Demand, DemandDTO>();
+        CreateMap<ProductDemand, DemandDTO>()
+            .ForMember(dest => dest.Id, src => src.MapFrom(t => t.Demand.Id))
+            .ForMember(dest => dest.Title, src => src.MapFrom(t => t.Demand.Title))
+            .ForMember(dest => dest.CreatedDate, src => src.MapFrom(t => t.Demand.CreatedDate))
+            .ReverseMap();
         CreateMap<Country, CountryDTO>();
         CreateMap<SubCategory, SubCategoryDTO>();
         CreateMap<AppFile, AppFileDTO>();

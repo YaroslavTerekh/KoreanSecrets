@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +28,6 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
         product.BrandId = request.BrandId == Guid.Empty ? null : request.BrandId;
         product.CategoryId = request.CategoryId == Guid.Empty ? null : request.CategoryId;
         product.CountryId = request.CountryId == Guid.Empty ? null : request.CountryId;
-        product.DemandId = request.DemandId == Guid.Empty ? null : request.DemandId;
         product.SubCategoryId = request.SubCategoryId == Guid.Empty ? null : request.SubCategoryId;
         product.Title = request.Title;
         product.Characteristics = request.Characteristics;
@@ -36,6 +36,20 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
         product.AdditionalIcon = request.Icon;
         product.Quantity = request.Quantity;
 
+        var newProductDemands = new List<ProductDemand>();
+
+        foreach(var id in request.DemandId)
+        {
+            var productDemand = new ProductDemand
+            {
+                DemandId = id,
+                ProductId = product.Id
+            };
+
+            newProductDemands.Add(productDemand);
+        }
+
+        await _context.ProductDemand.AddRangeAsync(newProductDemands, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

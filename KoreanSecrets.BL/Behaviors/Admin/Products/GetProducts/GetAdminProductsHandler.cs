@@ -27,7 +27,8 @@ public class GetAdminProductsHandler : IRequestHandler<GetAdminProductsQuery, Pa
         var query = _context.Products
             .Include(t => t.Category)
             .Include(t => t.Country)
-            .Include(t => t.Demand)
+            .Include(t => t.ProductDemands)
+                .ThenInclude(t => t.Demand)
             .Include(t => t.Brand)
             .Include(t => t.SubCategory)
             .Where(t => t.Title.Contains(request.SearchText));
