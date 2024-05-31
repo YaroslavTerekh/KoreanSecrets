@@ -14,7 +14,7 @@ public class AddBannerCommandValidator : AbstractValidator<AddBannerCommand>
 {
     public AddBannerCommandValidator(DataContext context)
     {
-        RuleFor(t => t.ProductId)
+        RuleFor(t => t.BrandId)
             .NotEmpty()
             .WithMessage(ValidationMessages.IdRequired)
             .MustAsync(async (id, cancellationToken) =>
