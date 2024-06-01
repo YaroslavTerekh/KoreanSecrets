@@ -35,6 +35,11 @@ public class SubscribeOnProductHandler : IRequestHandler<SubscribeOnProductComma
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
+        if (string.IsNullOrEmpty(user.Email))
+        {
+            throw new NotFoundException(ErrorMessages.NoEmail);
+        }
+        
         product.UsersWaitingForStock.Add(user);
         await _context.SaveChangesAsync(cancellationToken);
 

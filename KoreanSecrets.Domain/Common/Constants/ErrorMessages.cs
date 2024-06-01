@@ -34,6 +34,8 @@ public static class ErrorMessages
     public const string CodeExpired = "Термін дії коду (10 хвилин) сплив. Спробуйте заново";
     public const string CodeNotValid = "Введений код неправильний";
 
+    public const string NoEmail = "Вам подрібно додати EMAIL у налаштуваннях профілю, щоб підписатися на оновлення продукту!";
+    
     public static string ProductNotFound(string product) => $"{product} не знайдено";
     public static string DeleteProductsFirst(EntityErrorType type, string title) 
     {
