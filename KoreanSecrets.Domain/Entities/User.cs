@@ -10,6 +10,8 @@ namespace KoreanSecrets.Domain.Entities;
 
 public class User : IdentityUser<Guid>
 {
+    public long? TemporaryCode { get; set; }
+
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
 
     public string FirstName { get; set; }

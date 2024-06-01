@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.BL.Services.Abstractions;
+﻿using Hangfire;
+using KoreanSecrets.BL.Services.Abstractions;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
@@ -6,6 +7,7 @@ using KoreanSecrets.Domain.Entities;
 using KoreanSecrets.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Auth.Register;
 
-public class RegisterHandler : IRequestHandler<RegisterCommand>
+public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
@@ -35,16 +37,18 @@ public class RegisterHandler : IRequestHandler<RegisterCommand>
         _context = context;
     }
 
-    public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var user = new User
         {
-            UserName = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            Email = request.Email,
-            PhoneNumber = _phoneNumberService.FormatPhoneNumber(request.PhoneNumber)
+            PhoneNumberConfirmed = false,
+            Email = null,
+            EmailConfirmed = false
         };
+
+        user.UserName = Guid.NewGuid().ToString();
 
         var userResult = await _userManager.CreateAsync(user, request.Password);
 
@@ -65,6 +69,18 @@ public class RegisterHandler : IRequestHandler<RegisterCommand>
         await _context.Buckets.AddAsync(bucket, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        BackgroundJob.Schedule(() => RemoveUser(user.Id, cancellationToken), TimeSpan.FromMinutes(10));
+
+        return user.Id;
+    }
+    public async Task RemoveUser(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+
+        if (user is null)
+            throw new NotFoundException(ErrorMessages.UserNotFound);
+
+        if (user.PhoneNumberConfirmed == false)
+            await _userManager.DeleteAsync(user);      
     }
 }

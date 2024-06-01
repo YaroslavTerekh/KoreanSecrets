@@ -28,7 +28,7 @@ public class JWTService : IJWTService
         List<Claim> claims = new List<Claim>
             {
                 new Claim(type: ClaimTypes.NameIdentifier, value: user.Id.ToString()),
-                new Claim(type: ClaimTypes.Email, user.Email),                
+                new Claim(type: ClaimTypes.MobilePhone, user.PhoneNumber),                
             };
 
         foreach (var role in roles)

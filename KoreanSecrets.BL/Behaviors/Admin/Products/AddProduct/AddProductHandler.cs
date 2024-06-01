@@ -39,15 +39,18 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             Quantity = request.Quantity,
         };
 
-        foreach(var guid in request.DemandId)
+        if(request.DemandId is not null)
         {
-            var newProductDemand = new ProductDemand
+            foreach (var guid in request.DemandId)
             {
-                DemandId = guid,
-                ProductId = product.Id
-            };
+                var newProductDemand = new ProductDemand
+                {
+                    DemandId = guid,
+                    ProductId = product.Id
+                };
 
-            await _context.AddAsync(newProductDemand, cancellationToken);
+                await _context.AddAsync(newProductDemand, cancellationToken);
+            }
         }
 
         product.MainPhoto.ProductMainPhotoId = product.Id;

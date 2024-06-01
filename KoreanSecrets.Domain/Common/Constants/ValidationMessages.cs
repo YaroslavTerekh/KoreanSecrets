@@ -45,4 +45,6 @@ public static class ValidationMessages
     public const string WrongPrice = "Вказано некоректну ціну";
 
     public const string UserWithNumberExists = "Користувач з таким номером телефону вже присутній";
+    public static string VerificationCodeInfo(long? code) => $"Ваш код дійсний протягом 10-ти хвилин: {code}";
+
 }

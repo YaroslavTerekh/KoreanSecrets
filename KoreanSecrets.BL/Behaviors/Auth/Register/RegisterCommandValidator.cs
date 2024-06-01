@@ -31,25 +31,5 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
             .WithMessage(ValidationMessages.LastNameTooLong)
             .NotEmpty()
             .WithMessage(ValidationMessages.LastNameRequired);
-
-        RuleFor(t => t.Email)
-            .EmailAddress()
-            .WithMessage(ValidationMessages.WrongEmail)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.EmailRequired);
-
-        RuleFor(t => t.PhoneNumber)
-            .MustAsync(async (phoneNumber, cancellationToken) =>
-            {
-                var exists = await context.Users.AnyAsync(t => t.PhoneNumber == phoneNumber, cancellationToken);
-                return !exists;
-            })
-            .WithMessage(ValidationMessages.UserWithNumberExists)
-            .MaximumLength(13)
-            .WithMessage(ValidationMessages.PhoneNumberTooLong)
-            .MinimumLength(9)
-            .WithMessage(ValidationMessages.PhoneNumberTooShort)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.PhoneNumberRequired);
     }
 }

@@ -87,6 +87,10 @@ var hostConfig = builder.Configuration
 var firebaseConfig = builder.Configuration
         .GetSection("FirebaseSettings")
         .Get<FirebaseSettings>();
+var twillioConfig = builder.Configuration
+        .GetRequiredSection("TwillioSettings")
+        .Get<TwillioSettings>();
+builder.Services.AddSingleton(twillioConfig);
 builder.Services.AddSingleton(hostConfig);
 builder.Services.AddSingleton(firebaseConfig);
 builder.Services.AddSingleton(liqPayConfig);
@@ -110,6 +114,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 4;
     options.Password.RequiredUniqueChars = 0;
+
+    options.User.RequireUniqueEmail = false;
 });
 
 builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>

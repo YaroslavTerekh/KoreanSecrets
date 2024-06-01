@@ -11,6 +11,7 @@ public static class ErrorMessages
 {
     public const string ProductNotInStock = "Товару немає в наявності";
 
+    public const string UserWithSamePhoneExists = "Користувач з таким номером телефону вже присутній";
     public const string AddressInfoNotFound = "Адреси, яка належить до користувача не знайдено";
     public const string BrandNotFound = "Бренд не знайдено";
     public const string BannerNotFound = "Банер не знайдено";
@@ -29,6 +30,9 @@ public static class ErrorMessages
 
     public const string FileNotFound = "Файлу не знайдено";
     public const string UserNotFound = "Користувача не знайдено";
+    public const string UserExpired = "Користувача було видалено, тому що він не підтвердив номер телефону протягом 10 хвилин. Зареєструйтеся заново";
+    public const string CodeNotValid = "Введений код неправильний";
+
     public static string ProductNotFound(string product) => $"{product} не знайдено";
     public static string DeleteProductsFirst(EntityErrorType type, string title) 
     {

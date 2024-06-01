@@ -1,6 +1,8 @@
 ﻿using KoreanSecrets.BL.Behaviors.Auth.ChangePassword;
+using KoreanSecrets.BL.Behaviors.Auth.ConfirmPhoneVerificationCode;
 using KoreanSecrets.BL.Behaviors.Auth.Login;
 using KoreanSecrets.BL.Behaviors.Auth.Register;
+using KoreanSecrets.BL.Behaviors.Auth.SendPhoneVerificationCode;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -39,4 +41,12 @@ public class AuthController : BaseController
 
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
+
+    [HttpPost("phone-code-request")]
+    public async Task<IActionResult> PhoneCodeRequestAsync([FromBody] SendPhoneVerificationCodeCommand command, CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPost("phone-code-confirm")]
+    public async Task<IActionResult> PhoneCodeComfirmAsync([FromBody] ConfirmPhoneVerificationCodeCommand command, CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(command, cancellationToken));
 }

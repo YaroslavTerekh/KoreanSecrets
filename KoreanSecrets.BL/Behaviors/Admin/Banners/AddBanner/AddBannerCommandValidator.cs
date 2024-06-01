@@ -16,19 +16,10 @@ public class AddBannerCommandValidator : AbstractValidator<AddBannerCommand>
     {
         RuleFor(t => t.BrandId)
             .NotEmpty()
-            .WithMessage(ValidationMessages.IdRequired)
-            .MustAsync(async (id, cancellationToken) =>
-            {
-                return await context.Products.AnyAsync(t => t.Id == id, cancellationToken);
-            })
-            .WithMessage(ErrorMessages.SomeProductNotFound);
+            .WithMessage(ValidationMessages.IdRequired);
 
         RuleFor(t => t.Title)
             .NotEmpty()
-            .WithMessage(ValidationMessages.TitleRequired)
-            .MinimumLength(5)
-            .WithMessage(ValidationMessages.TitleTooShort)
-            .MaximumLength(100)
-            .WithMessage(ValidationMessages.TitleTooLong);
+            .WithMessage(ValidationMessages.TitleRequired);
     }
 }
