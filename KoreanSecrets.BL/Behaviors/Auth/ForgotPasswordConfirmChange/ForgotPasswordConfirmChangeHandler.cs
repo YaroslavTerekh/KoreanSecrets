@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using KoreanSecrets.BL.Services.Abstractions;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
@@ -13,9 +14,11 @@ public class ForgotPasswordConfirmChangeHandler : IRequestHandler<ForgotPassword
 {
     private readonly UserManager<User> _userManager;
     private readonly DataContext _context;
+    private readonly IPhoneNumberService _phoneNumberService;
 
-    public ForgotPasswordConfirmChangeHandler(UserManager<User> userManager, DataContext context)
+    public ForgotPasswordConfirmChangeHandler(UserManager<User> userManager, DataContext context, IPhoneNumberService phoneNumberService)
     {
+        _phoneNumberService = phoneNumberService;
         _userManager = userManager;
         _context = context;
     }
@@ -33,7 +36,7 @@ public class ForgotPasswordConfirmChangeHandler : IRequestHandler<ForgotPassword
         if (user.TemporaryCode != request.ConfirmationCode)
             throw new Exception(ErrorMessages.CodeNotValid);
 
-        var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, request.PhoneNumber);
+        var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, _phoneNumberService.FormatPhoneNumber(request.PhoneNumber));
         var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);
 
         if (!result.Succeeded)

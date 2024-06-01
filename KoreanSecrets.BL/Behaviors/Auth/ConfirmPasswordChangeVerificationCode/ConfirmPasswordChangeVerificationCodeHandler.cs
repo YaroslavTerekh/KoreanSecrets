@@ -28,8 +28,6 @@ public class ConfirmPasswordChangeVerificationCodeHandler : IRequestHandler<Conf
 
     public async Task<AuthToken> Handle(ConfirmPasswordChangeVerificationCodeCommand request, CancellationToken cancellationToken)
     {
-        // ТУТ перевіряєш код і шлеш мені ок чи погано
-
         var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber, cancellationToken);
 
         if (user is null)
@@ -40,7 +38,5 @@ public class ConfirmPasswordChangeVerificationCodeHandler : IRequestHandler<Conf
         var roles = await _userManager.GetRolesAsync(user);
 
         return _jwtService.GenerateJWT(user, roles.ToArray());
-
-        return default;
     }
 }

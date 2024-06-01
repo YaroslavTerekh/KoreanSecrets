@@ -31,10 +31,11 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
     {
         var query = _context.Users.AsQueryable();
         var users = query
-            .Include(t => t.Purchases)
-            .Skip(request.CurrentPage * request.PageSize)
-            .Take(request.PageSize)            
+            .Include(t => t.Purchases)            
             .AsQueryable();
+
+        var admins = await _roleManager.GetUsersInRoleAsync(Roles.Admin);
+        users = users.Where(t => !admins.Contains(t));
 
         if (!string.IsNullOrEmpty(request.ColumnToSort))
         {
@@ -60,8 +61,11 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
             users = users.OrderByDescending(x => x.CreatedTime).ThenByDescending(x=>x.Purchases);
         }
         
-        var admins = users.Where(t => CheckAdminRole(t)).ToList();
-        var res = await users.Where(t => !admins.Contains(t)).ToListAsync(cancellationToken);
+        var res = await users
+            .Where(t => !admins.Contains(t))
+            .Skip(request.CurrentPage * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
 
         return new PaginationModelDTO<UserDTO>
         {
@@ -72,8 +76,8 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
         };
     }
 
-    public bool CheckAdminRole(User user)
-    {
-        return _roleManager.IsInRoleAsync(user, Roles.Admin).GetAwaiter().GetResult();
-    }
+    //public bool CheckAdminRole(User user)
+    //{
+    //    return _roleManager.IsInRoleAsync(user, Roles.Admin).GetAwaiter().GetResult();
+    //}
 }
