@@ -43,7 +43,7 @@ public class SendPhoneVerificationCodeHandler : IRequestHandler<SendPhoneVerific
             throw new Exception(ErrorMessages.UserWithSamePhoneExists);
 
         if (user is null)
-            throw new NotFoundException(ErrorMessages.UserNotFound);
+            throw new NotFoundException(ErrorMessages.UserNotFound + ". Або час реєстрації минув, спробуйте ще раз!");
 
         if ((DateTime.UtcNow - user.CreatedTime).TotalMinutes > 10)
         {
