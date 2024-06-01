@@ -29,26 +29,17 @@ public class ConfirmPasswordChangeVerificationCodeHandler : IRequestHandler<Conf
     public async Task<AuthToken> Handle(ConfirmPasswordChangeVerificationCodeCommand request, CancellationToken cancellationToken)
     {
         // ТУТ перевіряєш код і шлеш мені ок чи погано
-        
-        // var user = await _context.Users.FirstOrDefaultAsync(t => t.Id == request.UserId, cancellationToken);
-        //
-        // if (user is null)
-        //     throw new NotFoundException(ErrorMessages.UserNotFound);
-        //
-        // if (user.PhoneNumber != _phoneNumberService.FormatPhoneNumber(request.PhoneNumber))
-        //     throw new Exception(ErrorMessages.WrongPhoneNumber);
-        //
-        // if (user.PhoneNumberConfirmed)
-        //     throw new Exception(ErrorMessages.PhoneNumberAlreadyConfirmed);
-        //
-        // if (user.TemporaryCode != request.ComfirmationCode) throw new Exception(ErrorMessages.CodeNotValid); ;
-        //
-        // user.PhoneNumberConfirmed = true;
-        // await _context.SaveChangesAsync(cancellationToken);
-        //
-        // var roles = await _userManager.GetRolesAsync(user);
-        //
-        // return _jwtService.GenerateJWT(user, roles.ToArray());
+
+        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber, cancellationToken);
+
+        if (user is null)
+            throw new NotFoundException(ErrorMessages.UserNotFound);
+
+        if (user.TemporaryCode != request.ConfirmationCode) throw new Exception(ErrorMessages.CodeNotValid);
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return _jwtService.GenerateJWT(user, roles.ToArray());
 
         return default;
     }

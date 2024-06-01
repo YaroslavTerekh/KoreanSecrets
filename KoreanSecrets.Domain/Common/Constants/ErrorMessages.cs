@@ -31,6 +31,7 @@ public static class ErrorMessages
     public const string FileNotFound = "Файлу не знайдено";
     public const string UserNotFound = "Користувача не знайдено";
     public const string UserExpired = "Користувача було видалено, тому що він не підтвердив номер телефону протягом 10 хвилин. Зареєструйтеся заново";
+    public const string CodeExpired = "Термін дії коду (10 хвилин) сплив. Спробуйте заново";
     public const string CodeNotValid = "Введений код неправильний";
 
     public static string ProductNotFound(string product) => $"{product} не знайдено";
