@@ -15,7 +15,7 @@ public class AddFeedbackCommandValidator : AbstractValidator<AddFeedbackCommand>
     public AddFeedbackCommandValidator(DataContext context)
     {
         RuleFor(t => t.FeedbackText)
-            .MinimumLength(20)
+            .MinimumLength(1)
             .WithMessage(ValidationMessages.FeedbackTooShort)
             .MaximumLength(200)
             .WithMessage(ValidationMessages.FeedbackTooLong)

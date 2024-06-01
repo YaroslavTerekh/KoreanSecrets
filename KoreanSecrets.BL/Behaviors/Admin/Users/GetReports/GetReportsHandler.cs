@@ -24,12 +24,39 @@ public class GetReportsHandler : IRequestHandler<GetReportsQuery, List<ReportDTO
 
     public async Task<List<ReportDTO>> Handle(GetReportsQuery request, CancellationToken cancellationToken)
     {
-        var reports = await _context.Reports
+        var reports = _context.Reports
             .Include(t => t.User)
             .ThenInclude(x=>x.AddressInfo)
-            .Select(t => _mapper.Map<ReportDTO>(t))
-            .ToListAsync(cancellationToken);
+            .AsQueryable();
+        
+        if (!string.IsNullOrEmpty(request.ColumnToSort))
+        {
+            reports = request.ColumnToSort switch
+            {
+                "status" => request?.WayToSort == "asc"
+                    ? reports.OrderBy(t => t.Status)
+                    : reports.OrderByDescending(t => t.Status),
+                "text" => request?.WayToSort == "asc"
+                    ? reports.OrderBy(t => t.ReportText)
+                    : reports.OrderByDescending(t => t.ReportText),
+                "user" => request?.WayToSort == "asc"
+                    ? reports.OrderBy(t => t.User.FirstName)
+                    : reports.OrderByDescending(t => t.User.FirstName),
+                "phone" => request?.WayToSort == "asc"
+                    ? reports.OrderBy(t => t.User.PhoneNumber)
+                    : reports.OrderByDescending(t => t.User.PhoneNumber),
+                "email" => request?.WayToSort == "asc"
+                    ? reports.OrderBy(t => t.User.Email)
+                    : reports.OrderByDescending(t => t.User.Email),
+                _ => reports
+            };
+        }
+        else
+        {
+            reports = reports.OrderByDescending(x => x.CreatedDate);
+        }
 
-        return reports;
+        return await reports.Select(t => _mapper.Map<ReportDTO>(t))
+            .ToListAsync(cancellationToken);
     }
 }

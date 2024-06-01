@@ -37,8 +37,48 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
             .Include(t => t.MainPhoto)
             .Include(t => t.Feedbacks)
                 .ThenInclude(t => t.User)
-            .Include(t => t.Volumes);
+            .Include(t => t.Volumes)
+            .AsQueryable();
 
+        if (!string.IsNullOrEmpty(request.Text))
+        {
+            query = query.Where(t => t.Title.Contains(request.Text));
+        }
+
+        if (!string.IsNullOrEmpty(request.ColumnToSort))
+        {
+            query = request.ColumnToSort switch
+            {
+                "name" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.Title)
+                    : query.OrderByDescending(t => t.Title),
+                "category" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.Category.Title)
+                    : query.OrderByDescending(t => t.Category.Title),
+                "country" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.Country.Title)
+                    : query.OrderByDescending(t => t.Country.Title),
+                "demand" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.ProductDemands.OrderBy(d => d.Demand.Title))
+                    : query.OrderByDescending(t => t.ProductDemands.OrderByDescending(d => d.Demand.Title)),
+                "subCategory" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.SubCategory.Title)
+                    : query.OrderByDescending(t => t.SubCategory.Title),
+                "brand" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.Brand.Title)
+                    : query.OrderByDescending(t => t.Brand.Title),
+                "isInStock" => request?.WayToSort == "asc"
+                    ? query.OrderBy(t => t.IsInStock)
+                    : query.OrderByDescending(t => t.IsInStock),
+                _ => query
+            };
+        }
+        else
+        {
+            query = query.OrderBy(x => x.SubCategory.Title).ThenByDescending(x => x.CreatedDate);
+        }
+
+        
         return new PaginationModelDTO<PageProductDTO>
         {
             CurrentPage = request.CurrentPage,

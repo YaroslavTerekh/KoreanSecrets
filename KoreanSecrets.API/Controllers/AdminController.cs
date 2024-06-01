@@ -109,10 +109,11 @@ public class AdminController : ControllerBase
     (CancellationToken cancellationToken = default)
         => Ok(await _mediatr.Send(new GetYearUserChartStatisticQuery(), cancellationToken));
 
-    [HttpGet("reports")]
-    public async Task<IActionResult> GetReportsAsync
-    (CancellationToken cancellationToken = default)
-    => Ok(await _mediatr.Send(new GetReportsQuery(), cancellationToken));
+    [HttpPut("reports")]
+    public async Task<IActionResult> GetReportsAsync(
+        [FromBody] GetReportsQuery command,
+        CancellationToken cancellationToken = default)
+    => Ok(await _mediatr.Send(command, cancellationToken));
 
     [HttpGet("chart/users-of-weak")]
     public async Task<IActionResult> GetChartForUsersOfWeakAsync

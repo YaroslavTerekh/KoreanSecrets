@@ -60,7 +60,7 @@ public class SendPhoneVerificationCodeHandler : IRequestHandler<SendPhoneVerific
         await _context.SaveChangesAsync(cancellationToken);
 
         TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
-
+        
         var message = await MessageResource.CreateAsync(
             body: ValidationMessages.VerificationCodeInfo(user.TemporaryCode),
             from: new PhoneNumber(_twilioSettings.FromPhoneNumber),

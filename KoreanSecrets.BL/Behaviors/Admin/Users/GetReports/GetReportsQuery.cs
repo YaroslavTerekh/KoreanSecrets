@@ -10,4 +10,7 @@ namespace KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 
 public class GetReportsQuery : IRequest<List<ReportDTO>>
 {
+    public string? WayToSort { get; set; }
+    
+    public string? ColumnToSort { get; set; }
 }

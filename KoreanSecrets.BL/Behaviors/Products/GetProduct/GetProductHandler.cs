@@ -38,7 +38,7 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Include(t => t.Photos)
             .Include(t => t.Guide)
             .Include(t => t.MainPhoto)
-            .Include(t => t.Feedbacks)
+            .Include(t => t.Feedbacks.OrderByDescending(x=>x.CreatedDate))
                 .ThenInclude(t => t.User)
             .Include(t => t.Volumes)
             .Where(t => t.Id == request.ProductId)

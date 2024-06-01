@@ -17,4 +17,8 @@ public class GetPurchasesQuery : IRequest<PaginationModelDTO<Purchase>>
     public int PageSize { get; set; }
 
     public PurchaseStatus? Status { get; set; }
+    
+    public string? WayToSort { get; set; }
+    
+    public string? ColumnToSort { get; set; }
 }
