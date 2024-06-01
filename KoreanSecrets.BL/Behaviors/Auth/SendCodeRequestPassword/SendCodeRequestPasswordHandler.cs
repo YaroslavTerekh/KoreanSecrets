@@ -28,7 +28,7 @@ public class SendCodeRequestPasswordHandler : IRequestHandler<SendCodeRequestPas
 
     public async Task<Unit> Handle(SendCodeRequestPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == _phoneNumberService.FormatPhoneNumber(request.PhoneNumber), cancellationToken);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
@@ -45,7 +45,7 @@ public class SendCodeRequestPasswordHandler : IRequestHandler<SendCodeRequestPas
         var message = await MessageResource.CreateAsync(
             body: ValidationMessages.VerificationCodeInfo(user.TemporaryCode),
             from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
-            to: new PhoneNumber(user.PhoneNumber)
+            to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(request.PhoneNumber))
         );
 
         return Unit.Value;
