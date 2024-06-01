@@ -36,7 +36,7 @@ public class ForgotPasswordConfirmChangeHandler : IRequestHandler<ForgotPassword
         if (user.TemporaryCode != request.ConfirmationCode)
             throw new Exception(ErrorMessages.CodeNotValid);
 
-        var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);
 
         if (!result.Succeeded)
