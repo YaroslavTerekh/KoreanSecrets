@@ -39,23 +39,22 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
 
         var newProductDemands = new List<ProductDemand>();
 
-        foreach(var id in request.DemandId)
-        {
-            var productDemand = new ProductDemand
+        if (request.DemandId != null)
+            foreach (var id in request.DemandId)
             {
-                DemandId = id,
-                ProductId = product.Id
-            };
+                var productDemand = new ProductDemand
+                {
+                    DemandId = id,
+                    ProductId = product.Id
+                };
 
-            if (product?.ProductDemands?.FirstOrDefault(x => x.DemandId == id) == null)
-            {
                 newProductDemands.Add(productDemand);
             }
-        }
 
         var productDemands = await _context.ProductDemand.Where(t => product.ProductDemands.Contains(t)).ToListAsync(cancellationToken);
 
         _context.ProductDemand.RemoveRange(productDemands);
+        await _context.SaveChangesAsync(cancellationToken);
         await _context.ProductDemand.AddRangeAsync(newProductDemands, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
