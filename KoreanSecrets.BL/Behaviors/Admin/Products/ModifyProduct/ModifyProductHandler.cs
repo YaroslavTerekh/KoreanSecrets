@@ -19,6 +19,7 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
     public async Task<Unit> Handle(ModifyProductCommand request, CancellationToken cancellationToken)
     {
         var product = await _context.Products
+            .Include(t => t.ProductDemands)
             .Where(t => t.Id == request.ProductId)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -49,6 +50,9 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
             newProductDemands.Add(productDemand);
         }
 
+        var productDemands = await _context.ProductDemand.Where(t => product.ProductDemands.Contains(t)).ToListAsync(cancellationToken);
+
+        _context.ProductDemand.RemoveRange(productDemands);
         await _context.ProductDemand.AddRangeAsync(newProductDemands, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -37,6 +37,11 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
         var admins = await _roleManager.GetUsersInRoleAsync(Roles.Admin);
         users = users.Where(t => !admins.Contains(t));
 
+        if(request.Text != null)
+        {
+            users = users.Where(t => String.Concat(t.FirstName, t.LastName).Contains(request.Text));
+        }
+
         if (!string.IsNullOrEmpty(request.ColumnToSort))
         {
             users = request.ColumnToSort switch
@@ -58,11 +63,10 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
         }
         else
         {
-            users = users.OrderByDescending(x => x.CreatedTime).ThenByDescending(x=>x.Purchases);
+            users = users.OrderByDescending(x => x.CreatedTime);
         }
         
         var res = await users
-            .Where(t => !admins.Contains(t))
             .Skip(request.CurrentPage * request.PageSize)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);

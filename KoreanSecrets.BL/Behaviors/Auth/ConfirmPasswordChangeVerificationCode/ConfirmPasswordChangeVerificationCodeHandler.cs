@@ -28,7 +28,7 @@ public class ConfirmPasswordChangeVerificationCodeHandler : IRequestHandler<Conf
 
     public async Task<AuthToken> Handle(ConfirmPasswordChangeVerificationCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == _phoneNumberService.FormatPhoneNumber(request.PhoneNumber), cancellationToken);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);

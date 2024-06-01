@@ -25,7 +25,7 @@ public class ForgotPasswordConfirmChangeHandler : IRequestHandler<ForgotPassword
 
     public async Task<Unit> Handle(ForgotPasswordConfirmChangeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == _phoneNumberService.FormatPhoneNumber(request.PhoneNumber), cancellationToken);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
@@ -36,7 +36,7 @@ public class ForgotPasswordConfirmChangeHandler : IRequestHandler<ForgotPassword
         if (user.TemporaryCode != request.ConfirmationCode)
             throw new Exception(ErrorMessages.CodeNotValid);
 
-        var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, _phoneNumberService.FormatPhoneNumber(request.PhoneNumber));
+        var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
         var result = await _userManager.ResetPasswordAsync(user, token, request.NewPassword);
 
         if (!result.Succeeded)

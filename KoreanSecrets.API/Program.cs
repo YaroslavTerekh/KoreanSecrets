@@ -55,10 +55,10 @@ builder.Services.AddIdentity<User, ApplicationRole>(opts =>
     {
         opts.User.RequireUniqueEmail = true;
     })
-    .AddRoles<ApplicationRole>()
+    .AddRoles<ApplicationRole>()    
+    .AddErrorDescriber<CustomIdentityErrorDescriber>()
     .AddEntityFrameworkStores<DataContext>()
-    .AddDefaultTokenProviders()
-    .AddErrorDescriber<CustomIdentityErrorDescriber>();
+    .AddDefaultTokenProviders();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
