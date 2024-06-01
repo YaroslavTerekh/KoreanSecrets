@@ -47,7 +47,10 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
                 ProductId = product.Id
             };
 
-            newProductDemands.Add(productDemand);
+            if (product?.ProductDemands?.FirstOrDefault(x => x.DemandId == id) == null)
+            {
+                newProductDemands.Add(productDemand);
+            }
         }
 
         var productDemands = await _context.ProductDemand.Where(t => product.ProductDemands.Contains(t)).ToListAsync(cancellationToken);
