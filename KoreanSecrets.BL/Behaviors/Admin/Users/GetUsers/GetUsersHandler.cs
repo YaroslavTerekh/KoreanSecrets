@@ -30,21 +30,45 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
     public async Task<PaginationModelDTO<UserDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
         var query = _context.Users.AsQueryable();
-        var users = await query
+        var users = query
             .Include(t => t.Purchases)
             .Skip(request.CurrentPage * request.PageSize)
             .Take(request.PageSize)            
-            .ToListAsync(cancellationToken);
+            .AsQueryable();
 
+        if (!string.IsNullOrEmpty(request.ColumnToSort))
+        {
+            users = request.ColumnToSort switch
+            {
+                "name" => request?.WayToSort == "asc"
+                    ? users.OrderBy(t => t.FirstName)
+                    : users.OrderByDescending(t => t.FirstName),
+                "email" => request?.WayToSort == "asc"
+                    ? users.OrderBy(t => t.Email)
+                    : users.OrderByDescending(t => t.Email),
+                "phone" => request?.WayToSort == "asc"
+                    ? users.OrderBy(t => t.PhoneNumber)
+                    : users.OrderByDescending(t => t.PhoneNumber),
+                "purchases" => request?.WayToSort == "asc"
+                    ? users.OrderBy(t => t.Purchases)
+                    : users.OrderByDescending(t => t.Purchases),
+                _ => users
+            };
+        }
+        else
+        {
+            users = users.OrderByDescending(x => x.CreatedTime).ThenByDescending(x=>x.Purchases);
+        }
+        
         var admins = users.Where(t => CheckAdminRole(t)).ToList();
-        users = users.Where(t => !admins.Contains(t)).ToList();
+        var res = await users.Where(t => !admins.Contains(t)).ToListAsync(cancellationToken);
 
         return new PaginationModelDTO<UserDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken) - admins.Count,
-            Products = users.Select(t => _mapper.Map<UserDTO>(t)).ToList()
+            Products = res.Select(t => _mapper.Map<UserDTO>(t)).ToList()
         };
     }
 

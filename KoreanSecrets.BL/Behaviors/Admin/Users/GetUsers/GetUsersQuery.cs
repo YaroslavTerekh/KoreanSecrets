@@ -13,4 +13,10 @@ public class GetUsersQuery : IRequest<PaginationModelDTO<UserDTO>>
     public int CurrentPage { get; set; }
 
     public int PageSize { get; set; }
+    
+    public string? WayToSort { get; set; }
+    
+    public string? ColumnToSort { get; set; }
+    
+    public string? Text { get; set; }
 }
