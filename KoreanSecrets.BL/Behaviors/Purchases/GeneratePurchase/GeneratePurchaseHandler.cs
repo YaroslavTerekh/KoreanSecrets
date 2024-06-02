@@ -83,46 +83,111 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
-        long? discPrice = 0;
+        var purchasesPriceDictionary = new Dictionary<PurchasedProduct, long>();
+
+        foreach (var purchaseProduct in purchase.Products)
+        {
+            purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * purchaseProduct.Volume.Price);
+        }
+
+        // product discount
+
+        foreach (var purchasePricePair in purchasesPriceDictionary)
+        {
+            var purchaseProduct = purchasePricePair.Key;
+            var currentPrice = purchasePricePair.Value;
+            long? newPrice = null;
+
+            if (purchaseProduct.Product.DiscountPrice is not null)
+            {
+                newPrice = (currentPrice * purchaseProduct.Product.DiscountPrice) / 100;
+            }
+            
+            if (newPrice != null) 
+                purchasesPriceDictionary[purchasePricePair.Key] = (long)newPrice;
+        }
+
+        // promocode
 
         if (promocode is not null)
         {
-            foreach(var product in purchase.Products)
+            foreach (var purchasePricePair in purchasesPriceDictionary)
             {
-                if (product.Product.BrandId == promocode.BrandId)
+                var purchaseProduct = purchasePricePair.Key;
+                var currentPrice = purchasePricePair.Value;
+
+                if (purchaseProduct.Product.BrandId == promocode.BrandId)
                 {
-                    var productPrice = product.Volume.Price * product.Amount;
-                    discPrice = (long)((productPrice * promocode.Discount) / 100);
+                    purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
                 }
             }
         }
 
-        var totalPrice = purchase.Products.Select(t => t.Product.DiscountPrice is not null ? (((t.Volume.Price * t.Amount) - ((t.Volume.Price * t.Amount * t.Product.DiscountPrice)     ) / 100)) : t.Volume.Price * t.Amount).Sum();
+        // promotion
 
         var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
         if (promotions.Count > 0)
         {
             var promoBrandIds = promotions.Select(t => t.BrandId).ToList();
-            foreach (var product in purchase.Products)
+            foreach (var purchasePricePair in purchasesPriceDictionary)
             {
-                if(product.Product.BrandId is not null)
+                var purchaseProduct = purchasePricePair.Key;
+                var currentPrice = purchasePricePair.Value;
+                long? newPrice = null;
+
+                if (purchaseProduct.Product.BrandId is not null && promoBrandIds.Contains((Guid)purchaseProduct.Product.BrandId))
                 {
-                    if (promoBrandIds.Contains((Guid)product.Product.BrandId))
-                    {
-                        var productPrice = product.Product.DiscountPrice is not null
-                            ? ((product.Volume.Price * product.Amount) - ((product.Volume.Price * product.Amount * product.Product.DiscountPrice) / 100))
-                            : product.Volume.Price * product.Amount;
-                        totalPrice -= (long)((productPrice * promotions.Where(t => t.BrandId == product.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100);
-                    }
-                }                
+                    newPrice = (long?)(currentPrice * promotions.Where(t => t.BrandId == purchaseProduct.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100;
+
+                    if(newPrice != null)
+                        purchasesPriceDictionary[purchasePricePair.Key] = (long)newPrice;
+                }
             }
         }
 
 
-        purchase.TotalPrice = (long)totalPrice!;
+        //long? discount = 0;
 
-        if(request.Address is not null && request.SaveAddress)
+        //if (promocode is not null)
+        //{
+        //    foreach(var product in purchase.Products)
+        //    {
+        //        if (product.Product.BrandId == promocode.BrandId)
+        //        {
+        //            discount = product.Volume.Price - (long)((product.Volume.Price * promocode.Discount) / 100);
+        //        }
+        //    }
+        //}
+
+        //var totalPrice = purchase.Products.Select(t => GetTotalPrice(t, promocode, discount)).Sum();
+
+        //var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
+        //var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        //if (promotions.Count > 0)
+        //{
+        //    var promoBrandIds = promotions.Select(t => t.BrandId).ToList();
+        //    foreach (var product in purchase.Products)
+        //    {
+        //        if(product.Product.BrandId is not null)
+        //        {
+        //            if (promoBrandIds.Contains((Guid)product.Product.BrandId))
+        //            {
+        //                var productPrice = product.Product.DiscountPrice is not null
+        //                    ? ((product.Volume.Price * product.Amount) - ((product.Volume.Price * product.Amount * product.Product.DiscountPrice) / 100))
+        //                    : product.Volume.Price * product.Amount;
+        //                totalPrice -= (long)((productPrice * promotions.Where(t => t.BrandId == product.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100);
+        //            }
+        //        }                
+        //    }
+        //}
+
+
+        //purchase.TotalPrice = (long)totalPrice!;
+
+        purchase.TotalPrice = purchasesPriceDictionary.Select(t => t.Value).Sum();
+
+        if (request.Address is not null && request.SaveAddress)
         {
             if(user.AddressInfoId is not null)
             {
@@ -158,6 +223,25 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
 
         return new { Form = form, Id = purchase.PurchaseIdentifier };
+    }
+
+    private long? GetTotalPrice(PurchasedProduct purchasedProduct, Promocode? promocode, long? discount)
+    {
+        if (purchasedProduct.Product.DiscountPrice is not null && purchasedProduct.Product.BrandId == promocode?.BrandId)
+        {
+            return
+                ((purchasedProduct.Volume.Price * purchasedProduct.Amount) - (((purchasedProduct.Volume.Price * purchasedProduct.Amount * purchasedProduct.Product.DiscountPrice)) / 100) - discount);
+        }
+        else if (purchasedProduct.Product.DiscountPrice is not null)
+        {
+            return        
+                (purchasedProduct.Volume.Price * purchasedProduct.Amount) - ((purchasedProduct.Volume.Price * purchasedProduct.Amount * purchasedProduct.Product.DiscountPrice) / 100);
+        }
+        else
+        {
+            return 
+                purchasedProduct.Volume.Price * purchasedProduct.Amount;
+        }
     }
 
     private long ConvertGuidToLong(Guid guid)
