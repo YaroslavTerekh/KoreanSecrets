@@ -30,6 +30,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<Banner> Banners { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<PurchasedProduct> PurchasedProducts { get; set; }
+    public DbSet<BucketProduct> BucketProducts { get; set; }
     public DbSet<Volume> Volume { get; set; }
     public DbSet<Report> Reports { get; set; }
     public DbSet<ProductUser> ProductUser { get; set; }
@@ -54,6 +55,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         builder.ApplyConfiguration(new PurchaseConfiguration());
         builder.ApplyConfiguration(new PurchaseProductConfiguration());
         builder.ApplyConfiguration(new ProductUserConfiguration());
+        builder.ApplyConfiguration(new BucketProductConfiguration());
         //builder.ApplyConfiguration(new CategoryBrandConfiguration());
         //builder.ApplyConfiguration(new CategorySubCategoryConfiguration());
         //builder.ApplyConfiguration(new CategoryCountryConfiguration());

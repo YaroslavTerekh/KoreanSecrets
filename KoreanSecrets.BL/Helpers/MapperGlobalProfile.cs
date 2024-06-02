@@ -24,7 +24,8 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon))
             .ForMember(dest => dest.Quantity, src => src.MapFrom(t => t.Quantity));
-        CreateMap<Bucket, BucketDTO>();
+        CreateMap<Bucket, BucketDTO>()
+            .ForMember(dest => dest.PurchaseProducts, src => src.MapFrom(t => t.BucketProducts));
         CreateMap<Brand, BrandDTO>();
         CreateMap<Demand, DemandDTO>();
         CreateMap<ProductDemand, DemandDTO>()
@@ -48,7 +49,8 @@ public class MapperGlobalProfile : Profile
             //.ForMember(dest => dest.SubCategories, src => src.MapFrom(t => t.CategorySubCategories.Select(t => t.SubCategory).ToList()))
             //.ForMember(dest => dest.Countries, src => src.MapFrom(t => t.CategoryCountries.Select(t => t.Country).ToList()))
             //.ForMember(dest => dest.Brands, src => src.MapFrom(t => t.CategoryBrands.Select(t => t.Brand).ToList()));
-        CreateMap<PurchasedProduct, PurchaseProductDTO>();
+        CreateMap<BucketProduct, BucketProductDTO>();
+        CreateMap<PurchasedProduct, BucketProductDTO>();
         CreateMap<AddressInfo, AddressInfoDTO>();
         CreateMap<AppFile, AppFileDTO>();
         //.ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => String.Concat(hostSettings.ApplicationUrl, src.FilePath.Replace(@"\", "/"))));

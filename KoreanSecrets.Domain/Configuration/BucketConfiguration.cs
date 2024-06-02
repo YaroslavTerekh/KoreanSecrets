@@ -13,7 +13,9 @@ public class BucketConfiguration : IEntityTypeConfiguration<Bucket>
 {
     public void Configure(EntityTypeBuilder<Bucket> builder)
     {
-        builder.HasMany(t => t.PurchaseProducts)
-            .WithOne();
+        builder.HasMany(t => t.BucketProducts)
+            .WithOne()
+            .HasForeignKey(t => t.BucketId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

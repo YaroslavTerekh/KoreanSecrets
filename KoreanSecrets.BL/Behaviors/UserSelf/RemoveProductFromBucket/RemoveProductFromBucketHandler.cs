@@ -30,18 +30,18 @@ public class RemoveProductFromBucketHandler : IRequestHandler<RemoveProductFromB
 
         var user = await _context.Users
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.PurchaseProducts)
+                .ThenInclude(t => t.BucketProducts)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
-        var purchaseProduct = user.Bucket.PurchaseProducts.Where(t => t.ProductId == request.ProductId).FirstOrDefault();
+        var purchaseProduct = user.Bucket.BucketProducts.Where(t => t.ProductId == request.ProductId).FirstOrDefault();
 
         if (purchaseProduct is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        _context.PurchasedProducts.Remove(purchaseProduct);
+        _context.BucketProducts.Remove(purchaseProduct);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

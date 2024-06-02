@@ -9,10 +9,10 @@ namespace KoreanSecrets.Domain.DataTransferObjects;
 
 public class BucketDTO : BaseEntity
 {
-    public List<PurchaseProductDTO> PurchaseProducts { get; set; }
+    public List<BucketProductDTO> PurchaseProducts { get; set; }
 }
 
-public class PurchaseProductDTO : BaseEntity
+public class BucketProductDTO : BaseEntity
 {
     public ListProductDTO Product { get; set; }
 

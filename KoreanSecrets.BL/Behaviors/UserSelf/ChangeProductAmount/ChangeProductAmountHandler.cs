@@ -25,7 +25,7 @@ public class ChangeProductAmountHandler : IRequestHandler<ChangeProductAmountCom
         var userBucket = await _context.Users
             .Where(t => t.Id == request.CurrentUserId)
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.PurchaseProducts)
+                .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Product)
             .Select(t => t.Bucket)
             .FirstOrDefaultAsync(cancellationToken);
@@ -33,12 +33,12 @@ public class ChangeProductAmountHandler : IRequestHandler<ChangeProductAmountCom
         if (userBucket is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
-        var purchaseProduct = userBucket.PurchaseProducts.FirstOrDefault(t => t.Id == request.PurchasedProductId);
+        var purchaseProduct = userBucket.BucketProducts.FirstOrDefault(t => t.Id == request.PurchasedProductId);
 
         if (purchaseProduct is null)
             throw new Exception(ErrorMessages.PurchaseProductNotRelatedToUser);
 
-        purchaseProduct = await _context.PurchasedProducts.FirstOrDefaultAsync(t => t.Id == request.PurchasedProductId);
+        purchaseProduct = await _context.BucketProducts.FirstOrDefaultAsync(t => t.Id == request.PurchasedProductId);
 
         purchaseProduct.Amount = request.NewAmount;
 

@@ -34,7 +34,7 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
 
         var user = await _context.Users
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.PurchaseProducts)
+                .ThenInclude(t => t.BucketProducts)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         if (user is null)
@@ -46,15 +46,15 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
         if (volume is null)
             throw new NotFoundException(ErrorMessages.ProductNotFound("Об'єкту об'єму"));
 
-        var purchaseProduct = new PurchasedProduct
+        var purchaseProduct = new BucketProduct
         {
             Amount = request.Amount,
             ProductId = product.Id,
             VolumeId = request.VolumeId,
-            BucketId = user.BucketId
+            BucketId = user.BucketId,
         };
 
-        await _context.PurchasedProducts.AddAsync(purchaseProduct, cancellationToken);
+        await _context.BucketProducts.AddAsync(purchaseProduct, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.Domain.Configuration;
 
-public class PurchaseProductConfiguration : IEntityTypeConfiguration<PurchasedProduct>
+public class BucketProductConfiguration : IEntityTypeConfiguration<BucketProduct>
 {
-    public void Configure(EntityTypeBuilder<PurchasedProduct> builder)
+    public void Configure(EntityTypeBuilder<BucketProduct> builder)
     {
         builder.HasOne(t => t.Product)
             .WithMany()
@@ -21,11 +21,11 @@ public class PurchaseProductConfiguration : IEntityTypeConfiguration<PurchasedPr
         builder.HasOne(t => t.Volume)
             .WithMany()
             .HasForeignKey(t => t.VolumeId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne(t => t.Purchase)
-            .WithMany(t => t.Products)
-            .HasForeignKey(t => t.PurchaseId)
+        builder.HasOne(t => t.Bucket)
+            .WithMany(t => t.BucketProducts)
+            .HasForeignKey(t => t.BucketId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -7,6 +7,7 @@ using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 
@@ -26,10 +27,10 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         var user = await _context.Users
             .Include(t => t.AddressInfo)
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.PurchaseProducts)
+                .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Product)
             .Include(t => t.Bucket)
-                .ThenInclude(t => t.PurchaseProducts)
+                .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Volume)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
@@ -39,7 +40,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         if (user.AddressInfo is null && request.Address is null)
             throw new NotFoundException(ErrorMessages.AddressInfoNotFound);
 
-        if (user.Bucket.PurchaseProducts.Count < 1)
+        if (user.Bucket.BucketProducts.Count < 1)
             throw new Exception(ErrorMessages.BucketIsEmpty);
 
         var promocode = await _context.Promocodes
@@ -48,7 +49,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         if (promocode is null && request.Promocode != "")
             throw new NotFoundException(ErrorMessages.PromoNotFound);
 
-        var productIds = user.Bucket.PurchaseProducts.Select(t => t.Id).ToList();
+        var productIds = user.Bucket.BucketProducts.Select(t => t.Id).ToList();
         //var productsIds = user.Bucket.PurchaseProducts.Select(t => t.ProductId).ToList();
         //var totalProductDiscount = await _context.Products.Where(t => productsIds.Contains(t.Id)).Select(t => t.)
 
@@ -61,8 +62,19 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             Comment = request.Comment,
             PayType = request.PayType,
             PromocodeId = promocode is null ? null : promocode.Id,
-            Products = await _context.PurchasedProducts.Where(t => productIds.Contains(t.Id)).ToListAsync(),
         };
+
+        purchase.Products = await _context.BucketProducts.Where(t => productIds.Contains(t.Id))
+            .Select(t => new PurchasedProduct
+            {
+                ProductId = t.ProductId,
+                Product = t.Product,
+                VolumeId = t.VolumeId,
+                Volume = t.Volume,
+                Amount = t.Amount,
+                CreatedDate = t.CreatedDate,
+                PurchaseId = purchase.Id
+            }).ToListAsync();
 
         if (purchase.Products.Count < 1)
         {
@@ -71,19 +83,40 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
-        var totalPrice = purchase.Products.Select(t => t.Product.DiscountPrice is not null ? (t.Volume.Price - ((t.Volume.Price * t.Amount * t.Product.DiscountPrice) / 100)) : t.Volume.Price * t.Amount).Sum();
+        long? discPrice = 0;
 
         if (promocode is not null)
         {
-            var total = purchase.Products.Select(t => t.Volume.Price * t.Amount).Sum();
-            totalPrice -= (long)((total * promocode.Discount) / 100);
+            foreach(var product in purchase.Products)
+            {
+                if (product.Product.BrandId == promocode.BrandId)
+                {
+                    var productPrice = product.Volume.Price * product.Amount;
+                    discPrice = (long)((productPrice * promocode.Discount) / 100);
+                }
+            }
         }
+
+        var totalPrice = purchase.Products.Select(t => t.Product.DiscountPrice is not null ? (((t.Volume.Price * t.Amount) - ((t.Volume.Price * t.Amount * t.Product.DiscountPrice)     ) / 100)) : t.Volume.Price * t.Amount).Sum();
 
         var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
         if (promotions.Count > 0)
         {
-            totalPrice -= (long)((totalPrice * promotions.Select(t => t.Discount).Sum()) / 100);
+            var promoBrandIds = promotions.Select(t => t.BrandId).ToList();
+            foreach (var product in purchase.Products)
+            {
+                if(product.Product.BrandId is not null)
+                {
+                    if (promoBrandIds.Contains((Guid)product.Product.BrandId))
+                    {
+                        var productPrice = product.Product.DiscountPrice is not null
+                            ? ((product.Volume.Price * product.Amount) - ((product.Volume.Price * product.Amount * product.Product.DiscountPrice) / 100))
+                            : product.Volume.Price * product.Amount;
+                        totalPrice -= (long)((productPrice * promotions.Where(t => t.BrandId == product.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100);
+                    }
+                }                
+            }
         }
 
 

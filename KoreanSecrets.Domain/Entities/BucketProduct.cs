@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.Domain.Entities;
 
-public class PurchasedProduct : BaseEntity
+public class BucketProduct : BaseEntity
 {
     public Guid ProductId { get; set; }
 
     public Product Product { get; set; }
 
-    public Guid PurchaseId { get; set; }
+    public Guid BucketId { get; set; }
 
-    public Purchase Purchase { get; set; }
+    public Bucket Bucket { get; set; }
 
     public Guid VolumeId { get; set; }
 

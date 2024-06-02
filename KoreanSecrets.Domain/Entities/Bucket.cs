@@ -12,5 +12,5 @@ public class Bucket : BaseEntity
 
     public User User { get; set; }
 
-    public List<PurchasedProduct> PurchaseProducts { get; set; } = new();
+    public List<BucketProduct> BucketProducts { get; set; } = new();
 }
