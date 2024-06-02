@@ -146,45 +146,6 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             }
         }
 
-
-        //long? discount = 0;
-
-        //if (promocode is not null)
-        //{
-        //    foreach(var product in purchase.Products)
-        //    {
-        //        if (product.Product.BrandId == promocode.BrandId)
-        //        {
-        //            discount = product.Volume.Price - (long)((product.Volume.Price * promocode.Discount) / 100);
-        //        }
-        //    }
-        //}
-
-        //var totalPrice = purchase.Products.Select(t => GetTotalPrice(t, promocode, discount)).Sum();
-
-        //var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
-        //var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
-        //if (promotions.Count > 0)
-        //{
-        //    var promoBrandIds = promotions.Select(t => t.BrandId).ToList();
-        //    foreach (var product in purchase.Products)
-        //    {
-        //        if(product.Product.BrandId is not null)
-        //        {
-        //            if (promoBrandIds.Contains((Guid)product.Product.BrandId))
-        //            {
-        //                var productPrice = product.Product.DiscountPrice is not null
-        //                    ? ((product.Volume.Price * product.Amount) - ((product.Volume.Price * product.Amount * product.Product.DiscountPrice) / 100))
-        //                    : product.Volume.Price * product.Amount;
-        //                totalPrice -= (long)((productPrice * promotions.Where(t => t.BrandId == product.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100);
-        //            }
-        //        }                
-        //    }
-        //}
-
-
-        //purchase.TotalPrice = (long)totalPrice!;
-
         purchase.TotalPrice = purchasesPriceDictionary.Select(t => t.Value).Sum();
 
         if (request.Address is not null && request.SaveAddress)
