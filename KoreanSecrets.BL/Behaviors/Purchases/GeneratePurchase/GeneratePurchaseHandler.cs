@@ -43,7 +43,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             throw new Exception(ErrorMessages.BucketIsEmpty);
 
         var promocode = await _context.Promocodes
-            .FirstOrDefaultAsync(t => t.Code == request.Promocode && t.IsActive, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Code == request.Promocode, cancellationToken);
 
         if (promocode is null && request.Promocode != "")
             throw new NotFoundException(ErrorMessages.PromoNotFound);
@@ -64,7 +64,10 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             Products = await _context.PurchasedProducts.Where(t => productIds.Contains(t.Id)).ToListAsync(),
         };
 
-        
+        if (purchase.Products.Count < 1)
+        {
+            throw new NotFoundException(ErrorMessages.ProductNotFound("Продуктів для покупки"));
+        }
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
@@ -78,7 +81,10 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
-        totalPrice -= (long)promotions.Select(t => t.Discount).Sum();
+        if (promotions.Count > 0)
+        {
+            totalPrice -= (long)((totalPrice * promotions.Select(t => t.Discount).Sum()) / 100);
+        }
 
 
         purchase.TotalPrice = (long)totalPrice!;

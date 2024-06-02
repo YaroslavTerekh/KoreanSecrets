@@ -34,12 +34,13 @@ public class ConfirmPhoneVerificationCodeHandler : IRequestHandler<ConfirmPhoneV
     public async Task<AuthToken> Handle(ConfirmPhoneVerificationCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users.FirstOrDefaultAsync(t => t.Id == request.UserId, cancellationToken);
+        var checkPhoneNumberUser = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber == request.PhoneNumber && t.Id != request.UserId, cancellationToken);
+
+        if (checkPhoneNumberUser is not null)
+            throw new Exception(ErrorMessages.UserWithSamePhoneExists);
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
-
-        if (user.PhoneNumber != _phoneNumberService.FormatPhoneNumber(request.PhoneNumber))
-            throw new Exception(ErrorMessages.WrongPhoneNumber);
 
         if (user.PhoneNumberConfirmed)
             throw new Exception(ErrorMessages.PhoneNumberAlreadyConfirmed);
@@ -47,6 +48,7 @@ public class ConfirmPhoneVerificationCodeHandler : IRequestHandler<ConfirmPhoneV
         if (user.TemporaryCode != request.ComfirmationCode) throw new Exception(ErrorMessages.CodeNotValid); ;
 
         user.PhoneNumberConfirmed = true;
+        user.PhoneNumber = _phoneNumberService.FormatPhoneNumber(request.PhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
 
         var roles = await _userManager.GetRolesAsync(user);

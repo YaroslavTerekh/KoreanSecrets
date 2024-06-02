@@ -24,7 +24,10 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
     public async Task<PromocodeUI?> Handle(CheckPromocodeCommand request, CancellationToken cancellationToken)
     {
         var promocode = await _context.Promocodes
-            .FirstOrDefaultAsync(t => t.Code == request.Promocode && t.IsActive, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Code == request.Promocode, cancellationToken);
+
+        if (promocode is null)
+            throw new NotFoundException(ErrorMessages.PromoNotFound);
 
         if (promocode.StartDate > DateTime.UtcNow)
             throw new Exception(ErrorMessages.PromocodeHasBeenNotStartedYet(promocode.StartDate.ToString("dd.MM.yyyy")));
@@ -32,7 +35,7 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
         if (promocode.EndDate < DateTime.UtcNow)
             throw new Exception(ErrorMessages.PromocodeIsExpired(promocode.EndDate.ToString("dd.MM.yyyy")));
 
-        return promocode is null ? null : new PromocodeUI
+        return new PromocodeUI
         {
             Id = promocode.Id,
             Discount = promocode.Discount,
