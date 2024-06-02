@@ -54,13 +54,12 @@ public class SendPhoneVerificationCodeHandler : IRequestHandler<SendPhoneVerific
             throw new Exception(ErrorMessages.PhoneNumberAlreadyConfirmed);
 
         var code = new Random().Next(100000, 999999);
-        user.PhoneNumber = _phoneNumberService.FormatPhoneNumber(request.PhoneNumber);
         user.TemporaryCode = code;
 
         await _context.SaveChangesAsync(cancellationToken);
 
         TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
-        
+
         var message = await MessageResource.CreateAsync(
             body: ValidationMessages.VerificationCodeInfo(user.TemporaryCode),
             from: new PhoneNumber(_twilioSettings.FromPhoneNumber),

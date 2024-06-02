@@ -58,7 +58,7 @@ public class LiqPayService : ILiqPayService
         var response = DecodeResponse(data);
         var newStatus = response.Status switch
         {
-            LiqPayResponseStatus.Success => PurchaseStatus.Waiting,
+            LiqPayResponseStatus.Success => PurchaseStatus.New,
             LiqPayResponseStatus.Failure => PurchaseStatus.Failure, 
             _ => PurchaseStatus.Failure
         };
