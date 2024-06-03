@@ -48,6 +48,16 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
+        if( product.Brand is not null)
+        {
+            var promotion = await _context.Promotions.FirstOrDefaultAsync(t => t.BrandId == product.Brand.Id, cancellationToken);
+
+            if(promotion is not null)
+            {
+                product.Brand.Promotions = promotion;
+            }
+        }
+
         if (request.CurrentUserId != Guid.Empty)
         {
             var likes = await _context.Products

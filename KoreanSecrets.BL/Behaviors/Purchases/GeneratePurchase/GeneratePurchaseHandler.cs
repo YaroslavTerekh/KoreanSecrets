@@ -171,7 +171,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         }
 
         await _context.Purchases.AddAsync(purchase, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
         if(request.PayType == PayType.Terminal)
         {

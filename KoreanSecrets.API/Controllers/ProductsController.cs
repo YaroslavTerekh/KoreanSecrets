@@ -231,7 +231,11 @@ public class ProductsController : BaseController
     (
         [FromBody] CheckPromocodeCommand command,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(command, cancellationToken));
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 
     [HttpPost("volumes/add")]
     public async Task<IActionResult> AddVolumeAsync

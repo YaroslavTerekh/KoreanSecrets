@@ -12,4 +12,6 @@ public class BrandDTO : BaseEntity
     public string Title { get; set; }
 
     public AppFileDTO Photo { get; set; }
+
+    public Promotion Promotions { get; set; }
 }

@@ -32,6 +32,6 @@ public class PurchaseConfiguration : IEntityTypeConfiguration<Purchase>
             .WithMany()
             .IsRequired(false)
             .HasForeignKey(t => t.PromocodeId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

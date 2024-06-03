@@ -23,8 +23,8 @@ public class AddPromotionHandler : IRequestHandler<AddPromotionCommand>
         {
             BrandId = request.BrandId,
             Discount = request.Discount,
-            EndDate = request.EndDate,
-            StartDate = request.StartDate,
+            EndDate = request.EndDate.Value.AddHours(12),
+            StartDate = request.StartDate.Value.AddHours(12),
         };
 
         await _context.Promotions.AddAsync(promotion, cancellationToken);

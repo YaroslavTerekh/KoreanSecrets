@@ -13,4 +13,6 @@ public class PromocodeUI
     public string Title { get; set; }
 
     public double Discount { get; set; }
+
+    public long Total { get; set; }
 }
