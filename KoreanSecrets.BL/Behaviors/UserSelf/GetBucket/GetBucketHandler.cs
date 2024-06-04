@@ -46,15 +46,13 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
         if (bucket is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
-        var productsIds = bucket.PurchaseProducts.Select(t => t.Product.Id).ToList();
-        var products = await _context.Products.Where(t => productsIds.Contains(t.Id)).ToListAsync(cancellationToken);
-
-        var lowQuantityIds = products.Where(t => t.Quantity <= 0).Select(t => t.Id).ToList();
-        var purchasesToDeleteIds = bucket.PurchaseProducts.Where(t => lowQuantityIds.Contains(t.Product.Id)).Select(t => t.Id).ToList();
-
-        var purchases = await _context.PurchasedProducts.Where(t => purchasesToDeleteIds.Contains(t.Id)).ToListAsync(cancellationToken);
-
-        _context.PurchasedProducts.RemoveRange(purchases);
+        foreach( var product in bucket.PurchaseProducts)
+        {
+            if(product.Product.Brand is not null)
+            {
+                product.Product.Brand.Promotions = await _context.Promotions.FirstOrDefaultAsync(t => t.BrandId == product.Product.Brand.Id, cancellationToken);                
+            }
+        }
 
         return bucket;
     }

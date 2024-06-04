@@ -114,6 +114,14 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             }
         }
 
+        foreach (var product in products)
+        {
+            if (product.Brand is not null)
+            {
+                product.Brand.Promotions = await _context.Promotions.FirstOrDefaultAsync(t => t.BrandId == product.Brand.Id, cancellationToken);
+            }
+        }
+
         return new PaginationModelDTO<ListProductDTO>
         {
             CurrentPage = request.CurrentPage,

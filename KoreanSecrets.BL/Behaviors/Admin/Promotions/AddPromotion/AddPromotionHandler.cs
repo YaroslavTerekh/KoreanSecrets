@@ -1,6 +1,8 @@
-﻿using KoreanSecrets.Domain.DbConnection;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,13 @@ public class AddPromotionHandler : IRequestHandler<AddPromotionCommand>
             EndDate = request.EndDate.Value.AddHours(12),
             StartDate = request.StartDate.Value.AddHours(12),
         };
+
+        var products = await _context.Products.Where(t => t.BrandId == promotion.BrandId).ToListAsync(cancellationToken);
+
+        foreach (var product in products)
+        {
+            product.AdditionalIcon = ProductIcon.Sale;
+        }
 
         await _context.Promotions.AddAsync(promotion, cancellationToken);
         await _context.SaveChangesAsync();

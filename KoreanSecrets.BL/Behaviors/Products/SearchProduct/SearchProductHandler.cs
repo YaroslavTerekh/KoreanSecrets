@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,13 +25,23 @@ public class SearchProductHandler : IRequestHandler<SearchProductQuery, List<Lis
 
     public async Task<List<ListProductDTO>> Handle(SearchProductQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Products
+        var products = await _context.Products
             .Where(t => t.Title.Contains(request.SearchText))
             .Include(t => t.Brand)
             .Include(t => t.Category)
             .Include(t => t.MainPhoto)
             .Include(t => t.Volumes)
             .Select(t => _mapper.Map<ListProductDTO>(t))
-            .ToListAsync(cancellationToken);
+        .ToListAsync(cancellationToken);
+
+        foreach (var product in products)
+        {
+            if (product.Brand is not null)
+            {
+                product.Brand.Promotions = await _context.Promotions.FirstOrDefaultAsync(t => t.BrandId == product.Brand.Id, cancellationToken);
+            }
+        }
+
+        return products;
     }
 }

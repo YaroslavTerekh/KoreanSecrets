@@ -1,6 +1,8 @@
 ﻿using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
+using KoreanSecrets.Domain.Common.Enums;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,6 +28,13 @@ public class DeletePromotionHandler : IRequestHandler<DeletePromotionCommand>
 
         if (promo is null)
             throw new NotFoundException(ErrorMessages.PromotionNotFound);
+
+        var products = await _context.Products.Where(t => t.BrandId == promo.BrandId).ToListAsync(cancellationToken);
+
+        foreach (var product in products)
+        {
+            product.AdditionalIcon = ProductIcon.None;
+        }
 
         _context.Promotions.Remove(promo);
         await _context.SaveChangesAsync(cancellationToken);
