@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.Common.Constants;
+﻿using Hangfire;
+using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.Common.Enums;
 using KoreanSecrets.Domain.DbConnection;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.AddDiscount;
@@ -28,11 +30,41 @@ public class AddDiscountHandler : IRequestHandler<AddDiscountCommand>
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
+        if (request.DiscountPriceStartDate > request.DiscountPriceEndDate)
+            throw new Exception(ErrorMessages.DateNotMatch);
+
+        if (request.DiscountPriceEndDate < DateTime.UtcNow)
+            throw new Exception(ErrorMessages.DateNotMatch);
+
         product.DiscountPrice = request.NewPrice;
+        product.DiscountPriceEndDate = request.DiscountPriceEndDate.AddHours(12);
+        product.DiscountPriceStartDate = request.DiscountPriceStartDate.AddHours(12);
         product.AdditionalIcon = ProductIcon.Sale;
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        BackgroundJob.Schedule(() => RemoveDiscountAsync(product.Id, request.DiscountPriceEndDate, request.DiscountPriceStartDate), request.DiscountPriceEndDate - DateTime.UtcNow);
+
         return Unit.Value;
+    }
+
+    public async Task RemoveDiscountAsync(Guid id, DateTime endDate, DateTime startDate)
+    {
+        var product = await _context.Products.FirstOrDefaultAsync(t => t.Id == id);
+
+        if (product is null)
+            return;
+
+        if (endDate != product.DiscountPriceEndDate)
+            return;
+
+        if (startDate != product.DiscountPriceStartDate)
+            return;
+
+        product.DiscountPriceStartDate = null;
+        product.DiscountPriceEndDate = null;
+        product.DiscountPrice = null;
+
+        await _context.SaveChangesAsync();
     }
 }

@@ -35,6 +35,10 @@ public class Product : BaseEntity
 
     public long? DiscountPrice { get; set; }
 
+    public DateTime? DiscountPriceStartDate { get; set; }
+
+    public DateTime? DiscountPriceEndDate { get; set; }
+
     public string? Characteristics { get; set; }
 
     public string? Usage { get; set; }

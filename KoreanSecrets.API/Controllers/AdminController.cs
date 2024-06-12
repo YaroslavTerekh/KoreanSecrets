@@ -188,13 +188,12 @@ public class AdminController : ControllerBase
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new ChangeIsInStockStatusCommand(id), cancellationToken));
 
-    [HttpPatch("products/{id:guid}/discount/add")]
+    [HttpPost("products/discount/add")]
     public async Task<IActionResult> AddDiscountToProductAsync
     (
-        [FromRoute] Guid id,
-        [FromQuery] long newPrice,
+        [FromBody] AddDiscountCommand command,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(new AddDiscountCommand(id, newPrice), cancellationToken));
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
 
     [HttpPatch("products/{id:guid}/discount/remove")]
     public async Task<IActionResult> RemoveDiscountFromProductAsync

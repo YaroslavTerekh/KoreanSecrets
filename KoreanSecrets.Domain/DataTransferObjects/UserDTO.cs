@@ -25,4 +25,6 @@ public class UserDTO : BaseEntity
     public AddressInfoDTO? AddressInfo { get; set; }
 
     public Guid BucketId { get; set; }
+
+    public long? TotalPurchases { get; set; }
 }

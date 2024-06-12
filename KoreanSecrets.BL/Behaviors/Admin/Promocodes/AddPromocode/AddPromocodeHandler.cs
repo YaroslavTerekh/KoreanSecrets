@@ -1,6 +1,9 @@
-﻿using KoreanSecrets.Domain.DbConnection;
+﻿using Hangfire;
+using KoreanSecrets.Domain.Common.Constants;
+using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +32,36 @@ public class AddPromocodeHandler : IRequestHandler<AddPromocodeCommand>
             EndDate = request.EndDate.AddHours(12),
         };
 
+        if (request.StartDate > request.EndDate)
+            throw new Exception(ErrorMessages.DateNotMatch);
+
+        if (request.EndDate < DateTime.UtcNow)
+            throw new Exception(ErrorMessages.DateNotMatch);
+
         await _context.Promocodes.AddAsync(promocode, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
+        BackgroundJob.Schedule(() => RemoveDiscountAsync(promocode.Id, request.EndDate, request.StartDate), request.EndDate - DateTime.UtcNow);
+
         return Unit.Value;
     }
+
+    public async Task RemoveDiscountAsync(Guid id, DateTime endDate, DateTime startDate)
+    {
+        var promocode = await _context.Promocodes.FirstOrDefaultAsync(t => t.Id == id);
+
+        if (promocode is null)
+            return;
+
+        if (endDate != promocode.EndDate)
+            return;
+
+        if (startDate != promocode.StartDate)
+            return;
+
+        _context.Promocodes.Remove(promocode);
+        await _context.SaveChangesAsync();
+    }
+
+
 }

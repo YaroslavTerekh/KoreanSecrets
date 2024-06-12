@@ -65,4 +65,8 @@ public static class ErrorMessages
 
     public static string PromocodeIsExpired(string date) => $"Промокод був дійсний до {date}";
     public static string PromocodeHasBeenNotStartedYet(string date) => $"Промокод буде дійсний з {date}";
+
+    public const string DateNotMatch = "Дата початку має бути більша, ніж дата завершення";
+    public const string DateShouldBeInFuture = "Дата завершення має бути більша, ніж сьогоднішня дата";
+
 }

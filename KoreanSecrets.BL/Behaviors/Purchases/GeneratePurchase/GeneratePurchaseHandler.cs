@@ -136,6 +136,9 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
                 var currentPrice = purchasePricePair.Value;
                 long? newPrice = null;
 
+                if (purchaseProduct.Product.DiscountPrice != null)
+                    continue;
+
                 if (purchaseProduct.Product.BrandId is not null && promoBrandIds.Contains((Guid)purchaseProduct.Product.BrandId))
                 {
                     newPrice = (long?)(currentPrice * promotions.Where(t => t.BrandId == purchaseProduct.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100;
@@ -171,7 +174,13 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         }
 
         await _context.Purchases.AddAsync(purchase, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+
+        var bucketProducts = await _context.BucketProducts.Where(t => t.BucketId == user.BucketId).ToListAsync(cancellationToken);
+
+        _context.BucketProducts.RemoveRange(bucketProducts);
+        await _context.SaveChangesAsync(cancellationToken);
 
         if(request.PayType == PayType.Terminal)
         {

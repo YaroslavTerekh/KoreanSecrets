@@ -14,9 +14,7 @@ public class AddDiscountCommand : IRequest
 
     public long NewPrice { get; set; }
 
-    public AddDiscountCommand(Guid id, long price)
-    {
-        ProductId = id;
-        NewPrice = price;
-    }
+    public DateTime DiscountPriceStartDate { get; set; }
+
+    public DateTime DiscountPriceEndDate { get; set; }
 }

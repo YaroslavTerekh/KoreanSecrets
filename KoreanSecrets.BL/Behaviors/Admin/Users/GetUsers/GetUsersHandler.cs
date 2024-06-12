@@ -37,6 +37,11 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
         var admins = await _roleManager.GetUsersInRoleAsync(Roles.Admin);
         users = users.Where(t => !admins.Contains(t));
 
+        var usersTotalPurchases = new Dictionary<Guid, long>();
+
+        foreach (var user in users)
+            usersTotalPurchases.Add(user.Id, user.Purchases.Select(t => t.TotalPrice).Sum());
+
         if(request.Text != null)
         {
             users = users.Where(t => String.Concat(t.FirstName, t.LastName).Contains(request.Text));
@@ -71,12 +76,19 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
+        var usersResult = res.Select(t => _mapper.Map<UserDTO>(t)).ToList();
+
+        foreach (var user in usersResult)
+        {
+            user.TotalPurchases = usersTotalPurchases[user.Id];
+        }
+
         return new PaginationModelDTO<UserDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken) - admins.Count,
-            Products = res.Select(t => _mapper.Map<UserDTO>(t)).ToList()
+            Products = usersResult
         };
     }
 
