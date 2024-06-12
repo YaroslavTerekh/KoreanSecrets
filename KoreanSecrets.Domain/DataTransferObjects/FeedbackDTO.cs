@@ -15,4 +15,5 @@ public class FeedbackDTO : BaseEntity
     public FeedbackRate Rate { get; set; }
 
     public UserDTO User { get; set; }
+    public ListProductDTO Product { get; set; }
 }

@@ -177,8 +177,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         {
             return new { Id = purchase.PurchaseIdentifier };
         }
-
-        BackgroundJob.Schedule(() => ModifyPurchaseDeliveryState(purchase.Id, PurchaseStatus.Success), TimeSpan.FromHours(24));
+        
         BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromHours(3));
  
         var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
@@ -216,15 +215,6 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         result = Math.Abs(result % 100000);
 
         return result;
-    }
-
-    public async Task ModifyPurchaseDeliveryState(Guid id, PurchaseStatus status)
-    {
-        var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == id);
-
-        purchase.PurchaseStatus = status;
-
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteFailuredPurchase(Guid id)

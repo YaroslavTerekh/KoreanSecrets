@@ -38,7 +38,9 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeProductQuantity;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProduct;
+using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProductFeedback;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.GetCustomerFeedbacks;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
@@ -512,4 +514,18 @@ public class AdminController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeleteProductCommand(id), cancellationToken));
+    
+    [HttpPost("read-all-feedbacks/all")]
+    public async Task<IActionResult> GetAllFeedbacksForProductsAsync
+    (
+        [FromBody] GetCustomerFeedbacksQuery query,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(query, cancellationToken));
+
+    [HttpDelete("product-feedback/delete/{id:guid}")]
+    public async Task<IActionResult> DeleteProductFeedbackAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeleteProductFeedbackCommand(id), cancellationToken));
 }

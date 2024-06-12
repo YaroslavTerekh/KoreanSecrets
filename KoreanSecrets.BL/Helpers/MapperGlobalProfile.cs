@@ -20,6 +20,8 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon))
             .ForMember(dest => dest.Quantity, src => src.MapFrom(t => t.Quantity))
             .ForMember(dest => dest.Demand, src => src.MapFrom(t => t.ProductDemands.Select(t => t.Demand).ToList()));
+        CreateMap<Feedback, FeedbackDTO>()
+            .ForMember(dest => dest.Product, src => src.MapFrom(t => t.Product));
         CreateMap<Product, ListProductDTO>()
             .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon))

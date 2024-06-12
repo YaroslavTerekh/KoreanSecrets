@@ -75,7 +75,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
         }
         else
         {
-            query = query.OrderBy(x => x.SubCategory.Title).ThenByDescending(x => x.CreatedDate);
+            query = query.OrderBy(x => x.Brand.Title).ThenByDescending(x => x.CreatedDate);
         }
 
         
