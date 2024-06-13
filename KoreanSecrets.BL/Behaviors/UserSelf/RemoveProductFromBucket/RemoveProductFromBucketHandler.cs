@@ -41,6 +41,8 @@ public class RemoveProductFromBucketHandler : IRequestHandler<RemoveProductFromB
         if (purchaseProduct is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
+        product.Quantity += purchaseProduct.Amount;
+        if (product.Quantity >= 0) product.IsInStock = true;
         _context.BucketProducts.Remove(purchaseProduct);
         await _context.SaveChangesAsync(cancellationToken);
 
