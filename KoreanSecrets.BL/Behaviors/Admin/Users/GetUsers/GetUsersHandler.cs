@@ -44,7 +44,10 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
 
         if(request.Text != null)
         {
-            users = users.Where(t => String.Concat(t.FirstName, t.LastName).Contains(request.Text));
+            users = users.Where(t 
+                => String.Concat(t.FirstName, t.LastName).Contains(request.Text)
+                || t.PhoneNumber.Contains(request.Text)
+                || t.Email.Contains(request.Text));
         }
 
         if (!string.IsNullOrEmpty(request.ColumnToSort))

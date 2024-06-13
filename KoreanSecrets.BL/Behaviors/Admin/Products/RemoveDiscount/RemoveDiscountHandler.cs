@@ -30,7 +30,11 @@ public class RemoveDiscountHandler : IRequestHandler<RemoveDiscountCommand>
 
         product.DiscountPrice = null;
         product.AdditionalIcon = ProductIcon.None;
-
+        product.DiscountPriceStartDate = null;
+        product.DiscountPriceEndDate = null;
+        product.UseDiscountPrice = false;
+        
+        await _context.SaveChangesAsync(cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

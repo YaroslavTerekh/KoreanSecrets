@@ -62,6 +62,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             Comment = request.Comment,
             PayType = request.PayType,
             PromocodeId = promocode is null ? null : promocode.Id,
+            UserInfo = request.UserInfo
         };
 
         purchase.Products = await _context.BucketProducts.Where(t => productIds.Contains(t.Id))
@@ -98,7 +99,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             var currentPrice = purchasePricePair.Value;
             long? newPrice = null;
 
-            if (purchaseProduct.Product.DiscountPrice is not null)
+            if (purchaseProduct.Product.DiscountPrice is not null && purchaseProduct.Product.UseDiscountPrice)
             {
                 newPrice = (currentPrice * purchaseProduct.Product.DiscountPrice) / 100;
             }
@@ -129,14 +130,14 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
         if (promotions.Count > 0)
         {
-            var promoBrandIds = promotions.Select(t => t.BrandId).ToList();
+            var promoBrandIds = promotions.Where(t=> DateTime.Now >= t.StartDate).Select(t => t.BrandId).ToList();
             foreach (var purchasePricePair in purchasesPriceDictionary)
             {
                 var purchaseProduct = purchasePricePair.Key;
                 var currentPrice = purchasePricePair.Value;
                 long? newPrice = null;
 
-                if (purchaseProduct.Product.DiscountPrice != null)
+                if (purchaseProduct.Product.DiscountPrice != null && purchaseProduct.Product.UseDiscountPrice)
                     continue;
 
                 if (purchaseProduct.Product.BrandId is not null && promoBrandIds.Contains((Guid)purchaseProduct.Product.BrandId))

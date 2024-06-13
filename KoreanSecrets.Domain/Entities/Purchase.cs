@@ -32,4 +32,5 @@ public class Purchase : BaseEntity
     public Guid? PromocodeId { get; set; }
 
     public Promocode Promocode { get; set; }
+    public string UserInfo { get; set; }
 }

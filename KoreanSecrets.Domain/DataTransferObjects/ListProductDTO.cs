@@ -31,4 +31,5 @@ public class ListProductDTO : BaseEntity
     public bool IsInStock { get; set; }
 
     public bool? IsLikedByUser { get; set; }
+    public bool UseDiscountPrice { get; set; }
 }

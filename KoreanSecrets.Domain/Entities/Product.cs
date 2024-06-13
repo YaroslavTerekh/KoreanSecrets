@@ -34,6 +34,7 @@ public class Product : BaseEntity
     public List<Volume> Volumes { get; set; }
 
     public long? DiscountPrice { get; set; }
+    public bool UseDiscountPrice { get; set; }
 
     public DateTime? DiscountPriceStartDate { get; set; }
 

@@ -29,7 +29,7 @@ public class AddDiscountHandler : IRequestHandler<AddDiscountCommand>
 
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
-
+        
         if (request.DiscountPriceStartDate > request.DiscountPriceEndDate)
             throw new Exception(ErrorMessages.DateNotMatch);
 
@@ -39,15 +39,34 @@ public class AddDiscountHandler : IRequestHandler<AddDiscountCommand>
         product.DiscountPrice = request.NewPrice;
         product.DiscountPriceEndDate = request.DiscountPriceEndDate.AddHours(12);
         product.DiscountPriceStartDate = request.DiscountPriceStartDate.AddHours(12);
-        product.AdditionalIcon = ProductIcon.Sale;
 
         await _context.SaveChangesAsync(cancellationToken);
-
+        
+        BackgroundJob.Schedule(() => SetIconAsync(product.Id, request.DiscountPriceEndDate, request.DiscountPriceStartDate), request.DiscountPriceStartDate - DateTime.UtcNow);
         BackgroundJob.Schedule(() => RemoveDiscountAsync(product.Id, request.DiscountPriceEndDate, request.DiscountPriceStartDate), request.DiscountPriceEndDate - DateTime.UtcNow);
 
         return Unit.Value;
     }
 
+    public async Task SetIconAsync(Guid id, DateTime endDate, DateTime startDate)
+    {
+        var product = await _context.Products.FirstOrDefaultAsync(t => t.Id == id);
+
+        if (product is null)
+            return;
+
+        if (endDate != product.DiscountPriceEndDate)
+            return;
+
+        if (startDate != product.DiscountPriceStartDate)
+            return;
+
+        product.AdditionalIcon = ProductIcon.Sale;
+        product.UseDiscountPrice = true;
+        
+        await _context.SaveChangesAsync();
+    }
+    
     public async Task RemoveDiscountAsync(Guid id, DateTime endDate, DateTime startDate)
     {
         var product = await _context.Products.FirstOrDefaultAsync(t => t.Id == id);
@@ -64,6 +83,8 @@ public class AddDiscountHandler : IRequestHandler<AddDiscountCommand>
         product.DiscountPriceStartDate = null;
         product.DiscountPriceEndDate = null;
         product.DiscountPrice = null;
+        product.AdditionalIcon = ProductIcon.None;
+        product.UseDiscountPrice = false;
 
         await _context.SaveChangesAsync();
     }

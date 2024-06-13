@@ -43,6 +43,11 @@ public class PageProductDTO : BaseEntity
     public long Price { get; set; }
 
     public long? DiscountPrice { get; set; }
+    public bool UseDiscountPrice { get; set; }
+    
+    public DateTime? DiscountPriceStartDate { get; set; }
+
+    public DateTime? DiscountPriceEndDate { get; set; }
 
     public string Characteristics { get; set; }
 
