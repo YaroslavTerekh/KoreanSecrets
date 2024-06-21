@@ -63,7 +63,7 @@ public class SendPhoneVerificationCodeHandler : IRequestHandler<SendPhoneVerific
         var message = await MessageResource.CreateAsync(
             body: ValidationMessages.VerificationCodeInfo(user.TemporaryCode),
             from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
-            to: new PhoneNumber(user.PhoneNumber)
+            to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(request.PhoneNumber))
         );
 
         return Unit.Value;
