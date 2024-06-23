@@ -45,15 +45,20 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
 
             foreach (var product in products)
             {
-                int purchaseAmount = 0;
-
                 foreach (var purchasedProduct in order.Products)
                 {
-                    if (purchasedProduct.ProductId == product.Id) purchaseAmount = purchasedProduct.Amount; break;
-                }
+                    if (purchasedProduct.ProductId == product.Id)
+                    {
+                        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == purchasedProduct.VolumeId, cancellationToken);
 
-                product.Quantity += purchaseAmount;
-                if (product.Quantity >= 0) product.IsInStock = true;
+                        if (volume is null)
+                            throw new NotFoundException(ErrorMessages.VolumeNotFound);
+
+                        volume.Quantity -= purchasedProduct.Amount;
+
+                        break;
+                    }
+                }
             }
         }
 
@@ -64,17 +69,22 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
 
             foreach (var product in products)
             {
-                int purchaseAmount = 0;
-
                 foreach (var purchasedProduct in order.Products)
                 {
-                    if (purchasedProduct.ProductId == product.Id) purchaseAmount = purchasedProduct.Amount; break;
-                }
+                    if (purchasedProduct.ProductId == product.Id)
+                    {
+                        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == purchasedProduct.VolumeId, cancellationToken);
 
-                if(purchaseAmount !> product.Quantity)
-                {
-                    product.Quantity -= purchaseAmount;
-                    if (product.Quantity <= 0) product.IsInStock = false;
+                        if (volume is null)
+                            throw new NotFoundException(ErrorMessages.VolumeNotFound);
+
+                        if (purchasedProduct.Amount! > volume.Quantity)
+                        {
+                            volume.Quantity -= purchasedProduct.Amount;
+                            if (volume.Quantity <= 0) product.IsInStock = false;
+                        }
+                        break;
+                    }
                 }
             }
         }

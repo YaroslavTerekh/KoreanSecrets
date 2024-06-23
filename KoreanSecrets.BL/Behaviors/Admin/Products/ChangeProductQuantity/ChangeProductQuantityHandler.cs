@@ -22,11 +22,11 @@ public class ChangeProductQuantityHandler : IRequestHandler<ChangeProductQuantit
 
     public async Task<Unit> Handle(ChangeProductQuantityCommand request, CancellationToken cancellationToken)
     {
-        var product = await _context.Products.FirstOrDefaultAsync(t => t.Id == request.ProductId, cancellationToken);
+        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == request.VolumeId, cancellationToken);
 
-        if (product is null) throw new NotFoundException(ErrorMessages.ProductNotFound("Продукту"));
+        if (volume is null) throw new NotFoundException(ErrorMessages.ProductNotFound("Продукту"));
 
-        product.Quantity = request.NewQuantity;
+        volume.Quantity = request.NewQuantity;
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

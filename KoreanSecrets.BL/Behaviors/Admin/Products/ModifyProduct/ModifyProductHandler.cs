@@ -35,7 +35,6 @@ public class ModifyProductHandler : IRequestHandler<ModifyProductCommand>
         product.Syllabes = request.Syllabes;
         product.Usage = request.Usage;
         product.AdditionalIcon = request.Icon;
-        product.Quantity = request.Quantity;
 
         var newProductDemands = new List<ProductDemand>();
 

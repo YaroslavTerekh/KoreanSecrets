@@ -41,8 +41,13 @@ public class RemoveProductFromBucketHandler : IRequestHandler<RemoveProductFromB
         if (purchaseProduct is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        product.Quantity += purchaseProduct.Amount;
-        if (product.Quantity >= 0) product.IsInStock = true;
+        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == purchaseProduct.VolumeId, cancellationToken);
+
+        if (volume is null)
+            throw new NotFoundException(ErrorMessages.VolumeNotFound);
+
+        volume.Quantity += purchaseProduct.Amount;
+        if (volume.Quantity >= 0) product.IsInStock = true;
         _context.BucketProducts.Remove(purchaseProduct);
         await _context.SaveChangesAsync(cancellationToken);
 

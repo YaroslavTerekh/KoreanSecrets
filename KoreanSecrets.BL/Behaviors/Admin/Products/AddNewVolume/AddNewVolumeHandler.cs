@@ -33,7 +33,8 @@ public class AddNewVolumeHandler : IRequestHandler<AddNewVolumeCommand>
             ProductId = request.ProductId,
             Price = request.Price,
             Unit = request.Unit,
-            Value = request.Value
+            Value = request.Value,
+            Quantity = request.Quantity
         };
 
         await _context.Volume.AddAsync(volume, cancellationToken);

@@ -30,6 +30,7 @@ public class ModifyVolumeHandler : IRequestHandler<ModifyVolumeCommand>
         volume.Price = request.Price;
         volume.Unit = request.Unit;
         volume.Value = request.Value;
+        volume.Quantity = request.Quantity;
 
         await _context.SaveChangesAsync(cancellationToken);
 

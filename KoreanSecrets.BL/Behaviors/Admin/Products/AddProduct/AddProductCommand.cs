@@ -40,6 +40,4 @@ public class AddProductCommand : IRequest
     public List<VolumeDTO> Volumes { get; set; } = new();
 
     public ProductIcon Icon { get; set; } = ProductIcon.None;
-
-    public int Quantity { get; set; }
 }

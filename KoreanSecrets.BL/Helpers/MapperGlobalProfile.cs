@@ -18,14 +18,12 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.SameProducts, src => src.Ignore())
             .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon))
-            .ForMember(dest => dest.Quantity, src => src.MapFrom(t => t.Quantity))
             .ForMember(dest => dest.Demand, src => src.MapFrom(t => t.ProductDemands.Select(t => t.Demand).ToList()));
         CreateMap<Feedback, FeedbackDTO>()
             .ForMember(dest => dest.Product, src => src.MapFrom(t => t.Product));
         CreateMap<Product, ListProductDTO>()
             .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
-            .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon))
-            .ForMember(dest => dest.Quantity, src => src.MapFrom(t => t.Quantity));
+            .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Bucket, BucketDTO>()
             .ForMember(dest => dest.PurchaseProducts, src => src.MapFrom(t => t.BucketProducts));
         CreateMap<Brand, BrandDTO>();
@@ -59,7 +57,6 @@ public class MapperGlobalProfile : Profile
         CreateMap<ProductUser, ListProductDTO>()
             .ForMember(dest => dest.MainPhoto, src => src.MapFrom(t => t.Likes.MainPhoto))
             .ForMember(dest => dest.MainPhotoId, src => src.MapFrom(t => t.Likes.MainPhotoId))
-            .ForMember(dest => dest.Quantity, src => src.MapFrom(t => t.Likes.Quantity))
             .ForMember(dest => dest.CreatedDate, src => src.MapFrom(t => t.Likes.CreatedDate))
             .ForMember(dest => dest.Brand, src => src.MapFrom(t => t.Likes.Brand))
             .ForMember(dest => dest.BrandId, src => src.MapFrom(t => t.Likes.BrandId))

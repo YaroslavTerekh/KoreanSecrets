@@ -15,5 +15,7 @@ public class ModifyVolumeCommand : IRequest
 
     public string Unit { get; set; }
 
+    public int Quantity { get; set; }
+
     public long Price { get; set; }
 }

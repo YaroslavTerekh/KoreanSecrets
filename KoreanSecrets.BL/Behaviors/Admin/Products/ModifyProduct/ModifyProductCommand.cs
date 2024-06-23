@@ -22,8 +22,6 @@ public class ModifyProductCommand : IRequest
 
     public string? Usage { get; set; }
 
-    public int Quantity { get; set; }
-
     public string? Syllabes { get; set; }
 
     public Guid? CategoryId { get; set; }

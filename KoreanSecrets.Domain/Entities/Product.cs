@@ -34,6 +34,7 @@ public class Product : BaseEntity
     public List<Volume> Volumes { get; set; }
 
     public long? DiscountPrice { get; set; }
+
     public bool UseDiscountPrice { get; set; }
 
     public DateTime? DiscountPriceStartDate { get; set; }
@@ -45,8 +46,6 @@ public class Product : BaseEntity
     public string? Usage { get; set; }
 
     public string? Syllabes { get; set; }
-
-    public int Quantity { get; set; }
 
     public Guid? GuideId { get; set; }
 
