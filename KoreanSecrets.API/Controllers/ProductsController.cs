@@ -2,6 +2,7 @@
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteVolume;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyVolume;
 using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
+using KoreanSecrets.BL.Behaviors.Banners.GetAllBottomBanners;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetWarehouses;
 using KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
@@ -259,4 +260,9 @@ public class ProductsController : BaseController
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeleteVolumeCommand(id), cancellationToken));
+    
+    [HttpGet("bottom-banners")]
+    public async Task<IActionResult> GetBottomBannersAsync
+        (CancellationToken cancellationToken = default)
+        => Ok(await _mediatr.Send(new GetAllBottomBannersQuery(), cancellationToken));
 }

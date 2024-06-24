@@ -99,7 +99,7 @@ public class FileService : IFileService
             finally
             {
                 _context.Files.Remove(file);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
             }
         }
     }
