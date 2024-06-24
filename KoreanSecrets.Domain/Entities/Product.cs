@@ -66,4 +66,6 @@ public class Product : BaseEntity
     public List<ProductUser> Likes { get; set; } = new();
 
     public List<User> UsersWaitingForStock { get; set; } = new();
+
+    public List<ProductPromocode> Promocodes { get; set; } = new();
 }

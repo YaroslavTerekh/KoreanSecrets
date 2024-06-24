@@ -38,6 +38,17 @@ public class AddPromocodeHandler : IRequestHandler<AddPromocodeCommand>
         if (request.EndDate < DateTime.UtcNow)
             throw new Exception(ErrorMessages.DateNotMatch);
 
+        if(request.ProductIds is not null)
+        {
+            var productPromocodes = request.ProductIds.Select(t => new ProductPromocode
+            {
+                ProductId = t,
+                PromocodeId = promocode.Id
+            }).ToList();
+
+            await _context.ProductPromocode.AddRangeAsync(productPromocodes, cancellationToken);
+        }
+
         await _context.Promocodes.AddAsync(promocode, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

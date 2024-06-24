@@ -18,7 +18,9 @@ public class Promocode : BaseEntity
 
     public DateTime EndDate { get; set; }
 
-    public Guid BrandId { get; set; }
+    public Guid? BrandId { get; set; }
 
     public Brand Brand { get; set; }
+
+    public List<ProductPromocode> Products { get; set;}
 }
