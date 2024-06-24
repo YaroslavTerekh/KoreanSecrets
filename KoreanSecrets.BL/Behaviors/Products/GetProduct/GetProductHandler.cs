@@ -41,6 +41,7 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Include(t => t.Feedbacks.OrderByDescending(x=>x.CreatedDate))
                 .ThenInclude(t => t.User)
             .Include(t => t.Volumes)
+                .ThenInclude(x=>x.Photos)
             .Where(t => t.Id == request.ProductId)
             .Select(t => _mapper.Map<PageProductDTO>(t))
             .FirstOrDefaultAsync(cancellationToken);

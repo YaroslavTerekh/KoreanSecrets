@@ -28,7 +28,7 @@ public class AddPhotoToVolumeListHandler : IRequestHandler<AddPhotoToVolumeListC
             throw new NotFoundException(ErrorMessages.VolumeNotFound);
 
         var photo = await _fileService.UploadFileAsync(request.Photo, cancellationToken);
-        photo.ProductPhotoId = volume.Id;
+        photo.VolumePhotoId = volume.Id;
 
         await _context.Files.AddAsync(photo, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

@@ -1,4 +1,5 @@
 ﻿using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddNewVolume;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddNewVolumes;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.DeleteVolume;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.ModifyVolume;
 using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
@@ -238,10 +239,19 @@ public class ProductsController : BaseController
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
 
+    [Authorize(Policy = AuthPolicies.Admins)]
     [HttpPost("volumes/add")]
     public async Task<IActionResult> AddVolumeAsync
     (
-        [FromBody] AddNewVolumeCommand command,
+        [FromForm] AddNewVolumeCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+    
+    [Authorize(Policy = AuthPolicies.Admins)]
+    [HttpPost("volumes/add-list")]
+    public async Task<IActionResult> AddVolumeListAsync
+    (
+        [FromForm] AddNewVolumesCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 

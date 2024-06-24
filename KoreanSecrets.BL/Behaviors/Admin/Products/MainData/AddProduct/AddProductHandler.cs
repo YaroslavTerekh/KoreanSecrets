@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.MainData.AddProduct;
 
-public class AddProductHandler : IRequestHandler<AddProductCommand>
+public class AddProductHandler : IRequestHandler<AddProductCommand, Guid>
 {
     private readonly DataContext _context;
     private readonly IFileService _fileService;
@@ -16,7 +16,7 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
         _fileService = fileService;
     }
 
-    public async Task<Unit> Handle(AddProductCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(AddProductCommand request, CancellationToken cancellationToken)
     {
         var product = new Product
         {
@@ -29,7 +29,7 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             CountryId = request.CountryId == Guid.Empty ? null : request.CountryId,
             SubCategoryId = request.SubCategoryId == Guid.Empty ? null : request.SubCategoryId,
             AdditionalIcon = request.Icon,
-            MainPhoto = await _fileService.UploadFileAsync(request.MainPhoto, cancellationToken),
+            // MainPhoto = await _fileService.UploadFileAsync(request.MainPhoto, cancellationToken),
             IsInStock = true,
         };
 
@@ -47,11 +47,10 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
             }
         }
 
-        product.MainPhoto.ProductMainPhotoId = product.Id;
-        product.MainPhotoId = product.MainPhoto.Id;
-        var volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = product.Id, Price = t.Price }).ToList();
-
-        await _context.Volume.AddRangeAsync(volumes, cancellationToken);
+        // product.MainPhoto.ProductMainPhotoId = product.Id;
+        // product.MainPhotoId = product.MainPhoto.Id;
+        // var volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = product.Id, Price = t.Price }).ToList();
+        // await _context.Volume.AddRangeAsync(volumes, cancellationToken);
 
         List<AppFile> photos = new List<AppFile>();
 
@@ -76,6 +75,6 @@ public class AddProductHandler : IRequestHandler<AddProductCommand>
         await _context.Products.AddAsync(product, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return product.Id;
     }
 }

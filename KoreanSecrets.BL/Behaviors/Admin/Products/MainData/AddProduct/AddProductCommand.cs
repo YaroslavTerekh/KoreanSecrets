@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.MainData.AddProduct;
 
-public class AddProductCommand : IRequest
+public class AddProductCommand : IRequest<Guid>
 {
     public string Title { get; set; }
 
@@ -25,13 +25,13 @@ public class AddProductCommand : IRequest
 
     public List<Guid>? DemandId { get; set; }
 
-    public IFormFile MainPhoto { get; set; }
+    // public IFormFile MainPhoto { get; set; }
 
     public List<IFormFile>? Photos { get; set; }
 
     public IFormFile? VideoGuide { get; set; }
 
-    public List<VolumeDTO> Volumes { get; set; } = new();
+    // public List<VolumeDTO> Volumes { get; set; } = new();
 
     public ProductIcon Icon { get; set; } = ProductIcon.None;
 }
