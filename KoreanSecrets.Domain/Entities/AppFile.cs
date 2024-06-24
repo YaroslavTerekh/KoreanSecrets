@@ -22,6 +22,10 @@ public class AppFile : BaseEntity
 
     public Product ProductPhoto { get; set; }
 
+    public Guid? VolumePhotoId { get; set; }
+
+    public Volume VolumePhoto { get; set; }
+
     public Guid? ProductMainPhotoId { get; set; }
 
     public Product ProductMainPhoto { get; set; }

@@ -56,6 +56,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         builder.ApplyConfiguration(new PurchaseProductConfiguration());
         builder.ApplyConfiguration(new ProductUserConfiguration());
         builder.ApplyConfiguration(new BucketProductConfiguration());
+        builder.ApplyConfiguration(new VolumeConfiguration());
         //builder.ApplyConfiguration(new CategoryBrandConfiguration());
         //builder.ApplyConfiguration(new CategorySubCategoryConfiguration());
         //builder.ApplyConfiguration(new CategoryCountryConfiguration());

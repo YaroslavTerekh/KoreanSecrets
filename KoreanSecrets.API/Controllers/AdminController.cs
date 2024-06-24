@@ -31,6 +31,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Demands.ModifyDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddPhotoToList;
+using KoreanSecrets.BL.Behaviors.Admin.Products.AddPhotoToVolumeList;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
@@ -216,7 +217,14 @@ public class AdminController : ControllerBase
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 
-    [HttpPatch("products/photos/{id:guid}/remove")]
+    [HttpPatch("volume/photos/add")]
+    public async Task<IActionResult> AddVolumePhotoAsync
+    (
+        [FromForm] AddPhotoToVolumeListCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
+    [HttpPatch("products/photos/{id:guid}/remove")] // + для видалення з волюму тоже працює!
     public async Task<IActionResult> RemovePhotoAsync
     (
         [FromRoute] Guid id,

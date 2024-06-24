@@ -19,4 +19,6 @@ public class Volume : BaseEntity
     public Guid ProductId { get; set; }
 
     public Product Product { get; set; }
+
+    public List<AppFile> Photos { get; set; }
 }
