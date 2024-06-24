@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.Domain.DataTransferObjects.Banners;
+using KoreanSecrets.Domain.Entities.Banners;
 
 namespace KoreanSecrets.BL.Helpers;
 
@@ -69,5 +71,8 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.IsInStock, src => src.MapFrom(t => t.Likes.IsInStock))
             .ForMember(dest => dest.IsLikedByUser, src => src.Ignore())
             .ReverseMap();
+        
+        CreateMap<BottomBanner, BottomBannerDTO>();
+        CreateMap<BottomBannerPhoto, BottomBannerPhotoDTO>();
     }
 }

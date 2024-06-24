@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.Domain.Entities.Banners;
 
 namespace KoreanSecrets.Domain.DbConnection;
 
@@ -36,6 +37,9 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<ProductUser> ProductUser { get; set; }
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<ProductDemand> ProductDemand { get; set; }
+    public DbSet<BottomBanner> BottomBanners { get; set; }
+    public DbSet<BottomBannerPhoto> BottomBannerPhotos { get; set; }
+    
     //public DbSet<CategoryBrand> CategoryBrands { get; set; }
     //public DbSet<CategoryCountry> CategoryCountries { get; set; }
     //public DbSet<CategoryDemand> CategoryDemands { get; set; }

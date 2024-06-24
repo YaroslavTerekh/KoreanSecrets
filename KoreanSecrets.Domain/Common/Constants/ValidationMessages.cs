@@ -47,4 +47,5 @@ public static class ValidationMessages
     public const string UserWithNumberExists = "Користувач з таким номером телефону вже присутній";
     public static string VerificationCodeInfo(long? code) => $"Secrets of care | Ваш код дійсний протягом 10-ти хвилин: {code}";
 
+    public const string PhotoRequired = "Фото обов'язкове!";
 }
