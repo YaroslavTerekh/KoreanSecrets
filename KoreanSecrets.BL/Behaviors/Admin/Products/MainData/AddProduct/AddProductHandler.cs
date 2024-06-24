@@ -1,0 +1,81 @@
+﻿using KoreanSecrets.BL.Services.Abstractions;
+using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
+using MediatR;
+
+namespace KoreanSecrets.BL.Behaviors.Admin.Products.MainData.AddProduct;
+
+public class AddProductHandler : IRequestHandler<AddProductCommand>
+{
+    private readonly DataContext _context;
+    private readonly IFileService _fileService;
+
+    public AddProductHandler(DataContext context, IFileService fileService)
+    {
+        _context = context;
+        _fileService = fileService;
+    }
+
+    public async Task<Unit> Handle(AddProductCommand request, CancellationToken cancellationToken)
+    {
+        var product = new Product
+        {
+            Title = request.Title,
+            Characteristics = request.Characteristics,
+            Syllabes = request.Syllabes,
+            Usage = request.Usage,           
+            BrandId = request.BrandId == Guid.Empty ? null : request.BrandId,
+            CategoryId = request.CategoryId == Guid.Empty ? null : request.CategoryId,
+            CountryId = request.CountryId == Guid.Empty ? null : request.CountryId,
+            SubCategoryId = request.SubCategoryId == Guid.Empty ? null : request.SubCategoryId,
+            AdditionalIcon = request.Icon,
+            MainPhoto = await _fileService.UploadFileAsync(request.MainPhoto, cancellationToken),
+            IsInStock = true,
+        };
+
+        if(request.DemandId is not null)
+        {
+            foreach (var guid in request.DemandId)
+            {
+                var newProductDemand = new ProductDemand
+                {
+                    DemandId = guid,
+                    ProductId = product.Id
+                };
+
+                await _context.AddAsync(newProductDemand, cancellationToken);
+            }
+        }
+
+        product.MainPhoto.ProductMainPhotoId = product.Id;
+        product.MainPhotoId = product.MainPhoto.Id;
+        var volumes = request.Volumes.Select(t => new Volume { Unit = t.Unit, Value = t.Value, ProductId = product.Id, Price = t.Price }).ToList();
+
+        await _context.Volume.AddRangeAsync(volumes, cancellationToken);
+
+        List<AppFile> photos = new List<AppFile>();
+
+        if (request.Photos != null)
+            foreach (var photo in request.Photos)
+            {
+                var result = await _fileService.UploadFileAsync(photo, cancellationToken);
+                result.ProductPhotoId = product.Id;
+                photos.Add(result);
+            }
+
+        product.Photos = photos;
+
+        if (request.VideoGuide is not null)
+        {
+            var videoResult = await _fileService.UploadFileAsync(request.VideoGuide, cancellationToken);
+            videoResult.ProductId = product.Id;
+            product.Guide = videoResult;
+            product.GuideId = videoResult.Id;
+        }
+
+        await _context.Products.AddAsync(product, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Unit.Value;
+    }
+}

@@ -22,7 +22,8 @@ public class GetAllBottomBannersHandler : IRequestHandler<GetAllBottomBannersQue
     {
         var banners = await _context.BottomBanners
             .Include(t => t.Photos)
-            .ThenInclude(x=>x.Photo)
+            .ThenInclude(x => x.Photo)
+            .OrderBy(x => x.Order)
             .Select(t => _mapper.Map<BottomBannerDTO>(t))
             .ToListAsync(cancellationToken);
 

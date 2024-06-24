@@ -20,7 +20,7 @@ public class ChangeOrderBottomBannerHandler : IRequestHandler<ChangeOrderBottomB
 
     public async Task<Unit> Handle(ChangeOrderBottomBannerCommand request, CancellationToken cancellationToken)
     {
-        var banner = await _context.BottomBanners.FirstOrDefaultAsync(t => t.Id == request.BannerId, cancellationToken);
+        var banner = await _context.BottomBanners.FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
         if (banner is null)
             throw new NotFoundException(ErrorMessages.BannerNotFound);

@@ -3,6 +3,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerText;
 using KoreanSecrets.BL.Behaviors.Admin.Banners.DeleteBanner;
 using KoreanSecrets.BL.Behaviors.Admin.BottomBanners.AddBanner;
+using KoreanSecrets.BL.Behaviors.Admin.BottomBanners.ChangeOrderBanner;
 using KoreanSecrets.BL.Behaviors.Admin.BottomBanners.DeleteBanner;
 using KoreanSecrets.BL.Behaviors.Admin.BottomBanners.UpdateBottomBannerPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Brands.AddBrand;
@@ -31,24 +32,24 @@ using KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.DeleteDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.GetDemands;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.ModifyDemand;
-using KoreanSecrets.BL.Behaviors.Admin.Products.AddDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
-using KoreanSecrets.BL.Behaviors.Admin.Products.AddPhotoToList;
-using KoreanSecrets.BL.Behaviors.Admin.Products.AddPhotoToVolumeList;
-using KoreanSecrets.BL.Behaviors.Admin.Products.AddProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
-using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeMainPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeProductQuantity;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
-using KoreanSecrets.BL.Behaviors.Admin.Products.DeletePhotoFromList;
-using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProductFeedback;
-using KoreanSecrets.BL.Behaviors.Admin.Products.GetAllProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Discounts.AddDiscount;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Discounts.RemoveDiscount;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetCustomerFeedbacks;
-using KoreanSecrets.BL.Behaviors.Admin.Products.GetProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
-using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyProduct;
-using KoreanSecrets.BL.Behaviors.Admin.Products.RemoveDiscount;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.AddPhotoToList;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.AddProduct;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.ChangeMainPhoto;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.DeletePhotoFromList;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.DeleteProduct;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.GetAllProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.GetProducts;
+using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.ModifyProduct;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddPhotoToVolumeList;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.GetPromocodes;
@@ -550,6 +551,13 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> UpdatePhotoBottomBannerAsync
     (
         [FromForm] UpdateBottomBannerPhotoCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+    
+    [HttpPost("bottom-banners/update-order")]
+    public async Task<IActionResult> UpdateOrderBottomBannerAsync
+    (
+        [FromBody] ChangeOrderBottomBannerCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
     

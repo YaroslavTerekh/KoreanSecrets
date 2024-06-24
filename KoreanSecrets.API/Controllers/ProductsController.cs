@@ -1,6 +1,6 @@
-﻿using KoreanSecrets.BL.Behaviors.Admin.Products.AddNewVolume;
-using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteVolume;
-using KoreanSecrets.BL.Behaviors.Admin.Products.ModifyVolume;
+﻿using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddNewVolume;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.DeleteVolume;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.ModifyVolume;
 using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
 using KoreanSecrets.BL.Behaviors.Banners.GetAllBottomBanners;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
