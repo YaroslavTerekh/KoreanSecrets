@@ -31,6 +31,7 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginationMo
             .AsNoTracking()
             .Include(t => t.Brand)
             .Include(t => t.Volumes)
+            .ThenInclude(x=>x.Photos)
             .Include(t => t.MainPhoto)
             .AsQueryable();
 

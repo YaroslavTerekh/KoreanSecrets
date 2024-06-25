@@ -39,6 +39,7 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
             .Include(t => t.Bucket)
                 .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Volume)
+                        .ThenInclude(x=>x.Photos)
             .Where(t => t.Id == request.CurrentUserId)
             .Select(t => _mapper.Map<BucketDTO>(t.Bucket))
             .FirstOrDefaultAsync(cancellationToken);

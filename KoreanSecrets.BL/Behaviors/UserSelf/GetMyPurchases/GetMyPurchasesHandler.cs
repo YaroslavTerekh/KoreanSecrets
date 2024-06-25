@@ -30,7 +30,9 @@ public class GetMyPurchasesHandler : IRequestHandler<GetMyPurchasesQuery, Pagina
                     .ThenInclude(x=>x.Brand)
             .Include(x=>x.Products)
                 .ThenInclude(p => p.Product)
-                    .ThenInclude(x=>x.MainPhoto).Skip(request.PageSize * request.CurrentPage)
+                    .ThenInclude(x=>x.Volumes)
+                        .ThenInclude(x=>x.Photos)
+            .Skip(request.PageSize * request.CurrentPage)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 

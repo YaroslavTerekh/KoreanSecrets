@@ -31,6 +31,7 @@ public class SearchProductHandler : IRequestHandler<SearchProductQuery, List<Lis
             .Include(t => t.Category)
             .Include(t => t.MainPhoto)
             .Include(t => t.Volumes)
+            .ThenInclude(x=>x.Photos)
             .Select(t => _mapper.Map<ListProductDTO>(t))
         .ToListAsync(cancellationToken);
 

@@ -29,6 +29,7 @@ public class GetPopularProductsHandler : IRequestHandler<GetPopularProductsQuery
             .Include(t => t.MainPhoto)
             .Include(t => t.Brand)
             .Include(t => t.Volumes)
+            .ThenInclude(x=>x.Photos)
             .Include(t => t.Feedbacks)
             .OrderByDescending(t => t.Feedbacks.Count)
             .Skip(request.PageSize * request.CurrentPage)
