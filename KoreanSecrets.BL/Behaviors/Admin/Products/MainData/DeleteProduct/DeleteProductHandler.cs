@@ -42,7 +42,7 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
         {
             if(file != null)
             {
-                await _fileService.DeleteFileAsync(file.Id);
+                await _fileService.DeleteFileAsync2(file.Id, cancellationToken);
             }
         }
 

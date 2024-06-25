@@ -43,11 +43,17 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         if (user.Bucket.BucketProducts.Count < 1)
             throw new Exception(ErrorMessages.BucketIsEmpty);
 
-        var promocode = await _context.Promocodes
-            .FirstOrDefaultAsync(t => t.Code == request.Promocode, cancellationToken);
+        Promocode? promocode = null;
 
-        if (promocode is null && request.Promocode != "")
-            throw new NotFoundException(ErrorMessages.PromoNotFound);
+        if (!string.IsNullOrEmpty(request.Promocode))
+        {
+            promocode = await _context.Promocodes.
+                Include(x => x.Products)
+                .FirstOrDefaultAsync(t => t.Code == request.Promocode, cancellationToken);
+
+            if (promocode is null && request.Promocode != "")
+                throw new NotFoundException(ErrorMessages.PromoNotFound);
+        }
 
         var productIds = user.Bucket.BucketProducts.Select(t => t.Id).ToList();
         //var productsIds = user.Bucket.PurchaseProducts.Select(t => t.ProductId).ToList();
@@ -91,61 +97,42 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * purchaseProduct.Volume.Price);
         }
 
-        // product discount
-
+        var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        
         foreach (var purchasePricePair in purchasesPriceDictionary)
         {
             var purchaseProduct = purchasePricePair.Key;
             var currentPrice = purchasePricePair.Value;
-            long? newPrice = null;
 
-            if (purchaseProduct.Product.DiscountPrice is not null && purchaseProduct.Product.UseDiscountPrice)
+            if (purchaseProduct.Product.DiscountPrice != null 
+                && purchaseProduct.Product.UseDiscountPrice)
             {
-                newPrice = (currentPrice * purchaseProduct.Product.DiscountPrice) / 100;
+                purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * purchaseProduct.Product.DiscountPrice) / 100);
             }
-            
-            if (newPrice != null) 
-                purchasesPriceDictionary[purchasePricePair.Key] = (long)newPrice;
-        }
-
-        // promocode
-
-        if (promocode is not null)
-        {
-            foreach (var purchasePricePair in purchasesPriceDictionary)
+            else if (promotions.Any(x => x.BrandId == purchaseProduct.Product.BrandId) 
+                     && purchaseProduct.Product.AdditionalIcon == ProductIcon.Sale)
             {
-                var purchaseProduct = purchasePricePair.Key;
-                var currentPrice = purchasePricePair.Value;
-
-                if (purchaseProduct.Product.BrandId == promocode.BrandId)
+                var currentPromotion = promotions.First(x => x.BrandId == purchaseProduct.Product.BrandId);
+                
+                purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * currentPromotion.Discount) / 100);
+            } 
+            else if (promocode != null)
+            {
+                if (promocode.BrandId.HasValue)
                 {
-                    purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
+                    if (purchaseProduct.Product.BrandId == promocode.BrandId
+                        && promocode.Products.All(x => x.ProductId != purchaseProduct.Product.Id))
+                    {
+                        purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
+                    } 
                 }
-            }
-        }
-
-        // promotion
-
-        var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
-        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
-        if (promotions.Count > 0)
-        {
-            var promoBrandIds = promotions.Where(t=> DateTime.Now >= t.StartDate).Select(t => t.BrandId).ToList();
-            foreach (var purchasePricePair in purchasesPriceDictionary)
-            {
-                var purchaseProduct = purchasePricePair.Key;
-                var currentPrice = purchasePricePair.Value;
-                long? newPrice = null;
-
-                if (purchaseProduct.Product.DiscountPrice != null && purchaseProduct.Product.UseDiscountPrice)
-                    continue;
-
-                if (purchaseProduct.Product.BrandId is not null && promoBrandIds.Contains((Guid)purchaseProduct.Product.BrandId))
+                else
                 {
-                    newPrice = (long?)(currentPrice * promotions.Where(t => t.BrandId == purchaseProduct.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100;
-
-                    if(newPrice != null)
-                        purchasesPriceDictionary[purchasePricePair.Key] = (long)newPrice;
+                    if (promocode.Products.All(x => x.ProductId != purchaseProduct.Product.Id))
+                    {
+                        purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
+                    } 
                 }
             }
         }
