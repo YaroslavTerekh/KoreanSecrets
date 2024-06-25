@@ -45,7 +45,7 @@ public class AddNewVolumeHandler : IRequestHandler<AddNewVolumeCommand>
                 photos.Add(result);
             }
 
-        product.Photos = photos;
+        volume.Photos = photos;
 
         await _context.Volume.AddAsync(volume, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

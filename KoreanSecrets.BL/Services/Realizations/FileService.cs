@@ -103,4 +103,38 @@ public class FileService : IFileService
             }
         }
     }
+    
+    public async Task DeleteFileAsync2(Guid id, CancellationToken cancellationToken = default)
+    {
+        var file = await _context.Files.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+
+        if (file is not null)
+        {
+            try
+            {
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(_firebaseSettings.ApiKey));
+                var a = await auth.SignInWithEmailAndPasswordAsync(_firebaseSettings.Email, _firebaseSettings.Password);
+
+                var cancellation = new CancellationTokenSource();
+
+                var task = new FirebaseStorage(
+                        _firebaseSettings.StorageLink,
+                        new FirebaseStorageOptions
+                        {
+                            AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                    .Child("uploads")
+                    .Child(file.FileName)
+                    .DeleteAsync();
+
+                await task;
+            }
+            catch { }
+            finally
+            {
+                _context.Files.Remove(file);
+            }
+        }
+    }
 }

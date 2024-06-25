@@ -33,6 +33,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
             .Include(t => t.Feedbacks)
                 .ThenInclude(t => t.User)
             .Include(t => t.Volumes)
+                .ThenInclude(x=>x.Photos)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Text))

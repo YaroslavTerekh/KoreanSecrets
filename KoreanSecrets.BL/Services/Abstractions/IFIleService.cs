@@ -13,5 +13,6 @@ public interface IFileService
     public Task<AppFile> UploadFileAsync(IFormFile file, CancellationToken cancellationToken = default);
 
     public Task DeleteFileAsync(Guid id, CancellationToken cancellationToken = default);
+    Task DeleteFileAsync2(Guid id, CancellationToken cancellationToken = default);
 }
 

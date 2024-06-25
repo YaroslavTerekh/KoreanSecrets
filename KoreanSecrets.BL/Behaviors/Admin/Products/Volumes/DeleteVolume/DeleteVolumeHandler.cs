@@ -20,6 +20,7 @@ public class DeleteVolumeHandler : IRequestHandler<DeleteVolumeCommand>
     public async Task<Unit> Handle(DeleteVolumeCommand request, CancellationToken cancellationToken)
     {
         var volume = await _context.Volume
+            .Include(volume => volume.Photos)
             .FirstOrDefaultAsync(t => t.Id == request.VolumeId, cancellationToken);
 
         if (volume is null) throw new Exception(ErrorMessages.ProductNotFound("Об'єкту об'єму для видалення"));
@@ -28,7 +29,7 @@ public class DeleteVolumeHandler : IRequestHandler<DeleteVolumeCommand>
         {
             if (file != null)
             {
-                await _fileService.DeleteFileAsync(file.Id);
+                await _fileService.DeleteFileAsync2(file.Id, cancellationToken);
             }
         }
 
