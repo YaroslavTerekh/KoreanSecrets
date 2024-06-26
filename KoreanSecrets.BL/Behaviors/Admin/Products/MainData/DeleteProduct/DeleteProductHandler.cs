@@ -22,6 +22,8 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
     public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
         var product = await _context.Products
+            .Include(t => t.Volumes)
+                .ThenInclude(t => t.Photos)
             .Include(t => t.MainPhoto)
             .Include(t => t.Photos)
             .Include(t => t.Guide)
@@ -30,12 +32,17 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
+        var volumeIds = product.Volumes.Select(t => t.Id).ToList();
+
+        var purchasedProducts = await _context.PurchasedProducts.Where(t => volumeIds.Contains(t.VolumeId)).ToListAsync(cancellationToken);
+        _context.PurchasedProducts.RemoveRange(purchasedProducts);  
         _context.Products.Remove(product);
 
         List<AppFile> filesToDelete = new();
 
         filesToDelete.Add(product.MainPhoto);
         filesToDelete.AddRange(product.Photos);
+        filesToDelete.AddRange(product.Volumes.SelectMany(t => t.Photos).ToList());
         filesToDelete.Add(product.Guide);
 
         foreach (var file in filesToDelete)
