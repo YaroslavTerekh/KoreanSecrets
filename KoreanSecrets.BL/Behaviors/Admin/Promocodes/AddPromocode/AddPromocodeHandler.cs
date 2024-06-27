@@ -40,7 +40,7 @@ public class AddPromocodeHandler : IRequestHandler<AddPromocodeCommand>
 
         if(request.ProductIds is not null)
         {
-            var productPromocodes = request.ProductIds.Select(t => new ProductPromocode
+            var productPromocodes = request.ProductIds.Select(t => new ProductPromocode 
             {
                 ProductId = t,
                 PromocodeId = promocode.Id
