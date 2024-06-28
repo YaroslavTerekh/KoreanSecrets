@@ -30,20 +30,43 @@ public class AddPromotionHandler : IRequestHandler<AddPromotionCommand>
             StartDate = request.StartDate.Value.AddHours(12),
         };
 
-        var products = await _context.Products.Where(t => t.BrandId == promotion.BrandId).ToListAsync(cancellationToken);
+        if (promotion.StartDate.Value.ToUniversalTime() <= DateTime.UtcNow)
+        {
+            await SetIconAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value);
+        }
+        else
+        {
+            BackgroundJob.Schedule(() => SetIconAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value), promotion.StartDate.Value.ToUniversalTime());
+        }
+        
+        if(request.EndDate != null && request.StartDate != null)
+            BackgroundJob.Schedule(() => RemoveDiscountAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value), promotion.EndDate.Value.ToUniversalTime());
+
+        return Unit.Value;
+    }
+    
+    public async Task SetIconAsync(Guid id, DateTime endDate, DateTime startDate)
+    {
+        var promotion = await _context.Promotions.FirstOrDefaultAsync(t => t.Id == id);
+
+        if (promotion is null)
+            return;
+
+        if (endDate != promotion.EndDate)
+            return;
+
+        if (startDate != promotion.StartDate)
+            return;
+
+        var products = await _context.Products.Where(t => t.BrandId == promotion.BrandId).ToListAsync();
 
         foreach (var product in products)
         {
             product.AdditionalIcon = ProductIcon.Sale;
         }
 
-        await _context.Promotions.AddAsync(promotion, cancellationToken);
+        await _context.Promotions.AddAsync(promotion);
         await _context.SaveChangesAsync();
-
-        if(request.EndDate != null && request.StartDate != null)
-            BackgroundJob.Schedule(() => RemoveDiscountAsync(promotion.Id, request.EndDate.Value, request.StartDate.Value), request.EndDate.Value - DateTime.UtcNow);
-
-        return Unit.Value;
     }
 
     public async Task RemoveDiscountAsync(Guid id, DateTime endDate, DateTime startDate)
