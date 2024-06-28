@@ -68,4 +68,6 @@ public class PageProductDTO : BaseEntity
     public List<FeedbackDTO> Feedbacks { get; set; } = new();
 
     public List<ListProductDTO> SameProducts { get; set; } = new();
+
+    public List<CommentDTO> Comments { get; set; } = new();
 }

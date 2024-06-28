@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.BL.Behaviors.Products.TogglePromocodeStatus;
+﻿using KoreanSecrets.BL.Behaviors.Products.Comments.AddComment;
+using KoreanSecrets.BL.Behaviors.Products.TogglePromocodeStatus;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddReport;
@@ -30,6 +31,18 @@ public class UserController : BaseController
     public UserController(IMediator mediator)
     {
         _mediatr = mediator;
+    }
+
+    [Authorize]
+    [HttpPost("comments/add")]
+    public async Task<IActionResult> AddCommentAsync
+    (
+        [FromBody] AddCommentCommand command,
+        CancellationToken cancellationToken = default
+    ) 
+    {
+        command.UserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
     }
 
     [Authorize]

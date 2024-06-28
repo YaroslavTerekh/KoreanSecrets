@@ -35,4 +35,6 @@ public class User : IdentityUser<Guid>
     public List<Purchase> Purchases { get; set; } = new();
 
     public List<Report> Reports { get; set; } = new();
+
+    public List<Comment> Comments { get; set; } = new();
 }

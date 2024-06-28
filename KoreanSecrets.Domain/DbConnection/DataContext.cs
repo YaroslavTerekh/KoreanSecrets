@@ -40,7 +40,8 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<ProductDemand> ProductDemand { get; set; }
     public DbSet<BottomBanner> BottomBanners { get; set; }
     public DbSet<BottomBannerPhoto> BottomBannerPhotos { get; set; }
-    
+    public DbSet<Comment> Comment { get; set; }
+
     //public DbSet<CategoryBrand> CategoryBrands { get; set; }
     //public DbSet<CategoryCountry> CategoryCountries { get; set; }
     //public DbSet<CategoryDemand> CategoryDemands { get; set; }
@@ -51,6 +52,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         base.OnModelCreating(builder);
 
         builder.ApplyConfiguration(new BannerConfiguration());
+        builder.ApplyConfiguration(new CommentConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new UserConfiguration());
         builder.ApplyConfiguration(new BrandConfiguration());

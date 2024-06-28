@@ -38,14 +38,21 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Include(t => t.Category)
             .Include(t => t.Photos)
             .Include(t => t.Guide)
+            .Include(t => t.Comments)
+                .ThenInclude(t => t.User)
+            .Include(t => t.Comments)
+                .ThenInclude(t => t.Replies)
+                    .ThenInclude(t => t.Replies)
             .Include(t => t.MainPhoto)
             .Include(t => t.Feedbacks.OrderByDescending(x=>x.CreatedDate))
                 .ThenInclude(t => t.User)
             .Include(t => t.Volumes)
                 .ThenInclude(x=>x.Photos)
             .Where(t => t.Id == request.ProductId)
-            .Select(t => _mapper.Map<PageProductDTO>(t))
             .FirstOrDefaultAsync(cancellationToken);
+
+        product.Comments = product.Comments.Where(t => t.ParentCommentId == null).ToList();
+        var mappedProduct = _mapper.Map<PageProductDTO>(product);
 
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
@@ -56,7 +63,7 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
 
             if(promotion is not null)
             {
-                product.Brand.Promotions = promotion;
+                mappedProduct.Brand.Promotions = promotion;
             }
         }
 
@@ -68,12 +75,12 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
                     .SelectMany(t => t.Likes.Select(t => t.LikesId1)).ToListAsync(cancellationToken);
 
             if (likes.Contains(request.CurrentUserId))
-                product.IsLikedByUser = true;
+                mappedProduct.IsLikedByUser = true;
             else
-                product.IsLikedByUser = false;
+                mappedProduct.IsLikedByUser = false;
         }
 
-        product.SameProducts = await _context.Products
+        mappedProduct.SameProducts = await _context.Products
             .AsNoTracking()
             .Include(t => t.MainPhoto)
             .Include(t => t.Brand)
@@ -85,6 +92,6 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Select(t => _mapper.Map<ListProductDTO>(t))
             .ToListAsync(cancellationToken);
 
-        return product;
+        return mappedProduct;
     }
 }

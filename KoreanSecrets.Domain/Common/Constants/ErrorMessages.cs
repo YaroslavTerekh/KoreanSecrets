@@ -24,6 +24,7 @@ public static class ErrorMessages
     public const string SomeProductNotFound = "Товару не знайдено";
     public const string PurchaseNotFound = "Замовлення не знайдено";
     public const string VolumeNotFound = "Об'єму не знайдено";
+    public const string CommentNotFound = "Коментаря не знайдено";
 
     public const string WrongPassword = "Пароль неправильний";
     public const string WrongPhoneNumber = "Номер телефону неправильний";
