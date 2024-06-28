@@ -13,7 +13,8 @@ public class VolumeDTO
 
     public string Unit { get; set; }
 
-    public long Price { get; set; }
+    public decimal Price { get; set; }
+    public decimal? PriceWithDiscount { get; set; }
     public int Quantity { get; set; }
     public List<AppFileDTO> Photos { get; set; }
 }

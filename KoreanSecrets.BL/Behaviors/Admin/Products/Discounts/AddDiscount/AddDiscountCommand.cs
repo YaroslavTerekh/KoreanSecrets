@@ -6,7 +6,7 @@ public class AddDiscountCommand : IRequest
 {
     public Guid ProductId { get; set; }
 
-    public long NewPrice { get; set; }
+    public decimal NewPrice { get; set; }
 
     public DateTime DiscountPriceStartDate { get; set; }
 

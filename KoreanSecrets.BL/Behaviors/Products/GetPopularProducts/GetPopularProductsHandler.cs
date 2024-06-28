@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.BL.Services;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetPopularProducts;
 
@@ -24,7 +25,7 @@ public class GetPopularProductsHandler : IRequestHandler<GetPopularProductsQuery
 
     public async Task<List<ListProductDTO>> Handle(GetPopularProductsQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Products
+        var products =  await _context.Products
             .Where(t => t.BrandId != null && t.CategoryId != null && t.CountryId != null && t.SubCategoryId != null)
             .Include(t => t.MainPhoto)
             .Include(t => t.Brand)
@@ -36,5 +37,15 @@ public class GetPopularProductsHandler : IRequestHandler<GetPopularProductsQuery
             .Take(request.PageSize)
             .Select(t => _mapper.Map<ListProductDTO>(t))
             .ToListAsync(cancellationToken);
+        
+        var productBrandIds = products.Select(t => t.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        
+        foreach (var product in products)
+        {
+            CalculatePriceService.GetProductPrice(product, promotions, null);
+        }
+
+        return products;
     }
 }

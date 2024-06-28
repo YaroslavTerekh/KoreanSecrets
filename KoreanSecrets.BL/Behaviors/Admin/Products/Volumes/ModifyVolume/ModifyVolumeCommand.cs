@@ -12,5 +12,5 @@ public class ModifyVolumeCommand : IRequest
 
     public int Quantity { get; set; }
 
-    public long Price { get; set; }
+    public decimal Price { get; set; }
 }

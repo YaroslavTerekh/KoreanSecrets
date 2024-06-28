@@ -35,9 +35,18 @@ public class AddDiscountHandler : IRequestHandler<AddDiscountCommand>
         product.DiscountPriceStartDate = request.DiscountPriceStartDate.AddHours(12);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+
+        if (request.DiscountPriceStartDate.ToUniversalTime() <= DateTime.UtcNow)
+        {
+            await SetIconAsync(product.Id, product.DiscountPriceEndDate.Value, product.DiscountPriceStartDate.Value);
+        }
+        else
+        {
+            BackgroundJob.Schedule(() => SetIconAsync(product.Id, product.DiscountPriceEndDate.Value, product.DiscountPriceStartDate.Value), product.DiscountPriceStartDate.Value.ToUniversalTime());
+        }
         
-        BackgroundJob.Schedule(() => SetIconAsync(product.Id, request.DiscountPriceEndDate, request.DiscountPriceStartDate), request.DiscountPriceStartDate - DateTime.UtcNow);
-        BackgroundJob.Schedule(() => RemoveDiscountAsync(product.Id, request.DiscountPriceEndDate, request.DiscountPriceStartDate), request.DiscountPriceEndDate - DateTime.UtcNow);
+        BackgroundJob.Schedule(() => RemoveDiscountAsync(product.Id, product.DiscountPriceEndDate.Value, product.DiscountPriceStartDate.Value), product.DiscountPriceEndDate.Value.ToUniversalTime());
 
         return Unit.Value;
     }

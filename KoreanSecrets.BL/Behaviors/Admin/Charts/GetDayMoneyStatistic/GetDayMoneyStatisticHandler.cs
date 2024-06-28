@@ -46,7 +46,7 @@ public class GetDayMoneyStatisticHandler : IRequestHandler<GetDayMoneyStatisticQ
         };
     }
 
-    private async Task<long> GetValue(int val)
+    private async Task<decimal> GetValue(int val)
     {
         return await _context.Purchases.Where(t => t.CreatedDate.Hour == DateTime.UtcNow.AddHours(val).Hour
             && t.CreatedDate.DayOfYear == DateTime.UtcNow.AddHours(val).DayOfYear

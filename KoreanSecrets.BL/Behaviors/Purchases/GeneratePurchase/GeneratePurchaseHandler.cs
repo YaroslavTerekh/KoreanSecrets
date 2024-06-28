@@ -8,6 +8,7 @@ using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using KoreanSecrets.BL.Services;
 
 namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 
@@ -90,7 +91,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         purchase.PurchaseIdentifier = ConvertGuidToLong(purchase.Id);
 
-        var purchasesPriceDictionary = new Dictionary<PurchasedProduct, long>();
+        var purchasesPriceDictionary = new Dictionary<PurchasedProduct, decimal>();
 
         foreach (var purchaseProduct in purchase.Products)
         {
@@ -102,39 +103,10 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         
         foreach (var purchasePricePair in purchasesPriceDictionary)
         {
-            var purchaseProduct = purchasePricePair.Key;
-            var currentPrice = purchasePricePair.Value;
-
-            if (purchaseProduct.Product.DiscountPrice != null 
-                && purchaseProduct.Product.UseDiscountPrice)
-            {
-                purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * purchaseProduct.Product.DiscountPrice) / 100);
-            }
-            else if (promotions.Any(x => x.BrandId == purchaseProduct.Product.BrandId) 
-                     && purchaseProduct.Product.AdditionalIcon == ProductIcon.Sale)
-            {
-                var currentPromotion = promotions.First(x => x.BrandId == purchaseProduct.Product.BrandId);
-                
-                purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * currentPromotion.Discount) / 100);
-            } 
-            else if (promocode != null)
-            {
-                if (promocode.BrandId.HasValue)
-                {
-                    if (purchaseProduct.Product.BrandId == promocode.BrandId
-                        && promocode.Products.All(x => x.ProductId != purchaseProduct.Product.Id))
-                    {
-                        purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
-                    } 
-                }
-                else
-                {
-                    if (promocode.Products.All(x => x.ProductId != purchaseProduct.Product.Id))
-                    {
-                        purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
-                    } 
-                }
-            }
+            purchasesPriceDictionary[purchasePricePair.Key] = CalculatePriceService.GetProductPrice(
+                purchasePricePair,
+                promotions,
+                promocode);
         }
 
         purchase.TotalPrice = purchasesPriceDictionary.Select(t => t.Value).Sum();
@@ -175,30 +147,11 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             return new { Id = purchase.PurchaseIdentifier };
         }
         
-        BackgroundJob.Schedule(() => DeleteFailuredPurchase(purchase.Id), TimeSpan.FromHours(3));
+        BackgroundJob.Schedule(() => DeleteFailedPurchase(purchase.Id), TimeSpan.FromHours(3));
  
         var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
 
         return new { Form = form, Id = purchase.PurchaseIdentifier };
-    }
-
-    private long? GetTotalPrice(PurchasedProduct purchasedProduct, Promocode? promocode, long? discount)
-    {
-        if (purchasedProduct.Product.DiscountPrice is not null && purchasedProduct.Product.BrandId == promocode?.BrandId)
-        {
-            return
-                ((purchasedProduct.Volume.Price * purchasedProduct.Amount) - (((purchasedProduct.Volume.Price * purchasedProduct.Amount * purchasedProduct.Product.DiscountPrice)) / 100) - discount);
-        }
-        else if (purchasedProduct.Product.DiscountPrice is not null)
-        {
-            return        
-                (purchasedProduct.Volume.Price * purchasedProduct.Amount) - ((purchasedProduct.Volume.Price * purchasedProduct.Amount * purchasedProduct.Product.DiscountPrice) / 100);
-        }
-        else
-        {
-            return 
-                purchasedProduct.Volume.Price * purchasedProduct.Amount;
-        }
     }
 
     private long ConvertGuidToLong(Guid guid)
@@ -214,7 +167,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         return result;
     }
 
-    public async Task DeleteFailuredPurchase(Guid id)
+    public async Task DeleteFailedPurchase(Guid id)
     {
         var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == id);
 

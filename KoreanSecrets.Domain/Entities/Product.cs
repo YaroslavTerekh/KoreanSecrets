@@ -33,7 +33,7 @@ public class Product : BaseEntity
 
     public List<Volume> Volumes { get; set; }
 
-    public long? DiscountPrice { get; set; }
+    public decimal? DiscountPrice { get; set; }
 
     public bool UseDiscountPrice { get; set; }
 

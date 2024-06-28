@@ -37,7 +37,7 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginationModelDTO
         var admins = await _roleManager.GetUsersInRoleAsync(Roles.Admin);
         users = users.Where(t => !admins.Contains(t));
 
-        var usersTotalPurchases = new Dictionary<Guid, long>();
+        var usersTotalPurchases = new Dictionary<Guid, decimal>();
 
         foreach (var user in users)
             usersTotalPurchases.Add(user.Id, user.Purchases.Select(t => t.TotalPrice).Sum());

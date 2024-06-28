@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KoreanSecrets.BL.Services;
 using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
 using MediatR;
@@ -74,17 +75,26 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
             query = query.OrderBy(x => x.Brand.Title).ThenByDescending(x => x.CreatedDate);
         }
 
+        var products = await query
+            .Skip(request.CurrentPage * request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        var productBrandIds = products.Select(t => t.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        
+        foreach (var product in products)
+        {
+            CalculatePriceService.GetProductPrice(product, promotions, promocode: null);
+        }
         
         return new PaginationModelDTO<PageProductDTO>
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
             Total = await query.CountAsync(cancellationToken),
-            Products = await query
-                .Select(t => _mapper.Map<PageProductDTO>(t))
-                .Skip(request.CurrentPage * request.PageSize)
-                .Take(request.PageSize)
-                .ToListAsync(cancellationToken)
+            Products = products
+                .Select(t => _mapper.Map<PageProductDTO>(t)).ToList()
         };
     }
 }

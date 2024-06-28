@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.BL.Services;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
 
@@ -47,8 +48,13 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
         if (bucket is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
+        var productBrandIds = bucket.PurchaseProducts.Select(t => t.Product.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        
         foreach( var product in bucket.PurchaseProducts)
         {
+            CalculatePriceService.GetProductPrice(product, promotions, null);
+            
             if(product.Product.Brand is not null)
             {
                 product.Product.Brand.Promotions = await _context.Promotions.FirstOrDefaultAsync(t => t.BrandId == product.Product.Brand.Id, cancellationToken);                

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.BL.Services;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetDiscountedProducts;
 
@@ -38,6 +39,14 @@ public class GetDiscountedProductsHandler : IRequestHandler<GetDiscountedProduct
             .Select(t => _mapper.Map<ListProductDTO>(t))
             .ToListAsync(cancellationToken);
 
+        var productBrandIds = products.Select(t => t.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        
+        foreach (var product in products)
+        {
+            CalculatePriceService.GetProductPrice(product, promotions, null);
+        }
+        
         if (request.CurrentUserId != Guid.Empty)
         {
             foreach (var product in products)

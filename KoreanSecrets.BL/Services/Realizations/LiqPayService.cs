@@ -39,7 +39,7 @@ public class LiqPayService : ILiqPayService
         {
             PublicKey = _liqPaySettings.PublicKey,
             Version = 3,
-            Amount = purchase.TotalPrice,
+            Amount = (double)purchase.TotalPrice,
             Currency = "UAH",
             OrderId = purchase.Id.ToString(),
             Action = LiqPayRequestAction.Pay,

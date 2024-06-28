@@ -45,7 +45,7 @@ public class GetYearMoneyStatisticHandler : IRequestHandler<GetYearMoneyStatisti
         };
     }
 
-    private async Task<long> GetValue(int val)
+    private async Task<decimal> GetValue(int val)
     {
         return await _context.Purchases.Where(t => t.CreatedDate.Month == val
                                                    && t.CreatedDate.Year == DateTime.UtcNow.Year).Select(t => t.TotalPrice).SumAsync();

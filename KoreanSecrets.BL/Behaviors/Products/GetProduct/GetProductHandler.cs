@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.BL.Services;
 
 namespace KoreanSecrets.BL.Behaviors.Products.GetProduct;
 
@@ -52,6 +53,11 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .FirstOrDefaultAsync(cancellationToken);
 
         product.Comments = product.Comments.Where(t => t.ParentCommentId == null).ToList();
+        
+        var promotions = await _context.Promotions.Where(t => product.BrandId == t.BrandId).ToListAsync(cancellationToken);
+        
+        CalculatePriceService.GetProductPrice(product, promotions, promocode: null);
+        
         var mappedProduct = _mapper.Map<PageProductDTO>(product);
 
         if (product is null)

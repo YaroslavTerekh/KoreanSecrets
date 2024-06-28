@@ -10,7 +10,7 @@ public class Promocode : BaseEntity
 {
     public string Code { get; set; }
 
-    public double Discount { get; set; }
+    public decimal Discount { get; set; }
 
     public bool IsActive { get; set; }
 

@@ -46,7 +46,7 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
         };
     }
 
-    private async Task<long> GetNewPriceAsync(Guid userId, Promocode promocode, CancellationToken cancellationToken)
+    private async Task<decimal> GetNewPriceAsync(Guid userId, Promocode promocode, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .Include(t => t.AddressInfo)
@@ -75,7 +75,7 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
                 CreatedDate = t.CreatedDate,
             }).ToList();
 
-        var purchasesPriceDictionary = new Dictionary<PurchasedProduct, long>();
+        var purchasesPriceDictionary = new Dictionary<PurchasedProduct, decimal>();
 
         foreach (var purchaseProduct in bucketProducts)
         {
@@ -88,7 +88,7 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
         {
             var purchaseProduct = purchasePricePair.Key;
             var currentPrice = purchasePricePair.Value;
-            long? newPrice = null;
+            decimal? newPrice = null;
 
             if (purchaseProduct.Product.DiscountPrice is not null)
             {
@@ -96,7 +96,7 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
             }
 
             if (newPrice != null)
-                purchasesPriceDictionary[purchasePricePair.Key] = (long)newPrice;
+                purchasesPriceDictionary[purchasePricePair.Key] = (decimal)newPrice;
         }
 
         // promocode
@@ -110,7 +110,7 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
 
                 if (purchaseProduct.Product.BrandId == promocode.BrandId)
                 {
-                    purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (long)((currentPrice * promocode.Discount) / 100);
+                    purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (decimal)((currentPrice * promocode.Discount) / 100);
                 }
             }
         }
@@ -126,14 +126,14 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
             {
                 var purchaseProduct = purchasePricePair.Key;
                 var currentPrice = purchasePricePair.Value;
-                long? newPrice = null;
+                decimal? newPrice = null;
 
                 if (purchaseProduct.Product.BrandId is not null && promoBrandIds.Contains((Guid)purchaseProduct.Product.BrandId))
                 {
-                    newPrice = (long?)(currentPrice * promotions.Where(t => t.BrandId == purchaseProduct.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100;
+                    newPrice = (decimal?)(currentPrice * promotions.Where(t => t.BrandId == purchaseProduct.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100;
 
                     if (newPrice != null)
-                        purchasesPriceDictionary[purchasePricePair.Key] = (long)newPrice;
+                        purchasesPriceDictionary[purchasePricePair.Key] = (decimal)newPrice;
                 }
             }
         }

@@ -12,7 +12,7 @@ public class PromocodeUI
 
     public string Title { get; set; }
 
-    public double Discount { get; set; }
+    public decimal Discount { get; set; }
 
-    public long Total { get; set; }
+    public decimal Total { get; set; }
 }

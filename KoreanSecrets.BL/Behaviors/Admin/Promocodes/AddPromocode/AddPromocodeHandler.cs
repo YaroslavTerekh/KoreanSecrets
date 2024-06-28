@@ -26,12 +26,16 @@ public class AddPromocodeHandler : IRequestHandler<AddPromocodeCommand>
         var promocode = new Promocode
         {
             Code = request.Title,
-            BrandId = request.BrandId,
             Discount = request.Discount,
             StartDate = request.StartDate.AddHours(12),
             EndDate = request.EndDate.AddHours(12),
         };
 
+        if (request.BrandId is not null)
+        {
+            promocode.BrandId = request.BrandId;
+        }
+        
         if (request.StartDate > request.EndDate)
             throw new Exception(ErrorMessages.DateNotMatch);
 

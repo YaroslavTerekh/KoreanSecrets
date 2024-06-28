@@ -27,7 +27,7 @@ public class Purchase : BaseEntity
 
     public List<PurchasedProduct> Products { get; set; }
 
-    public long TotalPrice { get; set; }
+    public decimal TotalPrice { get; set; }
 
     public Guid? PromocodeId { get; set; }
 

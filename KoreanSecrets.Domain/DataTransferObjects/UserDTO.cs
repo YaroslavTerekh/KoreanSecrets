@@ -26,7 +26,7 @@ public class UserDTO : BaseEntity
 
     public Guid BucketId { get; set; }
 
-    public long? TotalPurchases { get; set; }
+    public decimal? TotalPurchases { get; set; }
 
     public List<CommentDTO> Comments { get; set; } = new();
 }
