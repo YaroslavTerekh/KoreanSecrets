@@ -2,6 +2,7 @@
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddNewVolumes;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.DeleteVolume;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.ModifyVolume;
+using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.ModifyVolumeQuantity;
 using KoreanSecrets.BL.Behaviors.Banners.GetAllBanners;
 using KoreanSecrets.BL.Behaviors.Banners.GetAllBottomBanners;
 using KoreanSecrets.BL.Behaviors.NovaPost.GetAllCities;
@@ -260,6 +261,14 @@ public class ProductsController : BaseController
     public async Task<IActionResult> ModifyVolumeAsync
     (
         [FromBody] ModifyVolumeCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+    
+    [Authorize(Policy = AuthPolicies.Admins)]
+    [HttpPut("volumes-quantity/modify")]
+    public async Task<IActionResult> ModifyVolumeQuantityAsync
+    (
+        [FromBody] ModifyVolumeQuantityCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 
