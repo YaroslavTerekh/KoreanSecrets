@@ -37,7 +37,7 @@ public class SendSMSHandler : IRequestHandler<SendSMSCommand>
         await MessageResource.CreateAsync(
             body: request.Text,
             from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
-            to: new PhoneNumber("+380980721631")
+            to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(user.PhoneNumber))
         );
 
         return Unit.Value;
