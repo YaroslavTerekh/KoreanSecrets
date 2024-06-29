@@ -66,6 +66,7 @@ using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Users.ChangeReportStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
+using KoreanSecrets.BL.Behaviors.Admin.Users.SendSMS;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
@@ -583,4 +584,11 @@ public class AdminController : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeleteBottomBannerCommand(id), cancellationToken));
+    
+    [HttpPost("user-sms")]
+    public async Task<IActionResult> SendSMSToUserAsync
+    (
+        [FromBody] SendSMSCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
 }
