@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.BL.Services;
 
 namespace KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
 
@@ -81,63 +82,18 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
         {
             purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * purchaseProduct.Volume.Price);
         }
-
-        // product discount
+        
+        var productBrandIds = bucketProducts.Select(t => t.Product.BrandId).ToList();
+        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
 
         foreach (var purchasePricePair in purchasesPriceDictionary)
         {
-            var purchaseProduct = purchasePricePair.Key;
-            var currentPrice = purchasePricePair.Value;
-            decimal? newPrice = null;
-
-            if (purchaseProduct.Product.DiscountPrice is not null)
-            {
-                newPrice = (currentPrice * purchaseProduct.Product.DiscountPrice) / 100;
-            }
-
-            if (newPrice != null)
-                purchasesPriceDictionary[purchasePricePair.Key] = (decimal)newPrice;
+            purchasesPriceDictionary[purchasePricePair.Key] = CalculatePriceService.GetProductPrice(
+                purchasePricePair,
+                promotions,
+                promocode);
         }
-
-        // promocode
-
-        if (promocode is not null)
-        {
-            foreach (var purchasePricePair in purchasesPriceDictionary)
-            {
-                var purchaseProduct = purchasePricePair.Key;
-                var currentPrice = purchasePricePair.Value;
-
-                if (purchaseProduct.Product.BrandId == promocode.BrandId)
-                {
-                    purchasesPriceDictionary[purchasePricePair.Key] = currentPrice - (decimal)((currentPrice * promocode.Discount) / 100);
-                }
-            }
-        }
-
-        // promotion
-
-        var productBrandIds = bucketProducts.Select(t => t.Product.BrandId).ToList();
-        var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
-        if (promotions.Count > 0)
-        {
-            var promoBrandIds = promotions.Select(t => t.BrandId).ToList();
-            foreach (var purchasePricePair in purchasesPriceDictionary)
-            {
-                var purchaseProduct = purchasePricePair.Key;
-                var currentPrice = purchasePricePair.Value;
-                decimal? newPrice = null;
-
-                if (purchaseProduct.Product.BrandId is not null && promoBrandIds.Contains((Guid)purchaseProduct.Product.BrandId))
-                {
-                    newPrice = (decimal?)(currentPrice * promotions.Where(t => t.BrandId == purchaseProduct.Product.BrandId).Select(t => t.Discount).FirstOrDefault()) / 100;
-
-                    if (newPrice != null)
-                        purchasesPriceDictionary[purchasePricePair.Key] = (decimal)newPrice;
-                }
-            }
-        }
-
+        
         return purchasesPriceDictionary.Select(t => t.Value).Sum();
     }
 }
