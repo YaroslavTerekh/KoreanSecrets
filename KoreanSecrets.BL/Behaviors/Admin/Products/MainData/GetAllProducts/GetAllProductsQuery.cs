@@ -14,4 +14,5 @@ public class GetAllProductsQuery : IRequest<PaginationModelDTO<PageProductDTO>>
     public string? WayToSort { get; set; }
     
     public string? ColumnToSort { get; set; }
+    public List<string>? Brands { get; set; }
 }

@@ -42,6 +42,12 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
             query = query.Where(t => t.Title.Contains(request.Text));
         }
 
+        if (request.Brands is not null
+            && request.Brands.Any())
+        {
+            query = query.Where(t => t.BrandId != null && request.Brands.Contains(t.BrandId.ToString()));
+        }
+
         if (!string.IsNullOrEmpty(request.ColumnToSort))
         {
             query = request.ColumnToSort switch

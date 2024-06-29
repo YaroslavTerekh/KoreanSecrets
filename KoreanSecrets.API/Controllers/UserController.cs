@@ -4,6 +4,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddReport;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
+using KoreanSecrets.BL.Behaviors.UserSelf.GePurchaseById;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
@@ -54,6 +55,23 @@ public class UserController : BaseController
     )
     {
         query.CurrentUserId = CurrentUserId;
+
+        return Ok(await _mediatr.Send(query, cancellationToken));
+    }
+    
+    [Authorize]
+    [HttpGet("purchase/{id:long}")]
+    public async Task<IActionResult> GetPurchaseByIdAsync
+    (
+        [FromRoute] long id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var query = new GePurchaseByIdQuery
+        {
+            Id = id,
+            CurrentUserId = CurrentUserId
+        };
 
         return Ok(await _mediatr.Send(query, cancellationToken));
     }
