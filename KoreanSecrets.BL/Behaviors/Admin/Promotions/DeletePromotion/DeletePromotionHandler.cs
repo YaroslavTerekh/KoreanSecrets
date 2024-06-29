@@ -36,6 +36,7 @@ public class DeletePromotionHandler : IRequestHandler<DeletePromotionCommand>
             product.AdditionalIcon = ProductIcon.None;
         }
 
+        _context.Products.UpdateRange(products);
         _context.Promotions.Remove(promo);
         await _context.SaveChangesAsync(cancellationToken);
 

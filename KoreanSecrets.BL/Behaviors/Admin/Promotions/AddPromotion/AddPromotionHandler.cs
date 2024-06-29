@@ -30,17 +30,20 @@ public class AddPromotionHandler : IRequestHandler<AddPromotionCommand>
             StartDate = request.StartDate.Value.AddHours(12),
         };
 
-        if (promotion.StartDate.Value.ToUniversalTime() <= DateTime.UtcNow)
+        await _context.Promotions.AddAsync(promotion, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        if (promotion.StartDate.Value.Date.ToUniversalTime() <= DateTime.UtcNow.Date)
         {
             await SetIconAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value);
         }
         else
         {
-            BackgroundJob.Schedule(() => SetIconAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value), promotion.StartDate.Value.ToUniversalTime());
+            BackgroundJob.Schedule(() => SetIconAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value), promotion.StartDate.Value.Date.ToUniversalTime());
         }
         
         if(request.EndDate != null && request.StartDate != null)
-            BackgroundJob.Schedule(() => RemoveDiscountAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value), promotion.EndDate.Value.ToUniversalTime());
+            BackgroundJob.Schedule(() => RemoveDiscountAsync(promotion.Id, promotion.EndDate.Value, promotion.StartDate.Value), promotion.EndDate.Value.Date.ToUniversalTime());
 
         return Unit.Value;
     }
@@ -65,7 +68,7 @@ public class AddPromotionHandler : IRequestHandler<AddPromotionCommand>
             product.AdditionalIcon = ProductIcon.Sale;
         }
 
-        await _context.Promotions.AddAsync(promotion);
+        _context.Products.UpdateRange(products);
         await _context.SaveChangesAsync();
     }
 

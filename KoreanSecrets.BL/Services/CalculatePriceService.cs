@@ -11,6 +11,8 @@ public static class CalculatePriceService
         List<Promotion>? promotions,
         Promocode? promocode)
     {
+        var time = DateTime.UtcNow.Date.AddHours(-11);
+        
         decimal price = 0;
             
         if (product.Product.DiscountPrice != null
@@ -26,8 +28,7 @@ public static class CalculatePriceService
             var currentPromotion = promotions.FirstOrDefault(x => 
                 x is { EndDate: not null, StartDate: not null }
                  && x.BrandId == product.Product.BrandId
-                 && x.StartDate.Value.ToUniversalTime() >= DateTime.UtcNow
-                 && x.EndDate.Value.ToUniversalTime() <= DateTime.UtcNow);
+                 && x.StartDate.Value.Date >= time);
 
             if (currentPromotion is not null)
             {
@@ -40,8 +41,7 @@ public static class CalculatePriceService
             {
                 if (product.Product.BrandId == promocode.BrandId
                     && promocode.Products.All(x => x.ProductId != product.Id)
-                    && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                    && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                    && promocode.StartDate.Date >= time)
                 {
                     price = product.Volume.Price -  ((product.Volume.Price  * promocode.Discount) / 100);
                 } 
@@ -49,8 +49,7 @@ public static class CalculatePriceService
             else
             {
                 if (promocode.Products.All(x => x.ProductId != product.Id)
-                    && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                    && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                    && promocode.StartDate.Date >= time)
                 {
                     price = product.Volume.Price - ((product.Volume.Price  * promocode.Discount) / 100);
                 } 
@@ -68,6 +67,8 @@ public static class CalculatePriceService
         List<Promotion>? promotions,
         Promocode? promocode)
     {
+        var time = DateTime.UtcNow.Date.AddHours(-11);
+        
         foreach (var volume in product.Volumes)
         {
             decimal price = 0;
@@ -82,11 +83,11 @@ public static class CalculatePriceService
                      && promotions.Any(x => x.BrandId == product.BrandId)
                      && product.Icon == ProductIcon.Sale)
             {
+                
                 var currentPromotion = promotions.FirstOrDefault(x => 
                     x is { EndDate: not null, StartDate: not null }
                      && x.BrandId == product.BrandId
-                     && x.StartDate.Value.ToUniversalTime() >= DateTime.UtcNow
-                     && x.EndDate.Value.ToUniversalTime() <= DateTime.UtcNow);
+                     && x.StartDate.Value.Date >= time);
 
                 if (currentPromotion is not null)
                 {
@@ -99,8 +100,7 @@ public static class CalculatePriceService
                 {
                     if (product.BrandId == promocode.BrandId
                         && promocode.Products.All(x => x.ProductId != product.Id)
-                        && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                        && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                        && promocode.StartDate.Date >= time)
                     {
                         price = volume.Price -  ((volume.Price  * promocode.Discount) / 100);
                     } 
@@ -108,8 +108,7 @@ public static class CalculatePriceService
                 else
                 {
                     if (promocode.Products.All(x => x.ProductId != product.Id)
-                        && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                        && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                        && promocode.StartDate.Date >= time)
                     {
                         price = volume.Price -  ((volume.Price  * promocode.Discount) / 100);
                     } 
@@ -128,6 +127,8 @@ public static class CalculatePriceService
         List<Promotion>? promotions,
         Promocode? promocode)
     {
+        var time = DateTime.UtcNow.Date.AddHours(-11);
+        
         foreach (var volume in product.Volumes)
         {
             decimal price = 0;
@@ -145,8 +146,7 @@ public static class CalculatePriceService
                 var currentPromotion = promotions.FirstOrDefault(x => 
                     x is { EndDate: not null, StartDate: not null }
                      && x.BrandId == product.BrandId
-                     && x.StartDate.Value.ToUniversalTime() >= DateTime.UtcNow
-                     && x.EndDate.Value.ToUniversalTime() <= DateTime.UtcNow);
+                     && x.StartDate.Value.Date >= time);
 
                 if (currentPromotion is not null)
                 {
@@ -159,8 +159,7 @@ public static class CalculatePriceService
                 {
                     if (product.BrandId == promocode.BrandId
                         && promocode.Products.All(x => x.ProductId != product.Id)
-                        && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                        && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                        && promocode.StartDate.Date >= time)
                     {
                         price = volume.Price -  ((volume.Price  * promocode.Discount) / 100);
                     } 
@@ -168,8 +167,7 @@ public static class CalculatePriceService
                 else
                 {
                     if (promocode.Products.All(x => x.ProductId != product.Id)
-                        && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                        && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                        && promocode.StartDate.Date >= time)
                     {
                         price = volume.Price -  ((volume.Price  * promocode.Discount) / 100);
                     } 
@@ -189,6 +187,8 @@ public static class CalculatePriceService
         Promocode? promocode
         )
     {
+        var time = DateTime.UtcNow.Date.AddHours(-11);
+        
         var purchaseProduct = purchasePricePair.Key;
         var currentPrice = purchasePricePair.Value;
 
@@ -207,8 +207,7 @@ public static class CalculatePriceService
             var currentPromotion = promotions.FirstOrDefault(x => 
                 x is { EndDate: not null, StartDate: not null }
                 && x.BrandId == purchaseProduct.Product.BrandId
-                && x.StartDate.Value.ToUniversalTime() >= DateTime.UtcNow
-                && x.EndDate.Value.ToUniversalTime() <= DateTime.UtcNow);
+                && x.StartDate.Value.Date >= time);
 
             if (currentPromotion is not null)
             {
@@ -221,8 +220,7 @@ public static class CalculatePriceService
             {
                 if (purchaseProduct.Product.BrandId == promocode.BrandId
                     && promocode.Products.All(x => x.ProductId != purchaseProduct.Product.Id)
-                    && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                    && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                    && promocode.StartDate.Date >= time)
                 {
                     result = currentPrice - ((currentPrice * promocode.Discount) / 100);
                 } 
@@ -230,8 +228,7 @@ public static class CalculatePriceService
             else
             {
                 if (promocode.Products.All(x => x.ProductId != purchaseProduct.Product.Id)
-                    && promocode.StartDate.ToUniversalTime() >= DateTime.UtcNow 
-                    && promocode.EndDate.ToUniversalTime() <= DateTime.UtcNow)
+                    && promocode.StartDate.Date >= time)
                 {
                     result = currentPrice - ((currentPrice * promocode.Discount) / 100);
                 } 
