@@ -32,4 +32,5 @@ public class ListProductDTO : BaseEntity
 
     public bool? IsLikedByUser { get; set; }
     public bool UseDiscountPrice { get; set; }
+    public List<UserDTO> UsersWaitingForStock { get; set; } = new();
 }

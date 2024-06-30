@@ -67,6 +67,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 using KoreanSecrets.BL.Behaviors.Admin.Users.SendSMS;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
+using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProductData.GetSubscriptions;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -581,6 +582,13 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> SendSMSToUserAsync
     (
         [FromBody] SendSMSCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+    
+    [HttpPost("get-subscriptions")]
+    public async Task<IActionResult> GetSubscriptionsAsync
+    (
+        [FromBody] GetSubscriptionsQuery command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
 }
