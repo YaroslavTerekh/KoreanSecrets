@@ -86,7 +86,7 @@ public class AdminController : ControllerBase
         _mediatr = mediatr;
     }
 
-    [HttpDelete("feedbacks/delete/{id:guid}")]
+    [HttpDelete("feedbacks-reply/delete/{id:guid}")]
     public async Task<IActionResult> DeleteCommentAsync
     (
         [FromRoute] Guid id,

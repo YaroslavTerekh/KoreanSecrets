@@ -82,7 +82,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
                 Amount = t.Amount,
                 CreatedDate = t.CreatedDate,
                 PurchaseId = purchase.Id
-            }).ToListAsync();
+            }).ToListAsync(cancellationToken: cancellationToken);
 
         if (purchase.Products.Count < 1)
         {

@@ -16,12 +16,18 @@ public class DeleteProductFeedbackHandler : IRequestHandler<DeleteProductFeedbac
 
     public async Task<Unit> Handle(DeleteProductFeedbackCommand request, CancellationToken cancellationToken)
     {
-        var volume = await _context.Feedbacks
+        var feedback = await _context.Feedbacks
             .FirstOrDefaultAsync(t => t.Id == request.FeedbackId, cancellationToken);
+        
+        if (feedback is null) throw new Exception(ErrorMessages.ProductNotFound("Коментар не знайдено!"));
 
-        if (volume is null) throw new Exception(ErrorMessages.ProductNotFound("Коментар не знайдено!"));
+        var reply = await _context.FeedbackReply.FirstOrDefaultAsync(t => t.FeedbackId == feedback.Id, cancellationToken);
+        
+        if (reply is not null)
+            _context.FeedbackReply.Remove(reply);
+        
+        _context.Feedbacks.Remove(feedback);
 
-        _context.Feedbacks.Remove(volume);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

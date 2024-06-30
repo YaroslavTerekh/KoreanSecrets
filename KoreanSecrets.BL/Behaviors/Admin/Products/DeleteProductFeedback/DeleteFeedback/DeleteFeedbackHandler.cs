@@ -22,17 +22,12 @@ public class DeleteFeedbackHandler : IRequestHandler<DeleteFeedbackCommand>
 
     public async Task<Unit> Handle(DeleteFeedbackCommand request, CancellationToken cancellationToken)
     {
-        var feedback = await _context.Feedbacks.FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
         var reply = await _context.FeedbackReply.FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
-        if (feedback is null && reply is null)
+        if (reply is null)
             throw new NotFoundException(ErrorMessages.CommentNotFound);
-
-        if (feedback is not null)
-            _context.Feedbacks.Remove(feedback);
-
-        if (reply is not null)
-            _context.FeedbackReply.Remove(reply);
+        
+        _context.FeedbackReply.Remove(reply);
 
         await _context.SaveChangesAsync(cancellationToken);
 

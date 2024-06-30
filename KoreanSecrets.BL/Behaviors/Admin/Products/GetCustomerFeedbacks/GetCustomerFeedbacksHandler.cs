@@ -26,6 +26,8 @@ public class GetCustomerFeedbacksHandler : IRequestHandler<GetCustomerFeedbacksQ
         var feedbacks = _context.Feedbacks
             .Include(x=>x.Product)
             .Include(x=>x.User)
+            .Include(x=>x.Replies)
+            .ThenInclude(x=>x.User)
             .OrderByDescending(x=>x.CreatedDate)
             .AsNoTracking()
             .AsQueryable();
