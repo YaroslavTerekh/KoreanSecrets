@@ -23,12 +23,12 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.Demand, src => src.MapFrom(t => t.ProductDemands.Select(t => t.Demand).ToList()));
         CreateMap<Feedback, FeedbackDTO>()
             .ForMember(dest => dest.Product, src => src.MapFrom(t => t.Product));
-        CreateMap<Comment, CommentDTO>();
         CreateMap<Product, ListProductDTO>()
             .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Bucket, BucketDTO>()
             .ForMember(dest => dest.PurchaseProducts, src => src.MapFrom(t => t.BucketProducts));
+        CreateMap<FeedbackReply, FeedbackReplyDTO>();
         CreateMap<Brand, BrandDTO>();
         CreateMap<Demand, DemandDTO>();
         CreateMap<ProductDemand, DemandDTO>()

@@ -35,8 +35,6 @@ using KoreanSecrets.BL.Behaviors.Admin.Demands.ModifyDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeProductQuantity;
-using KoreanSecrets.BL.Behaviors.Admin.Products.Comments.DeleteComment;
-using KoreanSecrets.BL.Behaviors.Admin.Products.Comments.GetComments;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProductFeedback;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Discounts.AddDiscount;
@@ -64,6 +62,7 @@ using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Users.ChangeReportStatus;
+using KoreanSecrets.BL.Behaviors.Admin.Users.DeleteFeedback;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 using KoreanSecrets.BL.Behaviors.Admin.Users.SendSMS;
@@ -87,19 +86,12 @@ public class AdminController : ControllerBase
         _mediatr = mediatr;
     }
 
-    [HttpDelete("comments/delete/{id:guid}")]
+    [HttpDelete("feedbacks/delete/{id:guid}")]
     public async Task<IActionResult> DeleteCommentAsync
     (
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(new DeleteCommentCommand(id), cancellationToken));
-
-    [HttpPost("comments")]
-    public async Task<IActionResult> GetCommentsAsync
-    (
-        [FromBody] GetCommentsQuery command,
-        CancellationToken cancellationToken = default
-    ) => Ok(await _mediatr.Send(command, cancellationToken));
+    ) => Ok(await _mediatr.Send(new DeleteFeedbackCommand(id), cancellationToken));
 
     [HttpPost("promotions/add")]
     public async Task<IActionResult> AddPromotionAsync

@@ -1,5 +1,4 @@
-﻿using KoreanSecrets.BL.Behaviors.Products.Comments.AddComment;
-using KoreanSecrets.BL.Behaviors.Products.TogglePromocodeStatus;
+﻿using KoreanSecrets.BL.Behaviors.Products.TogglePromocodeStatus;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.AddReport;
@@ -10,6 +9,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.ReplyFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdateOrderStatus;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePassword;
@@ -35,10 +35,10 @@ public class UserController : BaseController
     }
 
     [Authorize]
-    [HttpPost("comments/add")]
+    [HttpPost("feedback/reply/add")]
     public async Task<IActionResult> AddCommentAsync
     (
-        [FromBody] AddCommentCommand command,
+        [FromBody] ReplyFeedbackCommand command,
         CancellationToken cancellationToken = default
     ) 
     {

@@ -20,4 +20,6 @@ public class Feedback : BaseEntity
     public Guid ProductId { get; set; }
 
     public Product Product { get; set; }
+
+    public List<FeedbackReply> Replies { get; set; } = new();
 }

@@ -39,11 +39,9 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
             .Include(t => t.Category)
             .Include(t => t.Photos)
             .Include(t => t.Guide)
-            .Include(t => t.Comments)
-                .ThenInclude(t => t.User)
-            .Include(t => t.Comments)
+            .Include(t => t.Feedbacks)
                 .ThenInclude(t => t.Replies)
-                    .ThenInclude(t => t.Replies)
+                    .ThenInclude(t => t.User)
             .Include(t => t.MainPhoto)
             .Include(t => t.Feedbacks.OrderByDescending(x=>x.CreatedDate))
                 .ThenInclude(t => t.User)
@@ -51,8 +49,6 @@ public class GetProductHandler : IRequestHandler<GetProductQuery, PageProductDTO
                 .ThenInclude(x=>x.Photos)
             .Where(t => t.Id == request.ProductId)
             .FirstOrDefaultAsync(cancellationToken);
-
-        product.Comments = product.Comments.Where(t => t.ParentCommentId == null).ToList();
         
         var promotions = await _context.Promotions.Where(t => product.BrandId == t.BrandId).ToListAsync(cancellationToken);
         
