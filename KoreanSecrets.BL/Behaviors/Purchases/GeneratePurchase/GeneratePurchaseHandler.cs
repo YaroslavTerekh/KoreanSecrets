@@ -9,6 +9,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using KoreanSecrets.BL.Services;
+using Newtonsoft.Json;
+using KoreanSecrets.Domain.DataTransferObjects;
 
 namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
 
@@ -75,13 +77,14 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         purchase.Products = await _context.BucketProducts.Where(t => productIds.Contains(t.Id))
             .Select(t => new PurchasedProduct
             {
-                ProductId = t.ProductId,
-                Product = t.Product,
-                VolumeId = t.VolumeId,
-                Volume = t.Volume,
+                ProductIdentify = t.ProductId.ToString(),
+                Product = JsonConvert.SerializeObject(t.Product, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore}),
+                VolumeIdentify = t.VolumeId.ToString(),
+                Volume = JsonConvert.SerializeObject(t.Volume, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                 Amount = t.Amount,
                 CreatedDate = t.CreatedDate,
-                PurchaseId = purchase.Id
+                PurchaseId = purchase.Id,
+                ProductTitle = t.Product.Title,
             }).ToListAsync(cancellationToken: cancellationToken);
 
         if (purchase.Products.Count < 1)
@@ -95,10 +98,13 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         foreach (var purchaseProduct in purchase.Products)
         {
-            purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * purchaseProduct.Volume.Price);
+            var volume = JsonConvert.DeserializeObject<Volume>(purchaseProduct.Volume);
+
+            purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * volume.Price);
         }
 
-        var productBrandIds = purchase.Products.Select(t => t.Product.BrandId).ToList();
+        var products = purchase.Products.Select(t => JsonConvert.DeserializeObject<Product>(t.Product)).ToList();
+        var productBrandIds = products.Select(t => t.BrandId).ToList();
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
         
         foreach (var purchasePricePair in purchasesPriceDictionary)

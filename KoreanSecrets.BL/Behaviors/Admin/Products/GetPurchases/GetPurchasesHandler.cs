@@ -26,7 +26,6 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
         var purchases = _context.Purchases
             .Include(x=>x.Products)
                 .ThenInclude(x => x.Product)
-                    .ThenInclude(x=>x.Photos)
             .OrderBy(t => t.CreatedDate)
             .AsQueryable();
 
@@ -48,8 +47,8 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
             purchases = request.ColumnToSort switch
             {
                 "name" => request?.WayToSort == "asc"
-                    ? purchases.OrderBy(t => t.Products.OrderBy(p => p.Product.Title))
-                    : purchases.OrderByDescending(t => t.Products.OrderByDescending(p => p.Product.Title)),
+                    ? purchases.OrderBy(t => t.Products.OrderBy(p => p.ProductTitle))
+                    : purchases.OrderByDescending(t => t.Products.OrderByDescending(p => p.ProductTitle)),
                 "price" => request?.WayToSort == "asc"
                     ? purchases.OrderBy(t => t.TotalPrice)
                     : purchases.OrderByDescending(t => t.TotalPrice),

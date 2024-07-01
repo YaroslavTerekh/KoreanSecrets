@@ -21,11 +21,8 @@ public class GePurchaseByIdHandler : IRequestHandler<GePurchaseByIdQuery, Purcha
             .Where(t => t.PurchaseIdentifier == request.Id && t.UserId == request.CurrentUserId)
             .Include(x=>x.Products)
                 .ThenInclude(p => p.Product)
-                    .ThenInclude(x=>x.Brand)
             .Include(x=>x.Products)
                 .ThenInclude(p => p.Product)
-                    .ThenInclude(x=>x.Volumes)
-                        .ThenInclude(x=>x.Photos)
             .FirstOrDefaultAsync(cancellationToken);
 
         return userPurchases;

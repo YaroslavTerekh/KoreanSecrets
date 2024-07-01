@@ -32,9 +32,9 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductCommand>
         if (product is null)
             throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        var volumeIds = product.Volumes.Select(t => t.Id).ToList();
+        var volumeIds = product.Volumes.Select(t => t.Id.ToString()).ToList();
 
-        var purchasedProducts = await _context.PurchasedProducts.Where(t => volumeIds.Contains(t.VolumeId)).ToListAsync(cancellationToken);
+        var purchasedProducts = await _context.PurchasedProducts.Where(t => volumeIds.Contains(t.VolumeIdentify)).ToListAsync(cancellationToken);
         _context.PurchasedProducts.RemoveRange(purchasedProducts);  
         _context.Products.Remove(product);
 

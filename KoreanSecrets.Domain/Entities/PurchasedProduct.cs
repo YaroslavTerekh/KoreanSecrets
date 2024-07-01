@@ -8,17 +8,19 @@ namespace KoreanSecrets.Domain.Entities;
 
 public class PurchasedProduct : BaseEntity
 {
-    public Guid ProductId { get; set; }
+    public string ProductIdentify { get; set; }
 
-    public Product Product { get; set; }
+    public string Product { get; set; }
+
+    public string ProductTitle { get; set; }
 
     public Guid PurchaseId { get; set; }
 
     public Purchase Purchase { get; set; }
 
-    public Guid VolumeId { get; set; }
+    public string VolumeIdentify { get; set; }
 
-    public Volume Volume { get; set; }
+    public string Volume { get; set; }
 
     public int Amount { get; set; }
 }

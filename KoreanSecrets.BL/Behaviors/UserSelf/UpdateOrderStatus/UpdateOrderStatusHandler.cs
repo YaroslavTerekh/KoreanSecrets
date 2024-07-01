@@ -40,16 +40,16 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
 
         if (request.Status == PurchaseStatus.Failure)
         {
-            var productIds = order.Products.Select(t => t.ProductId).ToList();
+            var productIds = order.Products.Select(t => Guid.Parse(t.ProductIdentify)).ToList();
             var products = await _context.Products.Where(t => productIds.Contains(t.Id)).ToListAsync(cancellationToken);
 
             foreach (var product in products)
             {
                 foreach (var purchasedProduct in order.Products)
                 {
-                    if (purchasedProduct.ProductId == product.Id)
+                    if (Guid.Parse(purchasedProduct.ProductIdentify) == product.Id)
                     {
-                        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == purchasedProduct.VolumeId, cancellationToken);
+                        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == Guid.Parse(purchasedProduct.VolumeIdentify), cancellationToken);
 
                         if (volume is null)
                             throw new NotFoundException(ErrorMessages.VolumeNotFound);
@@ -64,16 +64,16 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
 
         if (request.Status != PurchaseStatus.Failure && order.PurchaseStatus == PurchaseStatus.Failure)
         {
-            var productIds = order.Products.Select(t => t.ProductId).ToList();
+            var productIds = order.Products.Select(t => Guid.Parse(t.ProductIdentify)).ToList();
             var products = await _context.Products.Where(t => productIds.Contains(t.Id)).ToListAsync(cancellationToken);
 
             foreach (var product in products)
             {
                 foreach (var purchasedProduct in order.Products)
                 {
-                    if (purchasedProduct.ProductId == product.Id)
+                    if (Guid.Parse(purchasedProduct.ProductIdentify) == product.Id)
                     {
-                        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == purchasedProduct.VolumeId, cancellationToken);
+                        var volume = await _context.Volume.FirstOrDefaultAsync(t => t.Id == Guid.Parse(purchasedProduct.VolumeIdentify), cancellationToken);
 
                         if (volume is null)
                             throw new NotFoundException(ErrorMessages.VolumeNotFound);

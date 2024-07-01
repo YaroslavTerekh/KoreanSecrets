@@ -13,16 +13,6 @@ public class PurchaseProductConfiguration : IEntityTypeConfiguration<PurchasedPr
 {
     public void Configure(EntityTypeBuilder<PurchasedProduct> builder)
     {
-        builder.HasOne(t => t.Product)
-            .WithMany()
-            .HasForeignKey(t => t.ProductId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
-
-        builder.HasOne(t => t.Volume)
-            .WithMany()
-            .HasForeignKey(t => t.VolumeId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
-
         builder.HasOne(t => t.Purchase)
             .WithMany(t => t.Products)
             .HasForeignKey(t => t.PurchaseId)

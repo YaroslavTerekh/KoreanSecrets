@@ -1,6 +1,7 @@
 ﻿using KoreanSecrets.Domain.Common.Enums;
 using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.Entities;
+using Newtonsoft.Json;
 
 namespace KoreanSecrets.BL.Services;
 
@@ -188,8 +189,19 @@ public static class CalculatePriceService
         )
     {
         var time = DateTime.UtcNow.Date.AddHours(-11);
-        
-        var purchaseProduct = purchasePricePair.Key;
+
+        var purchaseProduct = new PurchaseProductDTO 
+        {
+            Amount = purchasePricePair.Key.Amount,
+            CreatedDate = purchasePricePair.Key.CreatedDate,
+            Id = purchasePricePair.Key.Id,
+            ProductId = Guid.Parse(purchasePricePair.Key.ProductIdentify),
+            VolumeId = Guid.Parse(purchasePricePair.Key.VolumeIdentify),
+            PurchaseId = purchasePricePair.Key.PurchaseId,
+            Purchase = purchasePricePair.Key.Purchase,
+            Product = JsonConvert.DeserializeObject<Product>(purchasePricePair.Key.Product),
+            Volume = JsonConvert.DeserializeObject<Volume>(purchasePricePair.Key.Volume),
+        };
         var currentPrice = purchasePricePair.Value;
 
         var result = currentPrice;

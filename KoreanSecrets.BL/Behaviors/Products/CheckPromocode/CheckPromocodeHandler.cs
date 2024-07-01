@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KoreanSecrets.BL.Services;
+using Newtonsoft.Json;
 
 namespace KoreanSecrets.BL.Behaviors.Products.CheckPromocode;
 
@@ -68,22 +69,26 @@ public class CheckPromocodeHandler : IRequestHandler<CheckPromocodeCommand, Prom
         var bucketProducts = user.Bucket.BucketProducts
             .Select(t => new PurchasedProduct
             {
-                ProductId = t.ProductId,
-                Product = t.Product,
-                VolumeId = t.VolumeId,
-                Volume = t.Volume,
+                ProductIdentify = t.ProductId.ToString(),
+                Product = JsonConvert.SerializeObject(t.Product, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                VolumeIdentify = t.VolumeId.ToString(),
+                Volume = JsonConvert.SerializeObject(t.Volume, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                 Amount = t.Amount,
                 CreatedDate = t.CreatedDate,
+                ProductTitle = t.Product.Title,
             }).ToList();
 
         var purchasesPriceDictionary = new Dictionary<PurchasedProduct, decimal>();
 
         foreach (var purchaseProduct in bucketProducts)
         {
-            purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * purchaseProduct.Volume.Price);
+            var ppVolume = JsonConvert.DeserializeObject<Volume>(purchaseProduct.Volume);
+
+            purchasesPriceDictionary.Add(purchaseProduct, purchaseProduct.Amount * ppVolume.Price);
         }
         
-        var productBrandIds = bucketProducts.Select(t => t.Product.BrandId).ToList();
+        var products = bucketProducts.Select(t => JsonConvert.DeserializeObject<Product>(t.Product)).ToList();
+        var productBrandIds = products.Select(t => t.BrandId).ToList();
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
 
         foreach (var purchasePricePair in purchasesPriceDictionary)
