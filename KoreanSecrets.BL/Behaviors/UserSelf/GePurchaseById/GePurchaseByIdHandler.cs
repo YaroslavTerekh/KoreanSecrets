@@ -20,9 +20,6 @@ public class GePurchaseByIdHandler : IRequestHandler<GePurchaseByIdQuery, Purcha
         var userPurchases = await _context.Purchases
             .Where(t => t.PurchaseIdentifier == request.Id && t.UserId == request.CurrentUserId)
             .Include(x=>x.Products)
-                .ThenInclude(p => p.Product)
-            .Include(x=>x.Products)
-                .ThenInclude(p => p.Product)
             .FirstOrDefaultAsync(cancellationToken);
 
         return userPurchases;

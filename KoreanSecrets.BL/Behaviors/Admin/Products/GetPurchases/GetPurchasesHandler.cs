@@ -25,7 +25,6 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
     {
         var purchases = _context.Purchases
             .Include(x=>x.Products)
-                .ThenInclude(x => x.Product)
             .OrderBy(t => t.CreatedDate)
             .AsQueryable();
 

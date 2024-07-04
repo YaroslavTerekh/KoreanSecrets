@@ -26,9 +26,6 @@ public class GetMyPurchasesHandler : IRequestHandler<GetMyPurchasesQuery, Pagina
 
         var result = await userPurchases
             .Include(x=>x.Products)
-                .ThenInclude(p => p.Product)
-            .Include(x=>x.Products)
-                .ThenInclude(p => p.Product)
             .Skip(request.PageSize * request.CurrentPage)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);

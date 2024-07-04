@@ -74,7 +74,14 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             UserInfo = request.UserInfo
         };
 
-        purchase.Products = await _context.BucketProducts.Where(t => productIds.Contains(t.Id))
+        purchase.Products = await _context.BucketProducts
+            .Include(t => t.Product)
+                .ThenInclude(t => t.MainPhoto)
+            .Include(t => t.Product)
+                .ThenInclude(t => t.Brand)
+            .Include(t => t.Volume)
+                .ThenInclude(t => t.Photos)
+            .Where(t => productIds.Contains(t.Id))
             .Select(t => new PurchasedProduct
             {
                 ProductIdentify = t.ProductId.ToString(),
