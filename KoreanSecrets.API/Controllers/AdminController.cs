@@ -49,6 +49,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.DeleteProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.GetAllProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.GetProducts;
 using KoreanSecrets.BL.Behaviors.Admin.Products.MainData.ModifyProduct;
+using KoreanSecrets.BL.Behaviors.Admin.Products.UpdatePurchaseNotes;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddPhotoToVolumeList;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
@@ -66,6 +67,8 @@ using KoreanSecrets.BL.Behaviors.Admin.Users.DeleteFeedback;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 using KoreanSecrets.BL.Behaviors.Admin.Users.SendSMS;
+using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUser;
+using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUserPurchases;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProductData.GetSubscriptions;
 using KoreanSecrets.Domain.Common.Constants;
@@ -591,4 +594,33 @@ public class AdminController : ControllerBase
         [FromBody] GetSubscriptionsQuery command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
+    
+    [HttpGet("get-user-by-id/{id:guid}")]
+    public async Task<IActionResult> GetUserByIdAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetUserQuery() { UserId = id}, cancellationToken));
+    
+    [HttpPost("user-purchases/{id:guid}")]
+    public async Task<IActionResult> GetUserPurchasesAsync
+    (
+        [FromRoute] Guid id,
+        [FromBody] GetUserPurchasesQuery command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.UserId = id;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+    
+    [HttpPost("purchase-notes")]
+    public async Task<IActionResult> UpdatePurchaseNotesAsync
+    (
+        [FromBody] UpdatePurchaseNotesQuery command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
 }

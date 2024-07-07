@@ -1,53 +1,41 @@
-﻿using KoreanSecrets.Domain.DataTransferObjects;
+﻿using KoreanSecrets.Domain.Common.Enums;
+using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KoreanSecrets.Domain.Common.Enums;
 
-namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
+namespace KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUserPurchases;
 
-public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, PaginationModelDTO<Purchase>>
+public class GetUserPurchasesHandler : IRequestHandler<GetUserPurchasesQuery, PaginationModelDTO<Purchase>>
 {
     private readonly DataContext _context;
 
-    public GetPurchasesHandler(DataContext context)
+    public GetUserPurchasesHandler(DataContext context)
     {
         _context = context;
     }
 
-    public async Task<PaginationModelDTO<Purchase>> Handle(GetPurchasesQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<Purchase>> Handle(GetUserPurchasesQuery request, CancellationToken cancellationToken)
     {
         var purchases = _context.Purchases
+            .Where(x=>x.UserId == request.UserId)
             .Include(x=>x.Products)
             .OrderBy(t => t.CreatedDate)
             .AsQueryable();
 
-        if(request.Status is not null)
-        {
-            if (request.Status == PurchaseStatus.New)
-            {
-                purchases = purchases.Where(t => 
-                    (t.PurchaseStatus == PurchaseStatus.New 
-                     || t.PurchaseStatus == PurchaseStatus.Waiting
-                     || t.PurchaseStatus == PurchaseStatus.InProgress
-                     || t.PurchaseStatus == PurchaseStatus.SendByAdmin
-                     || t.PurchaseStatus == PurchaseStatus.SendViaPost
-                     || t.PurchaseStatus == PurchaseStatus.NotCompleted));
-            }
-            
-            if (request.Status == PurchaseStatus.Success)
-            {
-                purchases = purchases.Where(t => 
-                    (t.PurchaseStatus == PurchaseStatus.Success 
-                     || t.PurchaseStatus == PurchaseStatus.Failure));
-            }
-        }
+        // if(request.Status is not null)
+        // {
+        //     if (request.Status == PurchaseStatus.New)
+        //     {
+        //         purchases = purchases.Where(t => (t.PurchaseStatus == PurchaseStatus.New || t.PurchaseStatus == PurchaseStatus.Waiting));
+        //     }
+        //     
+        //     if (request.Status == PurchaseStatus.Success)
+        //     {
+        //         purchases = purchases.Where(t => (t.PurchaseStatus == PurchaseStatus.Success || t.PurchaseStatus == PurchaseStatus.Failure));
+        //     }
+        // }
 
         if (!string.IsNullOrEmpty(request.ColumnToSort))
         {

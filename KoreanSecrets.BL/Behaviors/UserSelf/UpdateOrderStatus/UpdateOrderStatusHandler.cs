@@ -11,6 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoreanSecrets.BL.Services.Abstractions;
+using KoreanSecrets.Domain.Common.Settings;
+using Twilio.Types;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.UpdateOrderStatus;
 
@@ -18,16 +23,20 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
 {
     private readonly DataContext _context;
     private readonly UserManager<User> _userManager;
-
-    public UpdateOrderStatusHandler(DataContext context, UserManager<User> roleManager)
+    private readonly TwillioSettings _twilioSettings;
+    private readonly IPhoneNumberService _phoneNumberService;
+    public UpdateOrderStatusHandler(DataContext context, UserManager<User> roleManager, TwillioSettings twilioSettings, IPhoneNumberService phoneNumberService)
     {
         _context = context;
         _userManager = roleManager;
+        _twilioSettings = twilioSettings;
+        _phoneNumberService = phoneNumberService;
     }
 
     public async Task<Unit> Handle(UpdateOrderStatusCommand request, CancellationToken cancellationToken)
     {
         var order = await _context.Purchases
+            .Include(t => t.User)
             .Include(t => t.Products)
             .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
         var currentUser = await _context.Users.FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
@@ -36,8 +45,58 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
 
         if (currentUser is null) throw new NotFoundException(ErrorMessages.UserNotFound);
 
-        if (order.UserId != request.CurrentUserId && !await _userManager.IsInRoleAsync(currentUser, Roles.Admin)) throw new Exception(ErrorMessages.PurchaseNotRelatedToUser);
+        if (order.UserId != request.CurrentUserId && !await _userManager.IsInRoleAsync(currentUser, Roles.Admin)) 
+            throw new Exception(ErrorMessages.PurchaseNotRelatedToUser);
 
+        TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
+
+
+        switch (request.Status)
+        {
+            case PurchaseStatus.Waiting:
+                await SendMessage($"Secrets of care | Замовлення '{order.PurchaseIdentifier}'. Оплата підтверджена, очікуйте на наступні повідолення", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+            case PurchaseStatus.New:
+                await SendMessage($"Secrets of care | Замовлення '{order.PurchaseIdentifier}' зареєстовано, очікуйте на наступні повідолення.", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+            case PurchaseStatus.InProgress:
+                await SendMessage($"Secrets of care | Ваше замовлення '{order.PurchaseIdentifier}' в обробці", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+            case PurchaseStatus.SendViaPost:
+                await SendMessage($"Secrets of care | Ваше замовлення '{order.PurchaseIdentifier}' відправлено у відділення Нової пошти", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+            case PurchaseStatus.SendByAdmin:
+                await SendMessage($"Secrets of care | Ваше замовлення '{order.PurchaseIdentifier}' в пункті самовивозу", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+            case PurchaseStatus.Success:
+                await SendMessage($"Secrets of care | Дякуємо, за замовлення '{order.PurchaseIdentifier}'! Очікуєм на Ваш відгук!", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+            case PurchaseStatus.Failure:
+                await SendMessage($"Secrets of care | Ваше замовлення '{order.PurchaseIdentifier}' скасовано!", 
+                    order.User.PhoneNumber, order.Phone);
+                await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
+                    order.User.PhoneNumber, order.Phone);
+                break;
+        }
+        
         if (request.Status == PurchaseStatus.Failure)
         {
             var productIds = order.Products.Select(t => Guid.Parse(t.ProductIdentify)).ToList();
@@ -93,5 +152,37 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
+    }
+
+    private async Task SendMessage(string text, string phone, string requestPhone)
+    {
+        try
+        {
+            if (phone.Contains(requestPhone))
+            {
+                await MessageResource.CreateAsync(
+                    body: text,
+                    from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
+                    to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(phone))
+                );
+            }
+            else
+            {
+                await MessageResource.CreateAsync(
+                    body: text,
+                    from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
+                    to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(phone))
+                );
+                
+                await MessageResource.CreateAsync(
+                    body: text,
+                    from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
+                    to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(requestPhone))
+                );
+            }
+        }
+        catch (Exception e)
+        {
+        }
     }
 }

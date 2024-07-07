@@ -71,7 +71,9 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             Comment = request.Comment,
             PayType = request.PayType,
             PromocodeId = promocode is null ? null : promocode.Id,
-            UserInfo = request.UserInfo
+            UserInfo = request.UserInfo,
+            Phone = request.Phone,
+            Email = request?.Email ?? null
         };
 
         purchase.Products = await _context.BucketProducts

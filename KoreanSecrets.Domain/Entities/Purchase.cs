@@ -33,4 +33,12 @@ public class Purchase : BaseEntity
 
     public Promocode Promocode { get; set; }
     public string UserInfo { get; set; }
+    
+    public string Phone { get; set; }
+    
+    public string? Email { get; set; }
+    
+    public string? AdminNotes { get; set; }
+    
+    public DateTime PaidDate { get; set; }
 }
