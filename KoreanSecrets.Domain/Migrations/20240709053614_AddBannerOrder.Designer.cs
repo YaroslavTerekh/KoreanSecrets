@@ -4,6 +4,7 @@ using KoreanSecrets.Domain.DbConnection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KoreanSecrets.Domain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240709053614_AddBannerOrder")]
+    partial class AddBannerOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -813,9 +815,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsInStock")
-                        .HasColumnType("bit");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -841,21 +840,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Volume");
-                });
-
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.VolumeUser", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("VolumeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId", "VolumeId");
-
-                    b.HasIndex("VolumeId");
-
-                    b.ToTable("VolumeUser");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Models.ApplicationRole", b =>
@@ -1328,25 +1312,6 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("KoreanSecrets.Domain.Entities.VolumeUser", b =>
-                {
-                    b.HasOne("KoreanSecrets.Domain.Entities.User", "User")
-                        .WithMany("VolumesWaitingForStock")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KoreanSecrets.Domain.Entities.Volume", "Volume")
-                        .WithMany("UsersWaitingForStock")
-                        .HasForeignKey("VolumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("Volume");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("KoreanSecrets.Domain.Models.ApplicationRole", null)
@@ -1512,15 +1477,11 @@ namespace KoreanSecrets.Domain.Migrations
                     b.Navigation("Purchases");
 
                     b.Navigation("Reports");
-
-                    b.Navigation("VolumesWaitingForStock");
                 });
 
             modelBuilder.Entity("KoreanSecrets.Domain.Entities.Volume", b =>
                 {
                     b.Navigation("Photos");
-
-                    b.Navigation("UsersWaitingForStock");
                 });
 #pragma warning restore 612, 618
         }

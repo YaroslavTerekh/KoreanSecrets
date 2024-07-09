@@ -9,19 +9,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KoreanSecrets.Domain.Common.Enums;
+using AutoMapper;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
 
-public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, PaginationModelDTO<Purchase>>
+public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, PaginationModelDTO<PurchaseDTO>>
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public GetPurchasesHandler(DataContext context)
+    public GetPurchasesHandler(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<Purchase>> Handle(GetPurchasesQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<PurchaseDTO>> Handle(GetPurchasesQuery request, CancellationToken cancellationToken)
     {
         var purchases = _context.Purchases
             .Include(x=>x.Products)
@@ -91,12 +94,12 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
             .Include(t => t.Promocode)
             .ToListAsync(cancellationToken);
 
-        return new PaginationModelDTO<Purchase>
+        return new PaginationModelDTO<PurchaseDTO>
         {
             PageSize = request.PageSize,
             CurrentPage = request.CurrentPage,
             Total = total,
-            Products = purchasesEntities
+            Products = purchasesEntities.Select(t => _mapper.Map<PurchaseDTO>(t)).ToList()
         };
     }
 }

@@ -23,4 +23,8 @@ public class Volume : BaseEntity
     public Product Product { get; set; }
 
     public List<AppFile> Photos { get; set; }
+
+    public bool IsInStock { get; set; }
+
+    public List<VolumeUser> UsersWaitingForStock { get; set; }
 }

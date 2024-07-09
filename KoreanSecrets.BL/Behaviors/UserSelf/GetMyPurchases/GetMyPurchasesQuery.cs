@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
 
-public class GetMyPurchasesQuery : IAuthorizedRequest<PaginationModelDTO<Purchase>>
+public class GetMyPurchasesQuery : IAuthorizedRequest<PaginationModelDTO<PurchaseDTO>>
 {
     public int CurrentPage { get; set; }
     

@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.Common.Enums;
+﻿using AutoMapper;
+using KoreanSecrets.Domain.Common.Enums;
 using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
@@ -7,16 +8,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUserPurchases;
 
-public class GetUserPurchasesHandler : IRequestHandler<GetUserPurchasesQuery, PaginationModelDTO<Purchase>>
+public class GetUserPurchasesHandler : IRequestHandler<GetUserPurchasesQuery, PaginationModelDTO<PurchaseDTO>>
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public GetUserPurchasesHandler(DataContext context)
+    public GetUserPurchasesHandler(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<Purchase>> Handle(GetUserPurchasesQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<PurchaseDTO>> Handle(GetUserPurchasesQuery request, CancellationToken cancellationToken)
     {
         var purchases = _context.Purchases
             .Where(x=>x.UserId == request.UserId)
@@ -79,12 +82,12 @@ public class GetUserPurchasesHandler : IRequestHandler<GetUserPurchasesQuery, Pa
             .Include(t => t.Promocode)
             .ToListAsync(cancellationToken);
 
-        return new PaginationModelDTO<Purchase>
+        return new PaginationModelDTO<PurchaseDTO>
         {
             PageSize = request.PageSize,
             CurrentPage = request.CurrentPage,
             Total = total,
-            Products = purchasesEntities
+            Products = purchasesEntities.Select(t => _mapper.Map<PurchaseDTO>(t)).ToList(),
         };
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.GetPurchases;
 
-public class GetPurchasesQuery : IRequest<PaginationModelDTO<Purchase>>
+public class GetPurchasesQuery : IRequest<PaginationModelDTO<PurchaseDTO>>
 {
     public int CurrentPage { get; set; }
 

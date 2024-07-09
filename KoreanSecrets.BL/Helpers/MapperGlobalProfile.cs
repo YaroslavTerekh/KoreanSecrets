@@ -16,6 +16,9 @@ public class MapperGlobalProfile : Profile
 {
     public MapperGlobalProfile(HostSettings hostSettings)
     {
+        CreateMap<Purchase, PurchaseDTO>();
+        CreateMap<PurchasedProduct, PurchasedProductDTO>();
+        CreateMap<Promocode, PromocodeDTO>();
         CreateMap<Product, PageProductDTO>()
             .ForMember(dest => dest.SameProducts, src => src.Ignore())
             .ForMember(dest => dest.Volumes, src => src.MapFrom(t => t.Volumes.OrderByDescending(t => t.Price)))

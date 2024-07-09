@@ -11,4 +11,6 @@ public class Banner : BaseEntity
     public Guid BrandId { get; set; }
 
     public Brand Brand { get; set; }
+
+    public int Order { get; set; }
 }

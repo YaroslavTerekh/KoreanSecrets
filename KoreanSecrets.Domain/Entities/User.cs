@@ -34,6 +34,8 @@ public class User : IdentityUser<Guid>
     
     public List<Product> ProductsWaitingForStock { get; set; } = new();
 
+    public List<VolumeUser> VolumesWaitingForStock { get; set; } = new();
+
     public List<Purchase> Purchases { get; set; } = new();
 
     public List<Report> Reports { get; set; } = new();

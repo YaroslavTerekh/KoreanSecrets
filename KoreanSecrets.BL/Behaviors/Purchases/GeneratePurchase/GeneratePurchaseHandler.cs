@@ -83,6 +83,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
                 .ThenInclude(t => t.Brand)
             .Include(t => t.Volume)
                 .ThenInclude(t => t.Photos)
+
             .Where(t => productIds.Contains(t.Id))
             .Select(t => new PurchasedProduct
             {

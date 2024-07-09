@@ -10,4 +10,6 @@ public class BannerDTO : BaseEntity
 
     public Guid BrandId { get; set; }
     public BrandDTO Brand { get; set; }
+
+    public int Order { get; set; }
 }

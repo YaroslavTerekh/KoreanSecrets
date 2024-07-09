@@ -3,7 +3,7 @@ using KoreanSecrets.Domain.Entities;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GePurchaseById;
 
-public class GePurchaseByIdQuery : IAuthorizedRequest<Purchase>
+public class GePurchaseByIdQuery : IAuthorizedRequest<PurchaseDTO>
 {
     public long Id { get; set; }
 }

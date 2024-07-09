@@ -1,4 +1,5 @@
-﻿using KoreanSecrets.Domain.DataTransferObjects;
+﻿using AutoMapper;
+using KoreanSecrets.Domain.DataTransferObjects;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
@@ -11,16 +12,18 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
 
-public class GetMyPurchasesHandler : IRequestHandler<GetMyPurchasesQuery, PaginationModelDTO<Purchase>>
+public class GetMyPurchasesHandler : IRequestHandler<GetMyPurchasesQuery, PaginationModelDTO<PurchaseDTO>>
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public GetMyPurchasesHandler(DataContext context)
+    public GetMyPurchasesHandler(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<PaginationModelDTO<Purchase>> Handle(GetMyPurchasesQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationModelDTO<PurchaseDTO>> Handle(GetMyPurchasesQuery request, CancellationToken cancellationToken)
     {
         var userPurchases = _context.Purchases.Where(t => t.UserId == request.CurrentUserId);
 
@@ -32,11 +35,11 @@ public class GetMyPurchasesHandler : IRequestHandler<GetMyPurchasesQuery, Pagina
             .ToListAsync(cancellationToken);
 
 
-        return new PaginationModelDTO<Purchase>()
+        return new PaginationModelDTO<PurchaseDTO>()
         {
             CurrentPage = request.CurrentPage,
             PageSize = request.PageSize,
-            Products = result,
+            Products = result.Select(t => _mapper.Map<PurchaseDTO>(t)).ToList(),
             Total = await userPurchases.CountAsync(cancellationToken)
         };
     }

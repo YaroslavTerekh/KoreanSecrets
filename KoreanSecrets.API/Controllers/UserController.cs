@@ -11,6 +11,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
 using KoreanSecrets.BL.Behaviors.UserSelf.RemoveProductFromBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.ReplyFeedback;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProduct;
+using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnVolumeData.SubscribeOnVolume;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdateOrderStatus;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePassword;
 using KoreanSecrets.BL.Behaviors.UserSelf.UpdatePasswordUnauthorized;
@@ -94,6 +95,14 @@ public class UserController : BaseController
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new SubscribeOnProductCommand(id, CurrentUserId), cancellationToken));
+
+    [Authorize]
+    [HttpPatch("volume/subscribe/{id:guid}")]
+    public async Task<IActionResult> SubscribeOnVolumeAsync
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new SubscribeOnVolumeCommand(id, CurrentUserId), cancellationToken));
 
     [Authorize]
     [HttpPatch("bucket/add")]

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUserPurchases;
 
-public class GetUserPurchasesQuery : IRequest<PaginationModelDTO<Purchase>>
+public class GetUserPurchasesQuery : IRequest<PaginationModelDTO<PurchaseDTO>>
 {
     [JsonIgnore]
     public Guid UserId { get; set; }

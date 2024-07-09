@@ -1,4 +1,5 @@
 ﻿using KoreanSecrets.BL.Behaviors.Admin.Banners.AddBanner;
+using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerOrder;
 using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerPhoto;
 using KoreanSecrets.BL.Behaviors.Admin.Banners.ChangeBannerText;
 using KoreanSecrets.BL.Behaviors.Admin.Banners.DeleteBanner;
@@ -35,6 +36,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Demands.ModifyDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeProductQuantity;
+using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeVolumeIsInStock;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.DeleteProductFeedback;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Discounts.AddDiscount;
@@ -71,6 +73,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUser;
 using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUserPurchases;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProductData.GetSubscriptions;
+using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnVolumeData.GetVolumeSubsriptions;
 using KoreanSecrets.Domain.Common.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -89,6 +92,20 @@ public class AdminController : ControllerBase
     {
         _mediatr = mediatr;
     }
+
+    [HttpPatch("volume/{id:guid}/toggle")]
+    public async Task<IActionResult> ToggleVolumeStatusAsync
+    (
+        [FromRoute] Guid id, 
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new ChangeVolumeIsInStockCommand { VolumeId = id }, cancellationToken));
+
+    [HttpPost("banner/order/update")]
+    public async Task<IActionResult> UpdateBannerOrderAsync
+    (
+        [FromBody] ChangeBannerOrderCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
 
     [HttpDelete("feedbacks-reply/delete/{id:guid}")]
     public async Task<IActionResult> DeleteCommentAsync
@@ -587,14 +604,21 @@ public class AdminController : ControllerBase
         [FromBody] SendSMSCommand command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
-    
+
     [HttpPost("get-subscriptions")]
     public async Task<IActionResult> GetSubscriptionsAsync
     (
         [FromBody] GetSubscriptionsQuery command,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(command, cancellationToken));
-    
+
+    [HttpPost("get-volume-subscriptions")]
+    public async Task<IActionResult> GetVolumeSubscriptionsAsync
+    (
+        [FromBody] GetVolumeSubsriptionsQuery command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
+
     [HttpGet("get-user-by-id/{id:guid}")]
     public async Task<IActionResult> GetUserByIdAsync
     (
