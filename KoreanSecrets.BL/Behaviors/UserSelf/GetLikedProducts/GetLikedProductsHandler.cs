@@ -23,12 +23,10 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
             .Include(t => t.Likes)
                 .ThenInclude(t => t.Likes)   
                     .ThenInclude(t => t.Volumes)
+                        .ThenInclude(x=>x.Photos)
             .Include(t => t.Likes)
                 .ThenInclude(t => t.Likes)
                     .ThenInclude(t => t.Brand)
-            .Include(t => t.Likes)
-                .ThenInclude(t => t.Likes)
-                    .ThenInclude(t => t.MainPhoto)
             .Where(t => t.Id == request.CurrentUserId);
 
         var likes = await _context.Users
@@ -38,7 +36,7 @@ public class GetLikedProductsHandler : IRequestHandler<GetLikedProductsQuery, Pa
                 .Include(t => t.Likes)
                 .ThenInclude(x => x.MainPhoto)
                 .Include(t => t.Likes)
-                .ThenInclude(x => x.Volumes)
+                .ThenInclude(x => x.Volumes).ThenInclude(x=>x.Photos)
                 .Include(t => t.Likes)
                 .ThenInclude(x => x.Brand)
                         .ToListAsync(cancellationToken);
