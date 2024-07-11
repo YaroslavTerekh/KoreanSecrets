@@ -5,6 +5,7 @@ using KoreanSecrets.BL.Behaviors.UserSelf.AddReport;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.GePurchaseById;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetBucket;
+using KoreanSecrets.BL.Behaviors.UserSelf.GetCountBucket;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetMyPurchases;
 using KoreanSecrets.BL.Behaviors.UserSelf.GetUser;
 using KoreanSecrets.BL.Behaviors.UserSelf.ModifyAddressInfo;
@@ -145,6 +146,13 @@ public class UserController : BaseController
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetBucketQuery(CurrentUserId), cancellationToken));
 
+    [Authorize]
+    [HttpGet("bucket-count/get")]
+    public async Task<IActionResult> GetBucketCountAsync
+    (
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetCountBucketQuery(CurrentUserId), cancellationToken));
+    
     [Authorize]
     [HttpPut("address/modify")]
     public async Task<IActionResult> ModifyAddressInfoAsync

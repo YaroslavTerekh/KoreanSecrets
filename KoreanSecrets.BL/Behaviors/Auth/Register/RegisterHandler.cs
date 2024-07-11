@@ -66,6 +66,28 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
         };
         user.BucketId = bucket.Id;
 
+        if (request.Bucket != null
+            && request.Bucket.Any())
+        {
+            var newProducts = new List<BucketProduct>();
+
+            foreach (var product in request.Bucket)
+            {
+                newProducts.Add(new BucketProduct()
+                {
+                    ProductId = product.ProductId,
+                    VolumeId = product.VolumeId,
+                    Amount = product.Amount,
+                    BucketId = bucket.Id
+                });
+            }
+
+            if (newProducts.Any())
+            {
+                await _context.BucketProducts.AddRangeAsync(newProducts, cancellationToken);
+            }
+        }
+        
         await _context.Buckets.AddAsync(bucket, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
