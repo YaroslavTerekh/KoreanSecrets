@@ -187,7 +187,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
     {
         var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == id);
 
-        if (purchase.PurchaseStatus == PurchaseStatus.Waiting || purchase.PurchaseStatus == PurchaseStatus.Failure)
+        if (purchase.PurchaseStatus == PurchaseStatus.New || purchase.PurchaseStatus == PurchaseStatus.Failure)
         { 
             _context.Purchases.Remove(purchase);
             await _context.SaveChangesAsync();

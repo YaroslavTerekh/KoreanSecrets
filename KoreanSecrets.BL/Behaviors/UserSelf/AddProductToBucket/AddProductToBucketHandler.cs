@@ -46,6 +46,12 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
         if (volume is null)
             throw new NotFoundException(ErrorMessages.ProductNotFound("Об'єкту об'єму"));
 
+        if (user?.Bucket?.BucketProducts?
+            .FirstOrDefault(x=> x.ProductId == request.ProductId && x.VolumeId == request.VolumeId) != null)
+        {
+            return Unit.Value;
+        }
+        
         var purchaseProduct = new BucketProduct
         {
             Amount = request.Amount,

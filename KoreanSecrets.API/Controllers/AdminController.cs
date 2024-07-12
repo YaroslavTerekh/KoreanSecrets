@@ -16,6 +16,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Categories.AddCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.DeleteCategory;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.GetCategories;
 using KoreanSecrets.BL.Behaviors.Admin.Categories.ModifyCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Charts.GetCountStatistic;
 using KoreanSecrets.BL.Behaviors.Admin.Charts.GetDayMoneyStatistic;
 using KoreanSecrets.BL.Behaviors.Admin.Charts.GetWeekUserChartStatistic;
 using KoreanSecrets.BL.Behaviors.Admin.Charts.GetYearMoneyStatistic;
@@ -647,4 +648,11 @@ public class AdminController : ControllerBase
     {
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
+    
+    [HttpGet("statistic-count")]
+    public async Task<IActionResult> GetCountStatisticQuery
+    (
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetCountStatisticQuery(), cancellationToken));
 }

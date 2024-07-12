@@ -30,12 +30,7 @@ public class SubscribeOnVolumeHandler : IRequestHandler<SubscribeOnVolumeCommand
 
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
-
-        if (string.IsNullOrEmpty(user.Email))
-        {
-            throw new NotFoundException(ErrorMessages.NoEmail);
-        }
-
+        
         var volumeUser = new VolumeUser
         {
             UserId = request.CurrentUserId,

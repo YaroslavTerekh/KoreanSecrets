@@ -17,4 +17,17 @@ public class VolumeDTO
     public decimal? PriceWithDiscount { get; set; }
     public int Quantity { get; set; }
     public List<AppFileDTO> Photos { get; set; }
+    public List<VolumeUserDTO> UsersWaitingForStock { get; set; }
 }
+
+public class VolumeUserDTO
+{
+    public Guid VolumeId { get; set; }
+
+    public VolumeDTO Volume { get; set; }
+
+    public Guid UserId { get; set; }
+
+    public UserDTO User { get; set; }
+}
+

@@ -42,6 +42,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<BottomBannerPhoto> BottomBannerPhotos { get; set; }
     public DbSet<VolumeUser> VolumeUser { get; set; }
     public DbSet<FeedbackReply> FeedbackReply { get; set; }
+    public DbSet<SiteSettings> Settings { get; set; }
 
     //public DbSet<CategoryBrand> CategoryBrands { get; set; }
     //public DbSet<CategoryCountry> CategoryCountries { get; set; }
