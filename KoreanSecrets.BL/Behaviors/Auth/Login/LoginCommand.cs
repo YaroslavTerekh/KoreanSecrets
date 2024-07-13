@@ -15,6 +15,8 @@ public class LoginCommand : IRequest<AuthToken>
     public string Password { get; set; }
     
     public List<BucketData>? Bucket { get; set; }
+
+    public List<Guid>? Likes { get; set; }
 }
 
 public class BucketData

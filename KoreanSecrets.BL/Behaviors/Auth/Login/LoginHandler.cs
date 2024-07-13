@@ -100,7 +100,25 @@ public class LoginHandler : IRequestHandler<LoginCommand, AuthToken>
             }
             
         }
-        
+
+        if(request.Likes.Count != null)
+        {
+            foreach (var product in request.Likes)
+            {
+                var like = new ProductUser
+                {
+                    LikesId1 = user.Id,
+                    LikesId = product
+                };
+
+                if (!_context.ProductUser.Any(t => t.LikesId1 == like.LikesId1 && t.LikesId == like.LikesId))
+                {
+                    await _context.ProductUser.AddAsync(like);
+                }
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
         var roles = await _userManager.GetRolesAsync(user);
 
         return _jwtService.GenerateJWT(user, roles.ToArray());

@@ -87,7 +87,25 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
                 await _context.BucketProducts.AddRangeAsync(newProducts, cancellationToken);
             }
         }
-        
+
+        if (request.Likes.Count != null)
+        {
+            foreach (var product in request.Likes)
+            {
+                var like = new ProductUser
+                {
+                    LikesId1 = user.Id,
+                    LikesId = product
+                };
+
+                if (!_context.ProductUser.Any(t => t.LikesId1 == like.LikesId1 && t.LikesId == like.LikesId))
+                {
+                    await _context.ProductUser.AddAsync(like);
+                }
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
         await _context.Buckets.AddAsync(bucket, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

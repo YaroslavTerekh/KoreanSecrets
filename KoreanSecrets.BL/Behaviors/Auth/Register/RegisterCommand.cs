@@ -17,4 +17,6 @@ public class RegisterCommand : IRequest<Guid>
     public string Password { get; set; }
     
     public List<BucketData>? Bucket { get; set; }
+
+    public List<Guid>? Likes { get; set; }
 }
