@@ -31,7 +31,16 @@ public class GetPurchasesHandler : IRequestHandler<GetPurchasesQuery, Pagination
             .OrderBy(t => t.CreatedDate)
             .AsQueryable();
 
-        if(request.Status is not null)
+        if (request.PayStatus != null)
+        {
+            purchases = purchases.Where(t => t.PayType == request.PayStatus);
+        }
+        
+        if (request.SearchStatus != null && request.SearchStatus.Any())
+        {
+            purchases = purchases.Where(t => request.SearchStatus.Contains(t.PurchaseStatus));
+        }
+        else if(request.Status is not null)
         {
             if (request.Status == PurchaseStatus.New)
             {
