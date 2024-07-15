@@ -28,11 +28,17 @@ public class GetCountStatisticHandler : IRequestHandler<GetCountStatisticQuery, 
         var totalReports = await _context.Reports.Where(x =>
             x.Status == ReportStatus.Awaiting).CountAsync(cancellationToken);
         
+        var totalCardPurchases = await _context.Purchases.Where(x =>
+            (x.PurchaseStatus == PurchaseStatus.New 
+            || x.PurchaseStatus == PurchaseStatus.Waiting)
+            && x.PayType == PayType.Terminal).CountAsync(cancellationToken);
+        
         return new Data
         {
             Purchases = totalPurchases,
             Feedbacks = totalFeedbacks,
-            Reports = totalReports
+            Reports = totalReports,
+            CardPurchases = totalCardPurchases
         };
     }
 }
@@ -44,4 +50,6 @@ public class Data
     public int Feedbacks { get; set; }
     
     public int Reports { get; set; }
+    
+    public int CardPurchases { get; set; }
 }

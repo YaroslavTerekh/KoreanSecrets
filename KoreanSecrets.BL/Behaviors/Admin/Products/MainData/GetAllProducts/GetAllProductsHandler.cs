@@ -52,7 +52,7 @@ public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, Pagina
         {
             query = request.ColumnToSort switch
             {
-                "name" => request?.WayToSort == "asc"
+                "photo" => request?.WayToSort == "asc"
                     ? query.OrderBy(t => t.Title)
                     : query.OrderByDescending(t => t.Title),
                 "category" => request?.WayToSort == "asc"

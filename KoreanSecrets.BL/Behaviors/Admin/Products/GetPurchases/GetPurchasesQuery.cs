@@ -18,7 +18,11 @@ public class GetPurchasesQuery : IRequest<PaginationModelDTO<PurchaseDTO>>
 
     public PurchaseStatus? Status { get; set; }
     
+    public List<PurchaseStatus>? SearchStatus { get; set; }
+    
     public string? WayToSort { get; set; }
     
     public string? ColumnToSort { get; set; }
+
+    public PayType? PayStatus { get; set; }
 }
