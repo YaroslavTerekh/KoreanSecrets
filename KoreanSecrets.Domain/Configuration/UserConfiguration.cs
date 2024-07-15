@@ -13,6 +13,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey<Bucket>(t => t.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(t => t.AdminBucket)
+            .WithOne(t => t.User)
+            .HasForeignKey<AdminBucket>(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasOne(t => t.AddressInfo)
             .WithOne(t => t.User)
             .HasForeignKey<AddressInfo>(t => t.UserId)

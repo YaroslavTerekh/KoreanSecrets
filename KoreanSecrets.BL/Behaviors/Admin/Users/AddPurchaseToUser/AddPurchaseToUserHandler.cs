@@ -1,5 +1,5 @@
 ﻿using Hangfire;
-using KoreanSecrets.BL.Services.Abstractions;
+using KoreanSecrets.BL.Services;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.Common.Enums;
@@ -7,25 +7,25 @@ using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using KoreanSecrets.BL.Services;
 using Newtonsoft.Json;
-using KoreanSecrets.Domain.DataTransferObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace KoreanSecrets.BL.Behaviors.Purchases.GeneratePurchase;
+namespace KoreanSecrets.BL.Behaviors.Admin.Users.AddPurchaseToUser;
 
-public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, object>
+public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand>
 {
     private readonly DataContext _context;
-    private readonly ILiqPayService _liqPayService;
 
-    public GeneratePurchaseHandler(DataContext context, ILiqPayService liqPayService)
+    public AddPurchaseToUserHandler(DataContext context)
     {
         _context = context;
-        _liqPayService = liqPayService;
     }
 
-    public async Task<object> Handle(GeneratePurchaseCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AddPurchaseToUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .Include(t => t.AddressInfo)
@@ -66,11 +66,11 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         {
             Warehouse = request.Address.Warehouse,
             City = request.Address.City,
-            UserId = user.Id,
+            UserId = request.UserId,
             PurchaseStatus = PurchaseStatus.New,
-            GeneratedBy = PurchaseGenerateBy.GeneratedByUser,
+            GeneratedBy = PurchaseGenerateBy.GeneratedByAdmin,
             Comment = request.Comment,
-            PayType = request.PayType,
+            PayType = PayType.Terminal,
             PromocodeId = promocode is null ? null : promocode.Id,
             UserInfo = request.UserInfo,
             Phone = request.Phone,
@@ -84,12 +84,11 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
                 .ThenInclude(t => t.Brand)
             .Include(t => t.Volume)
                 .ThenInclude(t => t.Photos)
-
             .Where(t => productIds.Contains(t.Id))
             .Select(t => new PurchasedProduct
             {
                 ProductIdentify = t.ProductId.ToString(),
-                Product = JsonConvert.SerializeObject(t.Product, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore}),
+                Product = JsonConvert.SerializeObject(t.Product, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                 VolumeIdentify = t.VolumeId.ToString(),
                 Volume = JsonConvert.SerializeObject(t.Volume, Formatting.None, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                 Amount = t.Amount,
@@ -117,7 +116,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         var products = purchase.Products.Select(t => JsonConvert.DeserializeObject<Product>(t.Product)).ToList();
         var productBrandIds = products.Select(t => t.BrandId).ToList();
         var promotions = await _context.Promotions.Where(t => productBrandIds.Contains(t.BrandId)).ToListAsync(cancellationToken);
-        
+
         foreach (var purchasePricePair in purchasesPriceDictionary)
         {
             purchasesPriceDictionary[purchasePricePair.Key] = CalculatePriceService.GetProductPrice(
@@ -130,13 +129,13 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
 
         if (request.Address is not null && request.SaveAddress)
         {
-            if(user.AddressInfoId is not null)
+            if (user.AddressInfoId is not null)
             {
                 var addressInfo = await _context.Addresses.FirstOrDefaultAsync(t => t.Id == user.AddressInfoId, cancellationToken);
 
                 addressInfo.Warehouse = request.Address.Warehouse;
                 addressInfo.City = request.Address.City;
-            } 
+            }
             else
             {
                 var addressOfUser = new AddressInfo
@@ -154,21 +153,12 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         await _context.SaveChangesAsync(cancellationToken);
 
 
-        var bucketProducts = await _context.BucketProducts.Where(t => t.BucketId == user.BucketId).ToListAsync(cancellationToken);
+        var bucketProducts = await _context.BucketProducts.Where(t => t.AdminBucketId == user.AdminBucketId).ToListAsync(cancellationToken);
 
         _context.BucketProducts.RemoveRange(bucketProducts);
         await _context.SaveChangesAsync(cancellationToken);
 
-        if(request.PayType == PayType.Terminal)
-        {
-            return new { Id = purchase.PurchaseIdentifier };
-        }
-        
-        BackgroundJob.Schedule(() => DeleteFailedPurchase(purchase.Id), TimeSpan.FromHours(3));
- 
-        var form = await _liqPayService.GenerateForm(purchase.Id, cancellationToken);
-
-        return new { Form = form, Id = purchase.PurchaseIdentifier };
+        return Unit.Value;
     }
 
     private long ConvertGuidToLong(Guid guid)
@@ -182,16 +172,5 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
         result = Math.Abs(result % 100000);
 
         return result;
-    }
-
-    public async Task DeleteFailedPurchase(Guid id)
-    {
-        var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == id);
-
-        if (purchase.PurchaseStatus == PurchaseStatus.New || purchase.PurchaseStatus == PurchaseStatus.Failure)
-        { 
-            _context.Purchases.Remove(purchase);
-            await _context.SaveChangesAsync();
-        }
     }
 }

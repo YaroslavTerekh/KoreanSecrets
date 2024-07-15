@@ -12,9 +12,13 @@ public class BucketProduct : BaseEntity
 
     public Product Product { get; set; }
 
-    public Guid BucketId { get; set; }
+    public Guid? BucketId { get; set; }
 
-    public Bucket Bucket { get; set; }
+    public Bucket? Bucket { get; set; }
+
+    public Guid? AdminBucketId { get; set; }
+
+    public AdminBucket? AdminBucket { get; set; }
 
     public Guid VolumeId { get; set; }
 

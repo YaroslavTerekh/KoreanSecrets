@@ -3,6 +3,7 @@ using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace KoreanSecrets.BL.Behaviors.UserSelf.AddProductToBucket;
 public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketCommand>
 {
     private readonly DataContext _context;
+    private readonly UserManager<User> _userManager;
 
     public AddProductToBucketHandler(DataContext context)
     {
@@ -35,6 +37,8 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
         var user = await _context.Users
             .Include(t => t.Bucket)
                 .ThenInclude(t => t.BucketProducts)
+            .Include(t => t.AdminBucket)
+                .ThenInclude(t => t.BucketProducts)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
 
         if (user is null)
@@ -47,17 +51,20 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
             throw new NotFoundException(ErrorMessages.ProductNotFound("Об'єкту об'єму"));
 
         if (user?.Bucket?.BucketProducts?
-            .FirstOrDefault(x=> x.ProductId == request.ProductId && x.VolumeId == request.VolumeId) != null)
+            .FirstOrDefault(x => x.ProductId == request.ProductId && x.VolumeId == request.VolumeId) != null ||
+            user?.AdminBucket?.BucketProducts?
+            .FirstOrDefault(x => x.ProductId == request.ProductId && x.VolumeId == request.VolumeId) != null)
         {
             return Unit.Value;
         }
-        
+
         var purchaseProduct = new BucketProduct
         {
             Amount = request.Amount,
             ProductId = product.Id,
             VolumeId = request.VolumeId,
-            BucketId = user.BucketId,
+            AdminBucketId = user.AdminBucketId,
+            BucketId = user.BucketId
         };
 
         volume.Quantity -= request.Amount;

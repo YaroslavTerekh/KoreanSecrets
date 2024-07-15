@@ -27,5 +27,10 @@ public class BucketProductConfiguration : IEntityTypeConfiguration<BucketProduct
             .WithMany(t => t.BucketProducts)
             .HasForeignKey(t => t.BucketId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(t => t.AdminBucket)
+            .WithMany(t => t.BucketProducts)
+            .HasForeignKey(t => t.AdminBucketId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

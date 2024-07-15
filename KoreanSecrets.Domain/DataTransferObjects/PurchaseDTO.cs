@@ -24,6 +24,8 @@ public class PurchaseDTO : BaseEntity
 
     public PurchaseStatus PurchaseStatus { get; set; }
 
+    public PurchaseGenerateBy GeneratedBy { get; set; }
+
     public string Comment { get; set; }
 
     public List<PurchasedProductDTO> Products { get; set; }

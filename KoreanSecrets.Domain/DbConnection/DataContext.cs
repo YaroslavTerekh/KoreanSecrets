@@ -43,6 +43,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
     public DbSet<VolumeUser> VolumeUser { get; set; }
     public DbSet<FeedbackReply> FeedbackReply { get; set; }
     public DbSet<SiteSettings> Settings { get; set; }
+    public DbSet<AdminBucket> AdminBuckets { get; set; }
 
     //public DbSet<CategoryBrand> CategoryBrands { get; set; }
     //public DbSet<CategoryCountry> CategoryCountries { get; set; }
@@ -69,6 +70,7 @@ public class DataContext : IdentityDbContext<User, ApplicationRole, Guid>
         builder.ApplyConfiguration(new VolumeConfiguration());
         builder.ApplyConfiguration(new FeedbackConfiguration());
         builder.ApplyConfiguration(new PromocodeConfiguration());
+        builder.ApplyConfiguration(new AdminBucketConfiguration());
         //builder.ApplyConfiguration(new CategoryBrandConfiguration());
         //builder.ApplyConfiguration(new CategorySubCategoryConfiguration());
         //builder.ApplyConfiguration(new CategoryCountryConfiguration());

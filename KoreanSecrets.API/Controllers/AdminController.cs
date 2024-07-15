@@ -65,6 +65,7 @@ using KoreanSecrets.BL.Behaviors.Admin.SubCategories.AddSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.DeleteSubCategory;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.GetSubCategories;
 using KoreanSecrets.BL.Behaviors.Admin.SubCategories.ModifySubCategory;
+using KoreanSecrets.BL.Behaviors.Admin.Users.AddPurchaseToUser;
 using KoreanSecrets.BL.Behaviors.Admin.Users.ChangeReportStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Users.DeleteFeedback;
 using KoreanSecrets.BL.Behaviors.Admin.Users.GetReports;
@@ -72,6 +73,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Users.GetUsers;
 using KoreanSecrets.BL.Behaviors.Admin.Users.SendSMS;
 using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUser;
 using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.GetUserPurchases;
+using KoreanSecrets.BL.Behaviors.Admin.Users.UserInfo.ModifyPaidDate;
 using KoreanSecrets.BL.Behaviors.UserSelf.ChangeProductAmount;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProductData.GetSubscriptions;
 using KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnVolumeData.GetVolumeSubsriptions;
@@ -85,7 +87,7 @@ namespace KoreanSecrets.API.Controllers;
 [Authorize(Policy = AuthPolicies.Admins)]
 [Route("api/admin")]
 [ApiController]
-public class AdminController : ControllerBase
+public class AdminController : BaseController
 {
     private readonly IMediator _mediatr;
 
@@ -93,6 +95,24 @@ public class AdminController : ControllerBase
     {
         _mediatr = mediatr;
     }
+
+    [HttpPost("purchase-add-to-user")]
+    public async Task<IActionResult> AddPurchaseToUser
+    (
+        [FromBody] AddPurchaseToUserCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        command.CurrentUserId = CurrentUserId;
+        return Ok(await _mediatr.Send(command, cancellationToken));
+    }
+
+    [HttpPatch("purchase/modify-paid-date")]
+    public async Task<IActionResult> ModifyPaidDateAsync
+    (
+        [FromBody] ModifyPaidDateCommand command,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(command, cancellationToken));
 
     [HttpPatch("volume/{id:guid}/toggle")]
     public async Task<IActionResult> ToggleVolumeStatusAsync

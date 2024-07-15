@@ -15,13 +15,15 @@ public class Purchase : BaseEntity
 
     public string Warehouse { get; set; }
 
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
-    public User User { get; set; }    
+    public User? User { get; set; }    
 
     public PayType PayType { get; set; }
 
     public PurchaseStatus PurchaseStatus { get; set; }
+
+    public PurchaseGenerateBy GeneratedBy { get; set; }
 
     public string Comment { get; set; }
 
@@ -32,6 +34,7 @@ public class Purchase : BaseEntity
     public Guid? PromocodeId { get; set; }
 
     public Promocode Promocode { get; set; }
+
     public string UserInfo { get; set; }
     
     public string Phone { get; set; }

@@ -26,6 +26,10 @@ public class User : IdentityUser<Guid>
 
     public Bucket Bucket { get; set; }
 
+    public Guid? AdminBucketId { get; set; }
+
+    public AdminBucket? AdminBucket { get; set; }
+
     public List<Feedback> Feedbacks { get; set; } = new();
 
     public List<FeedbackReply> FeedbackReplies { get; set; } = new();
