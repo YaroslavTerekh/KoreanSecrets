@@ -31,6 +31,10 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.Icon, src => src.MapFrom(t => t.AdditionalIcon));
         CreateMap<Bucket, BucketDTO>()
             .ForMember(dest => dest.PurchaseProducts, src => src.MapFrom(t => t.BucketProducts));
+        
+        CreateMap<AdminBucket, BucketDTO>()
+            .ForMember(dest => dest.PurchaseProducts, src => src.MapFrom(t => t.BucketProducts));
+        
         CreateMap<FeedbackReply, FeedbackReplyDTO>();
         CreateMap<Brand, BrandDTO>();
         CreateMap<Demand, DemandDTO>();

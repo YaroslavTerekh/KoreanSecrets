@@ -34,6 +34,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Demands.AddDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.DeleteDemand;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.GetDemands;
 using KoreanSecrets.BL.Behaviors.Admin.Demands.ModifyDemand;
+using KoreanSecrets.BL.Behaviors.Admin.GetAdminBucket;
 using KoreanSecrets.BL.Behaviors.Admin.Products.AddGuide;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 using KoreanSecrets.BL.Behaviors.Admin.Products.ChangeProductQuantity;
@@ -675,4 +676,10 @@ public class AdminController : BaseController
         [FromRoute] Guid id,
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new GetCountStatisticQuery(), cancellationToken));
+    
+    [HttpPatch("bucket/get")]
+    public async Task<IActionResult> GetBucketAsync
+    (
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new GetAdminBucketQuery(CurrentUserId), cancellationToken));
 }

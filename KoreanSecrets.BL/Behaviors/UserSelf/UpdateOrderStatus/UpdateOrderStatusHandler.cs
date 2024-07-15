@@ -140,7 +140,6 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
                         if (purchasedProduct.Amount! > volume.Quantity)
                         {
                             volume.Quantity -= purchasedProduct.Amount;
-                            if (volume.Quantity <= 0) product.IsInStock = false;
                         }
                         break;
                     }

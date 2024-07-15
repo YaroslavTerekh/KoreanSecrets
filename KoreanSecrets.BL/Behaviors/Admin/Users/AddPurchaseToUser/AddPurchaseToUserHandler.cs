@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Users.AddPurchaseToUser;
 
-public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand>
+public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand, long>
 {
     private readonly DataContext _context;
 
@@ -25,14 +25,14 @@ public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand
         _context = context;
     }
 
-    public async Task<Unit> Handle(AddPurchaseToUserCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(AddPurchaseToUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .Include(t => t.AddressInfo)
-            .Include(t => t.Bucket)
+            .Include(t => t.AdminBucket)
                 .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Product)
-            .Include(t => t.Bucket)
+            .Include(t => t.AdminBucket)
                 .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Volume)
             .FirstOrDefaultAsync(t => t.Id == request.CurrentUserId, cancellationToken);
@@ -43,7 +43,7 @@ public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand
         if (user.AddressInfo is null && request.Address is null)
             throw new NotFoundException(ErrorMessages.AddressInfoNotFound);
 
-        if (user.Bucket.BucketProducts.Count < 1)
+        if (user.AdminBucket.BucketProducts.Count < 1)
             throw new Exception(ErrorMessages.BucketIsEmpty);
 
         Promocode? promocode = null;
@@ -58,23 +58,25 @@ public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand
                 throw new NotFoundException(ErrorMessages.PromoNotFound);
         }
 
-        var productIds = user.Bucket.BucketProducts.Select(t => t.Id).ToList();
-        //var productsIds = user.Bucket.PurchaseProducts.Select(t => t.ProductId).ToList();
-        //var totalProductDiscount = await _context.Products.Where(t => productsIds.Contains(t.Id)).Select(t => t.)
+        var productIds = user.AdminBucket.BucketProducts.Select(t => t.Id).ToList();
 
+        var client =
+            await _context.Users.FirstOrDefaultAsync(x => x.PhoneNumber.Contains(request.Phone), cancellationToken);
+        
         var purchase = new Purchase
         {
             Warehouse = request.Address.Warehouse,
             City = request.Address.City,
-            UserId = request.UserId,
+            UserId = client?.Id ?? user.Id,
             PurchaseStatus = PurchaseStatus.New,
             GeneratedBy = PurchaseGenerateBy.GeneratedByAdmin,
-            Comment = request.Comment,
+            AdminNotes = request.Comment,
             PayType = PayType.Terminal,
             PromocodeId = promocode is null ? null : promocode.Id,
             UserInfo = request.UserInfo,
             Phone = request.Phone,
-            Email = request?.Email ?? null
+            Email = request?.Email ?? null,
+            Comment = string.Empty
         };
 
         purchase.Products = await _context.BucketProducts
@@ -158,7 +160,7 @@ public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand
         _context.BucketProducts.RemoveRange(bucketProducts);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return purchase.PurchaseIdentifier;
     }
 
     private long ConvertGuidToLong(Guid guid)

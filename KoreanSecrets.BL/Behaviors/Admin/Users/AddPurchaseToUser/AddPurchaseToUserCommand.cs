@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Users.AddPurchaseToUser;
 
-public class AddPurchaseToUserCommand : IAuthorizedRequest
+public class AddPurchaseToUserCommand : IAuthorizedRequest<long>
 {
     public string? Comment { get; set; }
 
@@ -24,6 +24,4 @@ public class AddPurchaseToUserCommand : IAuthorizedRequest
     public string Phone { get; set; }
 
     public string? Email { get; set; }
-
-    public Guid? UserId { get; set; }
 }

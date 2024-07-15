@@ -18,9 +18,10 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
     private readonly DataContext _context;
     private readonly UserManager<User> _userManager;
 
-    public AddProductToBucketHandler(DataContext context)
+    public AddProductToBucketHandler(DataContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<Unit> Handle(AddProductToBucketCommand request, CancellationToken cancellationToken)
@@ -63,15 +64,40 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
             Amount = request.Amount,
             ProductId = product.Id,
             VolumeId = request.VolumeId,
-            AdminBucketId = user.AdminBucketId,
-            BucketId = user.BucketId
         };
+        
+        if (await CheckAdminRole(user))
+        {
+            if (user.AdminBucketId == null)
+            {
+                var adminBucket = new AdminBucket()
+                {
+                    UserId = user.Id
+                };
+                
+                purchaseProduct.AdminBucketId = adminBucket.Id;   
+                await _context.AdminBuckets.AddAsync(adminBucket, cancellationToken);
+            }
+            else
+            {
+                purchaseProduct.AdminBucketId = user.AdminBucketId;   
+            }
+        }
+        else if (user.BucketId != null)
+        {
+            purchaseProduct.BucketId = user.BucketId;
+        }
 
         volume.Quantity -= request.Amount;
-        if (volume.Quantity <= 0) product.IsInStock = false;
+
         await _context.BucketProducts.AddAsync(purchaseProduct, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
+    }
+    
+    public async Task<bool> CheckAdminRole(User user)
+    {
+        return await _userManager.IsInRoleAsync(user, Roles.Admin);
     }
 }
