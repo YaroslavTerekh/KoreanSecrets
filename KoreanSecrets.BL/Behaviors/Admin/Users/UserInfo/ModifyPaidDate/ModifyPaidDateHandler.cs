@@ -22,11 +22,16 @@ public class ModifyPaidDateHandler : IRequestHandler<ModifyPaidDateCommand>
 
     public async Task<Unit> Handle(ModifyPaidDateCommand request, CancellationToken cancellationToken)
     {
-        var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.Id == request.PurchaseId, cancellationToken);
+        var purchase = await _context.Purchases.FirstOrDefaultAsync(t => t.PurchaseIdentifier == request.PurchaseId, cancellationToken);
 
         if(purchase is null)
             throw new NotFoundException(ErrorMessages.PurchaseNotFound);
 
+        if (request.PaidDate.HasValue)
+        {
+            request.PaidDate = request.PaidDate.Value.AddHours(10);
+        }
+        
         purchase.PaidDate = request.PaidDate;
         await _context.SaveChangesAsync(cancellationToken);
 

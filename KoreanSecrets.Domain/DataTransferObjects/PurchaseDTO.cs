@@ -43,6 +43,6 @@ public class PurchaseDTO : BaseEntity
 
     public string? AdminNotes { get; set; }
 
-    public DateTime PaidDate { get; set; }
+    public DateTime? PaidDate { get; set; }
 }
 

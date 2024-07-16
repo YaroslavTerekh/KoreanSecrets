@@ -43,5 +43,5 @@ public class Purchase : BaseEntity
     
     public string? AdminNotes { get; set; }
     
-    public DateTime PaidDate { get; set; }
+    public DateTime? PaidDate { get; set; }
 }

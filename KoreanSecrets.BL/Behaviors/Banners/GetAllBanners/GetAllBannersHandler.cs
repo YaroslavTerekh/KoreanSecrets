@@ -28,6 +28,7 @@ public class GetAllBannersHandler : IRequestHandler<GetAllBannersQuery, List<Ban
         var banners = await _context.Banners
             .Include(t => t.Brand)
             .Include(t => t.BannerPhoto)
+            .OrderBy(x=>x.Order)
             .Select(t => _mapper.Map<BannerDTO>(t))
             .ToListAsync(cancellationToken);
 
