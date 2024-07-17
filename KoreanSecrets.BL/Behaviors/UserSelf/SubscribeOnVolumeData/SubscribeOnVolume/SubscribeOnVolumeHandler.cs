@@ -18,7 +18,7 @@ public class SubscribeOnVolumeHandler : IRequestHandler<SubscribeOnVolumeCommand
 
     public async Task<Unit> Handle(SubscribeOnVolumeCommand request, CancellationToken cancellationToken)
     {
-        var product = await _context.Products
+        var product = await _context.Volume
             .Include(t => t.UsersWaitingForStock)
             .FirstOrDefaultAsync(t => t.Id == request.VolumeId, cancellationToken);
 

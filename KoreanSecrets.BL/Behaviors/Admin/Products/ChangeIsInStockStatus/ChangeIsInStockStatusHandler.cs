@@ -26,26 +26,30 @@ public class ChangeIsInStockStatusHandler : IRequestHandler<ChangeIsInStockStatu
 
     public async Task<Unit> Handle(ChangeIsInStockStatusCommand request, CancellationToken cancellationToken)
     {
-        var product = await _context.Products
+        var volume = await _context.Volume
             .Include(t => t.UsersWaitingForStock)
+                .ThenInclude(t => t.User)
+            .Include(t => t.UsersWaitingForStock)
+                .ThenInclude(t => t.Volume)
+                    .ThenInclude(t => t.Product)
             .FirstOrDefaultAsync(t => t.Id == request.ProductId, cancellationToken);
 
-        if (product is null)
-            throw new NotFoundException(ErrorMessages.SomeProductNotFound);
+        if (volume is null)
+            throw new NotFoundException(ErrorMessages.VolumeNotFound);
 
-        product.IsInStock = !product.IsInStock;
+        volume.IsInStock = !volume.IsInStock;
 
         await _context.SaveChangesAsync(cancellationToken);
         
         try
         {
-            if (product.IsInStock)
+            if (volume.IsInStock)
             {
-                var message = new Message(product.UsersWaitingForStock.Select(t => t.Email).ToArray(), "Товар в наявності!", product.Title);
+                var message = new Message(volume.UsersWaitingForStock.Select(t => t.User.Email).ToArray(), "Товар в наявності!", volume.Product.Title);
         
                 await _emailService.SendEmailAsync(message, "Товар в наявності");
         
-                product.UsersWaitingForStock.Clear();
+                volume.UsersWaitingForStock.Clear();
                 
                 await _context.SaveChangesAsync(cancellationToken);
             }

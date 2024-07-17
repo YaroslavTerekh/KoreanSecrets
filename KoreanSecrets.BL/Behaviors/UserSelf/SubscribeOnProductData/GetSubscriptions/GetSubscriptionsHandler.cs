@@ -21,12 +21,12 @@ public class GetSubscriptionsHandler : IRequestHandler<GetSubscriptionsQuery, Pa
 
     public async Task<PaginationModelDTO<ListProductDTO>> Handle(GetSubscriptionsQuery request, CancellationToken cancellationToken)
     {
-        var product = _context.Products
+        var product = _context.Volume
             .Include(t => t.UsersWaitingForStock)
-            .Include(t => t.Brand)
-            .Include(t => t.Volumes)
+                .ThenInclude(t => t.Volume)
+                    .ThenInclude(t => t.Product)
             .Where(t => t.UsersWaitingForStock.Any() && !t.IsInStock)
-            .Select(t => _mapper.Map<ListProductDTO>(t))
+            .Select(t => _mapper.Map<ListProductDTO>(t.Product))
             .AsQueryable();
 
         return new PaginationModelDTO<ListProductDTO>()

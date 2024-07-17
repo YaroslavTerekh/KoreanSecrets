@@ -64,8 +64,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasForeignKey<AppFile>(t => t.ProductMainPhotoId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasMany(t => t.UsersWaitingForStock)
-            .WithMany(t => t.ProductsWaitingForStock)
-            .UsingEntity(j => j.ToTable("ProductUserWaitForStock"));
+        //builder.HasMany(t => t.UsersWaitingForStock)
+        //    .WithMany(t => t.ProductsWaitingForStock)
+        //    .UsingEntity(j => j.ToTable("ProductUserWaitForStock"));
     }
 }
