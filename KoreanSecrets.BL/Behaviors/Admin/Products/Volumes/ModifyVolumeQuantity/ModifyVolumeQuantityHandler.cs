@@ -20,7 +20,8 @@ public class ModifyVolumeQuantityHandler : IRequestHandler<ModifyVolumeQuantityC
 
     public async Task<Unit> Handle(ModifyVolumeQuantityCommand request, CancellationToken cancellationToken)
     {
-        var volume = await _context.Volume
+        var volume = await _context.Volume.Include(volume => volume.UsersWaitingForStock)
+            .ThenInclude(volumeUser => volumeUser.User).Include(volume => volume.Product)
             .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
 
         if (volume is null) throw new Exception(ErrorMessages.ProductNotFound("Об'єкту об'єму для модифікації"));
