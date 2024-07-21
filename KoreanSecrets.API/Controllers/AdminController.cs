@@ -57,6 +57,7 @@ using KoreanSecrets.BL.Behaviors.Admin.Products.UpdatePurchaseNotes;
 using KoreanSecrets.BL.Behaviors.Admin.Products.Volumes.AddPhotoToVolumeList;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.AddPromocode;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocode;
+using KoreanSecrets.BL.Behaviors.Admin.Promocodes.DeletePromocodeProduct;
 using KoreanSecrets.BL.Behaviors.Admin.Promocodes.GetPromocodes;
 using KoreanSecrets.BL.Behaviors.Admin.Promotions.AddPromotion;
 using KoreanSecrets.BL.Behaviors.Admin.Promotions.DeletePromotion;
@@ -450,6 +451,18 @@ public class AdminController : BaseController
         CancellationToken cancellationToken = default
     ) => Ok(await _mediatr.Send(new DeletePromocodeCommand(id), cancellationToken));
 
+    [HttpDelete("promocodes-product/{id:guid}/{product:guid}/delete")]
+    public async Task<IActionResult> DeletePromocodProductAsync
+    (
+        [FromRoute] Guid id,
+        [FromRoute] Guid product,
+        CancellationToken cancellationToken = default
+    ) => Ok(await _mediatr.Send(new DeletePromocodeProductCommand()
+    {
+        PromocodeId = id,
+        ProductId = product
+    }, cancellationToken));
+    
     [HttpPost("banners/add")]
     public async Task<IActionResult> AddBannerAsync
     (

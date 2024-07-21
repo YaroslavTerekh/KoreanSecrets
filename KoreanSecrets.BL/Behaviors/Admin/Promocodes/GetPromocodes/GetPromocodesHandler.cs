@@ -23,6 +23,8 @@ public class GetPromocodesHandler : IRequestHandler<GetPromocodesQuery, List<Pro
     {
         return await _context.Promocodes
             .Include(t => t.Brand)
+            .Include(t => t.Products)
+            .ThenInclude(x=>x.Product).ThenInclude(x=>x.Volumes).ThenInclude(x=>x.Photos)
             .ToListAsync(cancellationToken);
     }
 }
