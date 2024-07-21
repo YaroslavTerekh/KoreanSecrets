@@ -2,9 +2,12 @@
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
 using KoreanSecrets.Domain.DbConnection;
+using KoreanSecrets.Domain.Entities;
 using KoreanSecrets.Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +20,13 @@ public class ChangeIsInStockStatusHandler : IRequestHandler<ChangeIsInStockStatu
 {
     private readonly DataContext _context;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _config;
 
-    public ChangeIsInStockStatusHandler(DataContext context, IEmailService emailService)
+    public ChangeIsInStockStatusHandler(DataContext context, IEmailService emailService, IConfiguration config)
     {
         _context = context;
         _emailService = emailService;
+        _config = config;
     }
 
     public async Task<Unit> Handle(ChangeIsInStockStatusCommand request, CancellationToken cancellationToken)
@@ -45,7 +50,8 @@ public class ChangeIsInStockStatusHandler : IRequestHandler<ChangeIsInStockStatu
         {
             if (volume.IsInStock)
             {
-                var message = new Message(volume.UsersWaitingForStock.Select(t => t.User.Email).ToArray(), "Товар в наявності!", volume.Product.Title);
+                var message = new Message(volume.UsersWaitingForStock.Select(t => t.User.Email).ToArray(), 
+                    "Товар в наявності!", String.Concat("Товар", volume.Product.Title, "з'явився у наявності!", _config.GetSection("HostSettings:FrontApplicationUrl"), "home/item/", volume.Product.Id));
         
                 await _emailService.SendEmailAsync(message, "Товар в наявності");
         
