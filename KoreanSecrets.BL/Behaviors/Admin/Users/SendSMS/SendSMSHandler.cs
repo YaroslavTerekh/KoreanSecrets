@@ -35,7 +35,7 @@ public class SendSMSHandler : IRequestHandler<SendSMSCommand>
         TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
 
         await MessageResource.CreateAsync(
-            body: request.Text,
+            body: "Secrets of care | " + request.Text,
             from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
             to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(user.PhoneNumber))
         );

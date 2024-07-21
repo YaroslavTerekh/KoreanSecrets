@@ -84,7 +84,7 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
                     order.User.PhoneNumber, order.Phone);
                 break;
             case PurchaseStatus.Success:
-                await SendMessage($"Secrets of care | Дякуємо, за замовлення '{order.PurchaseIdentifier}'! Очікуєм на Ваш відгук!", 
+                await SendMessage($"Secrets of care | Дякуємо, за замовлення '{order.PurchaseIdentifier}'! Очікуємо на Ваш відгук!", 
                     order.User.PhoneNumber, order.Phone);
                 await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{order.PurchaseIdentifier}", 
                     order.User.PhoneNumber, order.Phone);
