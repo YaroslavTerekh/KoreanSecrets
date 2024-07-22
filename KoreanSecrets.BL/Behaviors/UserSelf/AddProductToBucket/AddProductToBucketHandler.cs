@@ -68,7 +68,7 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
         
         if (await CheckAdminRole(user))
         {
-            if (user.AdminBucketId == null)
+            if (user.AdminBucket.Id == null)
             {
                 var adminBucket = new AdminBucket()
                 {
@@ -80,7 +80,7 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
             }
             else
             {
-                purchaseProduct.AdminBucketId = user.AdminBucketId;   
+                purchaseProduct.AdminBucketId = user.AdminBucket.Id;   
             }
         }
         else if (user.BucketId != null)

@@ -155,7 +155,7 @@ public class AddPurchaseToUserHandler : IRequestHandler<AddPurchaseToUserCommand
         await _context.SaveChangesAsync(cancellationToken);
 
 
-        var bucketProducts = await _context.BucketProducts.Where(t => t.AdminBucketId == user.AdminBucketId).ToListAsync(cancellationToken);
+        var bucketProducts = await _context.BucketProducts.Where(t => t.AdminBucketId == user.AdminBucket.Id).ToListAsync(cancellationToken);
 
         _context.BucketProducts.RemoveRange(bucketProducts);
         await _context.SaveChangesAsync(cancellationToken);

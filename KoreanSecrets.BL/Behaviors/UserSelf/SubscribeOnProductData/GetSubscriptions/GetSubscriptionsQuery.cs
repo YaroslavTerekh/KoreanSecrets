@@ -2,7 +2,7 @@
 
 namespace KoreanSecrets.BL.Behaviors.UserSelf.SubscribeOnProductData.GetSubscriptions;
 
-public class GetSubscriptionsQuery : IAuthorizedRequest<PaginationModelDTO<ListProductDTO>>
+public class GetSubscriptionsQuery : IAuthorizedRequest<PaginationModelDTO<VolumeExtendedDTO>>
 {
     public int CurrentPage { get; set; }
 

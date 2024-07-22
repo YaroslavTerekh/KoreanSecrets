@@ -7,6 +7,7 @@ using KoreanSecrets.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 
@@ -31,6 +32,8 @@ public class ModifyVolumeQuantityHandler : IRequestHandler<ModifyVolumeQuantityC
 
     public async Task<Unit> Handle(ModifyVolumeQuantityCommand request, CancellationToken cancellationToken)
     {
+        TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
+
         var volume = await _context.Volume.Include(volume => volume.UsersWaitingForStock)
             .ThenInclude(volumeUser => volumeUser.User).Include(volume => volume.Product)
             .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
@@ -56,7 +59,7 @@ public class ModifyVolumeQuantityHandler : IRequestHandler<ModifyVolumeQuantityC
                     {
                         await SendMessage($"Secrets of care | Товар {volume.Product.Title} у наявності!",
                             volumeUser.User.PhoneNumber);
-                        await SendMessage($"https://www.secretsofcare.com.ua/home/purchase/{volumeUser.Volume.ProductId}",
+                        await SendMessage($"https://www.secretsofcare.com.ua/home/item/{volumeUser.Volume.ProductId}",
                             volumeUser.User.PhoneNumber);
                     }
                 }

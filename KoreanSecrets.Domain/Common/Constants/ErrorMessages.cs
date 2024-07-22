@@ -64,6 +64,7 @@ public static class ErrorMessages
     public const string PurchaseProductNotRelatedToUser = "Ваша корзина пуста";
     public const string PurchaseNotRelatedToUser = "Це не Ваша покупка";
     public const string BucketIsEmpty = "Ваша корзина пуста";
+    public const string YouAreAlreadySubscribed = "Запит вже було додано";
 
     public static string PromocodeIsExpired(string date) => $"Промокод був дійсний до {date}";
     public static string PromocodeHasBeenNotStartedYet(string date) => $"Промокод буде дійсний з {date}";

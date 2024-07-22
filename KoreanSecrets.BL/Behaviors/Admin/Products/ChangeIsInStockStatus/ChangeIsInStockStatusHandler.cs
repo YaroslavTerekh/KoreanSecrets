@@ -1,6 +1,8 @@
 ﻿using KoreanSecrets.BL.Services.Abstractions;
+using KoreanSecrets.BL.Services.Realizations;
 using KoreanSecrets.Domain.Common.Constants;
 using KoreanSecrets.Domain.Common.CustomExceptions;
+using KoreanSecrets.Domain.Common.Settings;
 using KoreanSecrets.Domain.DbConnection;
 using KoreanSecrets.Domain.Entities;
 using KoreanSecrets.Domain.Models;
@@ -13,6 +15,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace KoreanSecrets.BL.Behaviors.Admin.Products.ChangeIsInStockStatus;
 
@@ -21,50 +26,71 @@ public class ChangeIsInStockStatusHandler : IRequestHandler<ChangeIsInStockStatu
     private readonly DataContext _context;
     private readonly IEmailService _emailService;
     private readonly IConfiguration _config;
+    private readonly IPhoneNumberService _phoneNumberService;
+    private readonly TwillioSettings _twilioSettings;
 
-    public ChangeIsInStockStatusHandler(DataContext context, IEmailService emailService, IConfiguration config)
+    public ChangeIsInStockStatusHandler(DataContext context, IEmailService emailService, IConfiguration config, IPhoneNumberService phoneNumberService, TwillioSettings twillioSettings)
     {
         _context = context;
         _emailService = emailService;
         _config = config;
+        _phoneNumberService = phoneNumberService;
+        _twilioSettings = twillioSettings;
     }
 
     public async Task<Unit> Handle(ChangeIsInStockStatusCommand request, CancellationToken cancellationToken)
     {
-        var volume = await _context.Volume
-            .Include(t => t.UsersWaitingForStock)
-                .ThenInclude(t => t.User)
-            .Include(t => t.UsersWaitingForStock)
-                .ThenInclude(t => t.Volume)
-                    .ThenInclude(t => t.Product)
+        TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
+
+        var product = await _context.Products
+            .Include(t => t.Volumes)
+                .ThenInclude(t => t.UsersWaitingForStock)
+                    .ThenInclude(t => t.User)
             .FirstOrDefaultAsync(t => t.Id == request.ProductId, cancellationToken);
 
-        if (volume is null)
-            throw new NotFoundException(ErrorMessages.VolumeNotFound);
+        if (product is null)
+            throw new NotFoundException(ErrorMessages.SomeProductNotFound);
 
-        volume.IsInStock = !volume.IsInStock;
-
+        product.IsInStock = !product.IsInStock;
         await _context.SaveChangesAsync(cancellationToken);
-        
-        try
+
+        foreach (var volume in product.Volumes)
         {
-            if (volume.IsInStock)
+            try
             {
-                var message = new Message(volume.UsersWaitingForStock.Select(t => t.User.Email).ToArray(), 
-                    "Товар в наявності!", String.Concat("Товар", volume.Product.Title, "з'явився у наявності!", _config.GetSection("HostSettings:FrontApplicationUrl"), "home/item/", volume.Product.Id));
-        
-                await _emailService.SendEmailAsync(message, "Товар в наявності");
-        
+                foreach (var volumeUser in volume.UsersWaitingForStock)
+                {
+                    await SendMessage($"Secrets of care | Товар {volume.Product.Title} у наявності!",
+                        volumeUser.User.PhoneNumber);
+                    await SendMessage($"https://www.secretsofcare.com.ua/home/item/{volumeUser.Volume.ProductId}",
+                        volumeUser.User.PhoneNumber);
+                }
+
                 volume.UsersWaitingForStock.Clear();
-                
+
                 await _context.SaveChangesAsync(cancellationToken);
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         return Unit.Value;
+    }
+
+    private async Task SendMessage(string text, string phone)
+    {
+        try
+        {
+            await MessageResource.CreateAsync(
+            body: text,
+                from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
+                to: new PhoneNumber(_phoneNumberService.FormatPhoneNumber(phone))
+            );
+        }
+        catch (Exception e)
+        {
+        }
     }
 }

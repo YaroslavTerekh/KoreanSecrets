@@ -36,6 +36,9 @@ public class SubscribeOnProductHandler : IRequestHandler<SubscribeOnProductComma
         if (user is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 
+        if (await _context.VolumeUser.AnyAsync(t => t.UserId == request.CurrentUserId && t.VolumeId == volume.Id, cancellationToken))
+            throw new Exception(ErrorMessages.YouAreAlreadySubscribed);
+
         var newSubscription = new VolumeUser
         {
             UserId = request.CurrentUserId,
