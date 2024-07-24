@@ -17,4 +17,5 @@ public class VolumeExtendedDTO
     public int Quantity { get; set; }
     public List<AppFileDTO> Photos { get; set; }
     public List<VolumeUserDTO> UsersWaitingForStock { get; set; }
+    public DateTime CreatedDate { get; set; }
 }

@@ -51,6 +51,8 @@ public class MapperGlobalProfile : Profile
             .ForMember(dest => dest.OrdersCount, src => src.MapFrom(t => t.Purchases.Count))
             .ForMember(dest => dest.IsPhoneNumberConfirmed, src => src.Ignore()); // ToDo: add phone number confirmation
         CreateMap<Volume, VolumeDTO>();
+        CreateMap<VolumeUser, VolumeUserDTO>();
+        CreateMap<Volume, VolumeExtendedDTO>();
         CreateMap<Report, ReportDTO>();
         CreateMap<Banner, BannerDTO>()
             .ForMember(dest => dest.BrandId, src => src.MapFrom(t => t.BrandId));
