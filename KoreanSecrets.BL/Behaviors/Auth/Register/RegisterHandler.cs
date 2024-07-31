@@ -45,7 +45,8 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
             LastName = request.LastName,
             PhoneNumberConfirmed = false,
             Email = null,
-            EmailConfirmed = false
+            EmailConfirmed = false,
+            PhoneNumber = request.PhoneNumber,
         };
 
         user.UserName = Guid.NewGuid().ToString();
