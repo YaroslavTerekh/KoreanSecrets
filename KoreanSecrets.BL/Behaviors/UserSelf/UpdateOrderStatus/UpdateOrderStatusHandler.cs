@@ -113,7 +113,7 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
                         if (volume is null)
                             throw new NotFoundException(ErrorMessages.VolumeNotFound);
 
-                        volume.Quantity -= purchasedProduct.Amount;
+                        volume.Quantity += purchasedProduct.Amount;
 
                         break;
                     }

@@ -46,11 +46,17 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
             PhoneNumberConfirmed = false,
             Email = null,
             EmailConfirmed = false,
-            PhoneNumber = request.PhoneNumber,
         };
+        
+        var checkPhoneNumberUser = await _context.Users.FirstOrDefaultAsync(t => t.PhoneNumber.Contains(request.PhoneNumber), cancellationToken);
 
+        if (checkPhoneNumberUser is not null)
+            throw new Exception(ErrorMessages.UserWithSamePhoneExists);
+        
+        user.PhoneNumber = _phoneNumberService.FormatPhoneNumber(request.PhoneNumber);
+        
         user.UserName = Guid.NewGuid().ToString();
-
+        
         var userResult = await _userManager.CreateAsync(user, request.Password);
 
         if (!userResult.Succeeded)
@@ -110,7 +116,7 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, Guid>
         await _context.Buckets.AddAsync(bucket, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        BackgroundJob.Schedule(() => RemoveUser(user.Id, cancellationToken), TimeSpan.FromMinutes(10));
+        // BackgroundJob.Schedule(() => RemoveUser(user.Id, cancellationToken), TimeSpan.FromMinutes(10));
 
         return user.Id;
     }

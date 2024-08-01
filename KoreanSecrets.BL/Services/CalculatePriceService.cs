@@ -63,6 +63,62 @@ public static class CalculatePriceService
         }
     }
     
+     public static void GetProductPrice(
+        Volume volume,
+        List<Promotion>? promotions,
+        Promocode? promocode)
+    {
+        var time = DateTime.UtcNow.Date.AddHours(-11);
+        
+        decimal price = 0;
+            
+        if (volume.Product.DiscountPrice != null
+            && volume.Product.DiscountPrice.HasValue
+            && volume.Product.UseDiscountPrice)
+        {
+            price = volume.Price -  ((volume.Price * volume.Product.DiscountPrice.Value) / 100);
+        }
+        else if (promotions != null
+                 && promotions.Any(x => x.BrandId == volume.Product.BrandId)
+                 && volume.Product.AdditionalIcon == ProductIcon.Sale)
+        {
+            var currentPromotion = promotions.FirstOrDefault(x => 
+                x is { EndDate: not null, StartDate: not null }
+                 && x.BrandId == volume.Product.BrandId
+                 && x.StartDate.Value.Date >= time);
+
+            if (currentPromotion is not null)
+            {
+                price = volume.Price - ((volume.Price * currentPromotion.Discount) / 100);
+            }
+        } 
+        else if (promocode != null)
+        {
+            if (promocode.BrandId.HasValue)
+            {
+                if (volume.Product.BrandId == promocode.BrandId
+                    && promocode.Products.All(x => x.ProductId != volume.ProductId)
+                    && promocode.StartDate.Date >= time)
+                {
+                    price = volume.Price -  ((volume.Price  * promocode.Discount) / 100);
+                } 
+            }
+            else
+            {
+                if (promocode.Products.All(x => x.ProductId != volume.ProductId)
+                    && promocode.StartDate.Date >= time)
+                {
+                    price = volume.Price - ((volume.Price  * promocode.Discount) / 100);
+                } 
+            }
+        }
+
+        if (price > 0)
+        {
+            volume.PriceWithDiscount = Math.Round(price);
+        }
+    }
+    
     public static void GetProductPrice(
         ListProductDTO product,
         List<Promotion>? promotions,

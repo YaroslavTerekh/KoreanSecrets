@@ -76,16 +76,33 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
             Phone = request.Phone,
             Email = request?.Email ?? null
         };
-
-        purchase.Products = await _context.BucketProducts
+        
+        var neededProducts = await _context.BucketProducts
             .Include(t => t.Product)
-                .ThenInclude(t => t.MainPhoto)
+            .ThenInclude(t => t.MainPhoto)
             .Include(t => t.Product)
-                .ThenInclude(t => t.Brand)
+            .ThenInclude(t => t.Brand)
             .Include(t => t.Volume)
-                .ThenInclude(t => t.Photos)
+            .ThenInclude(t => t.Photos)
+            .Where(t => productIds.Contains(t.Id)).ToListAsync(cancellationToken: cancellationToken);
 
-            .Where(t => productIds.Contains(t.Id))
+        var productBrandIdsFirst = neededProducts.Select(t => t.Product.BrandId).ToList();
+        var promotionsFirst = await _context.Promotions.Where(t => productBrandIdsFirst.Contains(t.BrandId)).ToListAsync(cancellationToken);
+        
+        foreach (var product in neededProducts)
+        {
+            var volume = await _context.Volume
+                .FirstOrDefaultAsync(t => t.Id == product.VolumeId, cancellationToken);
+            if (volume != null)
+            {
+                volume.Quantity -= product.Amount;
+                _context.Update(volume);
+            }
+            
+            CalculatePriceService.GetProductPrice(product.Volume, promotionsFirst, null);
+        }
+        
+        purchase.Products = neededProducts
             .Select(t => new PurchasedProduct
             {
                 ProductIdentify = t.ProductId.ToString(),
@@ -96,7 +113,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
                 CreatedDate = t.CreatedDate,
                 PurchaseId = purchase.Id,
                 ProductTitle = t.Product.Title,
-            }).ToListAsync(cancellationToken: cancellationToken);
+            }).ToList();
 
         if (purchase.Products.Count < 1)
         {

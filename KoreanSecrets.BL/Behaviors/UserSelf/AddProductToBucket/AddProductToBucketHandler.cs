@@ -88,7 +88,7 @@ public class AddProductToBucketHandler : IRequestHandler<AddProductToBucketComma
             purchaseProduct.BucketId = user.BucketId;
         }
 
-        volume.Quantity -= request.Amount;
+        // volume.Quantity -= request.Amount;
 
         await _context.BucketProducts.AddAsync(purchaseProduct, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
