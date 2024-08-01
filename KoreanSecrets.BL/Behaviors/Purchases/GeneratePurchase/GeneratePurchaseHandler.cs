@@ -58,7 +58,7 @@ public class GeneratePurchaseHandler : IRequestHandler<GeneratePurchaseCommand, 
                 throw new NotFoundException(ErrorMessages.PromoNotFound);
         }
 
-        var productIds = user.Bucket.BucketProducts.Select(t => t.Id).ToList();
+        var productIds = user.Bucket.BucketProducts.Where(x=>x.Amount > 0).Select(t => t.Id).ToList();
         //var productsIds = user.Bucket.PurchaseProducts.Select(t => t.ProductId).ToList();
         //var totalProductDiscount = await _context.Products.Where(t => productsIds.Contains(t.Id)).Select(t => t.)
 

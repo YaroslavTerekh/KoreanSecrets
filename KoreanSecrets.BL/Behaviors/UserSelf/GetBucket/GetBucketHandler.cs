@@ -28,7 +28,7 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
 
     public async Task<BucketDTO> Handle(GetBucketQuery request, CancellationToken cancellationToken)
     {
-        var bucket = await _context.Users
+        var bucketData = await _context.Users
             .Include(t => t.Bucket)
                 .ThenInclude(t => t.BucketProducts)
                     .ThenInclude(t => t.Product)
@@ -42,9 +42,23 @@ public class GetBucketHandler : IRequestHandler<GetBucketQuery, BucketDTO>
                     .ThenInclude(t => t.Volume)
                         .ThenInclude(x=>x.Photos)
             .Where(t => t.Id == request.CurrentUserId)
-            .Select(t => _mapper.Map<BucketDTO>(t.Bucket))
+            .Select(t => t.Bucket)
             .FirstOrDefaultAsync(cancellationToken);
 
+        if (bucketData?.BucketProducts != null)
+            foreach (var product in bucketData.BucketProducts.Where(product => !product.Product.IsInStock || product.Volume.Quantity <= 0))
+            {
+                if (product.Amount > 0)
+                {
+                    product.Amount = 0;
+
+                    _context.BucketProducts.Update(product);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+            }
+
+        var bucket = _mapper.Map<BucketDTO>(bucketData);
+        
         if (bucket is null)
             throw new NotFoundException(ErrorMessages.UserNotFound);
 

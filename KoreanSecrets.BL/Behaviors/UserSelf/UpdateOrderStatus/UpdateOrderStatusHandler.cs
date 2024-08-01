@@ -114,8 +114,6 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
                             throw new NotFoundException(ErrorMessages.VolumeNotFound);
 
                         volume.Quantity += purchasedProduct.Amount;
-
-                        break;
                     }
                 }
             }
@@ -137,11 +135,10 @@ public class UpdateOrderStatusHandler : IRequestHandler<UpdateOrderStatusCommand
                         if (volume is null)
                             throw new NotFoundException(ErrorMessages.VolumeNotFound);
 
-                        if (purchasedProduct.Amount! > volume.Quantity)
+                        if (purchasedProduct.Amount <= volume.Quantity)
                         {
                             volume.Quantity -= purchasedProduct.Amount;
                         }
-                        break;
                     }
                 }
             }
